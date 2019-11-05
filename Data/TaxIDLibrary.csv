@@ -1,0 +1,134 @@
+﻿taxon,scientific_name,NCBI_rank,NCBItaxID,NCBItxid,NCBItax_parentID
+bacteria,Bacteria,superkingdom,2,NCBI:txid2,1
+acidobacteria,Acidobacteria,phylum,57723,NCBI:txid57723,2
+aquificae,Aquificae,phylum,200783,NCBI:txid200783,2
+caldiserica/cryosericota group,Caldiserica/Cryosericota group,no rank,2498710,NCBI:txid2498710,2
+calditrichaota,Calditrichaota,phylum,1930617,NCBI:txid1930617,2
+chrysiogenetes,Chrysiogenetes,phylum,200938,NCBI:txid200938,2
+coprothermobacteria,Coprothermobacteria,phylum,2138240,NCBI:txid2138240,2
+deferribacteres,Deferribacteres,phylum,200930,NCBI:txid200930,2
+dictyoglomi,Dictyoglomi,phylum,68297,NCBI:txid68297,2
+elusimicrobia,Elusimicrobia,phylum,74152,NCBI:txid74152,2
+fcb group,FCB group,no rank,1783270,NCBI:txid1783270,2
+fusobacteria,Fusobacteria,phylum,32066,NCBI:txid32066,2
+nitrospinae/tectomicrobia group,Nitrospinae/Tectomicrobia group,no rank,1802340,NCBI:txid1802340,2
+nitrospirae,Nitrospirae,phylum,40117,NCBI:txid40117,2
+proteobacteria,Proteobacteria,phylum,1224,NCBI:txid1224,2
+acidithiobacillia,Acidithiobacillia,class,1807140,NCBI:txid1807140,1224
+alphaproteobacteria,Alphaproteobacteria,class,28211,NCBI:txid28211,1224
+betaproteobacteria,Betaproteobacteria,class,28216,NCBI:txid28216,1224
+delta/epsilon subdivisions,delta/epsilon subdivisions,subphylum,68525,NCBI:txid68525,1224
+deltaproteobacteria,Deltaproteobacteria,class,28221,NCBI:txid28221,1224
+epsilonproteobacteria,Epsilonproteobacteria,class,29547,NCBI:txid29547,1224
+gammaproteobacteria,Gammaproteobacteria,class,1236,NCBI:txid1236,1224
+pvc group,PVC group,no rank,1783257,NCBI:txid1783257,2
+spirochaetes,Spirochaetes,phylum,203691,NCBI:txid203691,2
+synergistetes,Synergistetes,phylum,508458,NCBI:txid508458,2
+terrabacteria group,Terrabacteria group,no rank,1783272,NCBI:txid1783272,2
+thermodesulfobacteria,Thermodesulfobacteria,phylum,200940,NCBI:txid200940,2
+thermotogae,Thermotogae,phylum,200918,NCBI:txid200918,2
+unclassified bacteria,unclassified Bacteria,no rank,2323,NCBI:txid2323,2
+actinobacteria,Actinobacteria,phylum,201174,NCBI:txid201174,1783272
+bacteroidetes,Bacteroidetes,phylum,976,NCBI:txid976,68336
+bacteroidetes/chlorobi group,Bacteroidetes/Chlorobi group,no rank,68336,NCBI:txid68336,2
+balneolaeota,Balneolaeota,phylum,1936987,NCBI:txid1936987,68336
+chlorobi,Chlorobi,phylum,1090,NCBI:txid1090,68336
+ignavibacteriae,Ignavibacteriae,phylum,1134404,NCBI:txid1134404,68336
+rhodothermaeota,Rhodothermaeota,phylum,1853220,NCBI:txid1853220,68336
+abditibacteriota,Abditibacteriota,phylum,2109258,NCBI:txid2109258,1783272
+armatimonadetes,Armatimonadetes,phylum,67819,NCBI:txid67819,1783272
+chloroflexi,Chloroflexi,phylum,200795,NCBI:txid200795,1783272
+cyanobacteria/melainabacteria group,Cyanobacteria/Melainabacteria group,no rank,1798711,NCBI:txid1798711,1783272
+cyanobacteria,Cyanobacteria,phylum,1117,NCBI:txid1117,1798711
+chroococcidiopsidales,Chroococcidiopsidales,order,1890505,NCBI:txid1890505,1117
+gloeobacteria,Gloeobacteria,order,307596,NCBI:txid307596,1117
+gloeoemargaritales,Gloeoemargaritales,order,1955042,NCBI:txid1955042,1117
+nostocales,Nostocales,order,1161,NCBI:txid1161,1117
+oscillatoriophycideae,Oscillatoriophycideae,subclass,1301283,NCBI:txid1301283,1117
+pleurocapsales,Pleurocapsales,order,52604,NCBI:txid52604,1117
+spirulinales,Spirulinales,order,1890443,NCBI:txid1890443,1117
+synechococcales,Synechococcales,order,1890424,NCBI:txid1890424,1117
+deinococcus-thermus,Deinococcus-Thermus,phylum,1297,NCBI:txid1297,68336
+firmicutes,Firmicutes,phylum,1239,NCBI:txid1239,68336
+tenericutes,Tenericutes,phylum,544448,NCBI:txid544448,68336
+caldiserica,Caldiserica,phylum,67814,NCBI:txid67814,2498710
+archaea,Archaea,superkingdom,2157,NCBI:txid2157,1
+asgard group,Asgard group,no rank,1935183,NCBI:txid1935183,2157
+dpann group,DPANN group,no rank,1783276,NCBI:txid1783276,2157
+nanoarchaeota,Nanoarchaeota,phylum,192989,NCBI:txid192989,1783276
+euryarchaeota,Euryarchaeota,phylum,28890,NCBI:txid28890,2157
+eukaryota,Eukaryota,superkingdom,2759,NCBI:txid2759,1
+alveolata,Alveolata,no rank,33630,NCBI:txid33630,2759
+apicomplexa,Apicomplexa,phylum,5794,NCBI:txid5794,33630
+ciliophora,Ciliophora,phylum,5878,NCBI:txid5878,33630
+colpodellida,Colpodellida,no rank,877183,NCBI:txid877183,33630
+colponemidia,Colponemidia,phylum,1492816,NCBI:txid1492816,33630
+dinophyceae,Dinophyceae,class,2864,NCBI:txid2864,33630
+perkinsozoa,Perkinsozoa,phylum,2497438,NCBI:txid2497438,33630
+perkinsea,Perkinsea,no rank,27997,NCBI:txid27997,2497438
+amoebozoa,Amoebozoa,no rank,554915,NCBI:txid554915,2759
+apusozoa,Apusozoa,no rank,554296,NCBI:txid554296,2759
+breviatea,Breviatea,no rank,1401294,NCBI:txid1401294,2759
+cryptophyta,Cryptophyta,phylum,3027,NCBI:txid3027,2759
+discoba,Discoba,no rank,2611352,NCBI:txid2611352,2759
+euglenozoa,Euglenozoa,no rank,33682,NCBI:txid33682,2759
+glaucocystophyceae,Glaucocystophyceae,class,38254,NCBI:txid38254,2759
+haptista,Haptista,no rank,2608109,NCBI:txid2608109,2759
+haptophyta,Haptophyta,class,2830,NCBI:txid2830,2608109
+hemimastigophora,Hemimastigophora,phylum,2489521,NCBI:txid2489521,2759
+heterolobosea,Heterolobosea,phylum,5752,NCBI:txid5752,2759
+lobosa,Lobosa,phylum,5752,NCBI:txid5752,2759
+jakobida,Jakobida,no rank,556282,NCBI:txid556282,2759
+katablepharidophyta,Katablepharidophyta,class,339960,NCBI:txid339960,2759
+malawimonadidae,Malawimonadidae,family,136087,NCBI:txid136087,2759
+metamonada,Metamonada,phylum,2611341,NCBI:txid2611341,2759
+opisthokonta,Opisthokonta,no rank,33154,NCBI:txid33154,2759
+choanoflagellata,Choanoflagellata,order,28009,NCBI:txid28009,33154
+fungi,Fungi,kingdom,4751,NCBI:txid4751,33154
+dikarya,Dikarya,subkingdom,451864,NCBI:txid451864,4751
+ascomycota,Ascomycota,phylum,4890,NCBI:txid4890,451864
+basidiomycota,Basidiomycota,phylum,5204,NCBI:txid5204,451864
+metazoa,Metazoa,kingdom,33208,NCBI:txid33208,33154
+eumetazoa,Eumetazoa,no rank,6072,NCBI:txid6072,33208
+bilateria,Bilateria,no rank,33213,NCBI:txid33213,6072
+deuterostomia,Deuterostomia,no rank,33511,NCBI:txid33511,33213
+chaetognatha,Chaetognatha,phylum,10229,NCBI:txid10229,33511
+chordata,Chordata,phylum,7711,NCBI:txid7711,33511
+echinodermata,Echinodermata,phylum,7586,NCBI:txid7586,33511
+hemichordata,Hemichordata,phylum,10219,NCBI:txid10219,33511
+gnathostomulida,Gnathostomulida,phylum,66780,NCBI:txid66780,33213
+platyhelminthes,Platyhelminthes,phylum,6157,NCBI:txid6157,33213
+protostomia,Protostomia,no rank,33317,NCBI:txid33317,33213
+ecdysozoa,Ecdysozoa,no rank,1206794,NCBI:txid1206794,33317
+nematoda,Nematoda,phylum,6231,NCBI:txid6231,1206794
+nematomorpha,Nematomorpha,phylum,33310,NCBI:txid33310,1206794
+panarthropoda,Panarthropoda,phylum,88770,NCBI:txid88770,1206794
+arthropoda,Arthropoda,phylum,6656,NCBI:txid6656,88770
+onychophora,Onychophora,phylum,27563,NCBI:txid27563,88770
+tardigrada,Tardigrada,phylum,42241,NCBI:txid42241,88770
+scalidophora,Scalidophora,superphylum,1215728,NCBI:txid1215728,1206794
+bacillariophyta,Bacillariophyta,phylum,2836,NCBI:txid2836,33634
+diatoms,Diatoms,phylum,2836,NCBI:txid2836,33634
+straminopiles,Straminopiles,no rank,33634,NCBI:txid33634,2759
+stramenopila,Stramenopila,no rank,33634,NCBI:txid33634,2759
+chrysomerophyceae,Chrysomerophyceae,class,2825,NCBI:txid2825,33634
+dictyochophyceae,Dictyochophyceae,class,39119,NCBI:txid39119,33634
+eustigmatophyceae,Eustigmatophyceae,class,5747,NCBI:txid5747,33634
+labyrinthulomycetes,Labyrinthulomycetes,class,35131,NCBI:txid35131,33634
+labyrinthulea,Labyrinthulea,class,35131,NCBI:txid35131,33634
+hyphochytriomycetes,Hyphochytriomycetes,class,42382,NCBI:txid42382,33634
+oomycetes,Oomycetes,class,4762,NCBI:txid4762,33634
+oomycota,Oomycota,class,4762,NCBI:txid4762,33634
+synurophyceae,Synurophyceae,class,33859,NCBI:txid33859,33634
+bacillariophyceae,Bacillariophyceae,class,33849,NCBI:txid33849,2836
+coscinodiscophyceae,Coscinodiscophyceae,class,33836,NCBI:txid33836,2836
+fragilariophyceae,Fragilariophyceae,class,33853,NCBI:txid33853,2836
+rhodophyta,Rhodophyta,phylum,2763,NCBI:txid2763,2759
+rhizaria,Rhizaria,no rank,543769,NCBI:txid543769,2759
+aquavolonida,Aquavolonida,order,2172500,NCBI:txid2172500,543769
+cercozoa,Cercozoa,phylum,136419,NCBI:txid136419,543769
+endomyxa,Endomyxa,phylum,2604748,NCBI:txid2604748,543769
+viridiplantae,Viridiplantae,kingdom,33090,NCBI:txid33090,2759
+chlorophyta,Chlorophyta,phylum,3041,NCBI:txid3041,33090
+foraminifera,Foraminifera,no rank,29178,NCBI:txid29178,2662056
+retaria,Retaria,no rank,2662056,NCBI:txid2662056,543769

@@ -1,0 +1,17 @@
+env_package,ena_package,ena_checklist_accession,MIxS
+air,air,ERC000012,TRUE
+built_environment,built environment,ERC000031,TRUE
+host_associated,host-associated,ERC000013,TRUE
+human_associated,human-associated,ERC000014,TRUE
+human_gut,human-gut,ERC000015,TRUE
+human_oral,human-oral,ERC000016,TRUE
+human_skin,human-skin,ERC000017,TRUE
+human_vaginal,human-vaginal,ERC000018,TRUE
+microbial_mat_biofilm,microbial mat/biofilm,ERC000019,TRUE
+miscellaneous_natural_or_artificial_environment,miscellaneous natural or artificial environment,ERC000025,TRUE
+plant_associated,plant-associated,ERC000020,TRUE
+sediment,sediment,ERC000021,TRUE
+soil,soil,ERC000022,TRUE
+wastewater_sludge,wastewater/sludge,ERC000023,TRUE
+water,water,ERC000024,TRUE
+other,,ERC000011,FALSE
