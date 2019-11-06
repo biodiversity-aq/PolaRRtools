@@ -239,7 +239,7 @@ process.metadata <- function(metadata = NA, add_to = NA, strict.MIxS = FALSE,
   
   # 6. the package MIxS terms (just one package allowed for strict.MIxS, otherwise multiple packages allowed)
   # 6.1 find the best package/ask user if no package was specified
-  if(!"env_package" %in% colnames(New_metadata)){
+  if(!"env_package" %in% colnames(metadata)){
     if(ask.input){
       cat("No env_package was specified.\nPlease specify what to do next:\n1) Make an educated guess based on the data\n2) Ask user for the package name\n3) stop executing\n(type 1, 2 or 3)\n") 
       doNext <- readline() 
@@ -272,6 +272,7 @@ process.metadata <- function(metadata = NA, add_to = NA, strict.MIxS = FALSE,
       env_package <- env_package$values
     }
   }else{# 6.2 check if package is valid or if the ENA checklist number needs to be converted to a package
+    New_metadata$env_package <- metadata$env_package
     if(length(setdiff(unique(New_metadata$env_package), ENA_checklistAccession$env_package))>0 |
        length(setdiff(unique(New_metadata$env_package), ENA_checklistAccession$ena_package))>0){
       #no correct package name, check if it is one of the ENA accession numbers
@@ -288,6 +289,9 @@ process.metadata <- function(metadata = NA, add_to = NA, strict.MIxS = FALSE,
           }
         }
       }else{
+        env_package <- dataQC.guess.env_package.from.data(metadata)
+        warningmessages<-c(warningmessages, env_package$warningmessages)
+        env_package <- env_package$values
         warningmessages<-multi.warnings("It seems the way the environmatla package is written is not allowed, better correct", warningmessages)
       }
     }
@@ -846,11 +850,19 @@ write.metadata.MIxS.as.ENA <- function(metadata, name=NULL,
       file.name <- strsplit(name, "/")[[1]]
       out.dir <- paste(file.name[1:(length(file.name)-1)], collapse="/")
       file.name <- file.name[length(file.name)]
+      if(grepl(".txt$", file.name)){
+        file.name <- gsub(".txt$", ".tsv", file.name)
+      }
       if(!dir.exists(file.path(out.dir))){
         stop("Could not find the directory provided in the name argument.")
       }
     } else{
-      file.name <- paste(name, ".txt", sep="")
+      file.name <- name
+      if(grepl(".txt$", file.name)){
+        file.name <- gsub(".txt$", ".tsv", file.name)
+      }else{
+        file.name <- paste(file.name, ".tsv", sep="")
+      }
       out.dir <- getwd()
     }
     full.name <- paste(out.dir, file.name, sep="/")
@@ -899,7 +911,7 @@ write.metadata.MIxS.as.ENA <- function(metadata, name=NULL,
   lx <- c(1:nrow(metadata))
   sample_alias <- paste(unique_name_prefix, formatC(lx, width=ln, flag="0"), sep="_")
   ena_metadata$sample_alias<-sample_alias
-  ena_variable <- c(ena_variable, "#sample_alias")
+  ena_variable <- c(ena_variable, "sample_alias")
   ena_units <- c(ena_units, "#units")
   
   # 5.2 fixed term taxon
@@ -926,7 +938,7 @@ write.metadata.MIxS.as.ENA <- function(metadata, name=NULL,
   ena_variable <- c(ena_variable, "tax_id")
   ena_units <- c(ena_units, "")
   ena_metadata$tax_name <- tax_name
-  ena_variable <- c(ena_variable, "scientific name")
+  ena_variable <- c(ena_variable, "scientific_name")
   ena_units <- c(ena_units, "")
   
   # 5.4 fixed term sample_title	(original sample name)
@@ -1022,7 +1034,7 @@ write.metadata.MIxS.as.ENA <- function(metadata, name=NULL,
   
   cat(paste("The data had been written to ", out.dir, "/", file.name, "\n",sep=""))
   write.table(output, file=paste(out.dir, "/", file.name, sep=""), 
-              col.names = FALSE, row.names = FALSE, quote = FALSE)
+              col.names = FALSE, row.names = FALSE, quote = FALSE, fileEncoding = "UTF-8")
 }
 
 
@@ -1039,8 +1051,9 @@ Heind <- read.csv("/Users/msweetlove/Desktop/historic_fish/MiMARKS_Heindler_PRJE
 
 HeindQC <- process.metadata(metadata = Heind, strict.MIxS = FALSE, 
                             out.format="metadata.MIxS", ask.input=TRUE)
-
-write.metadata.MIxS.as.ENA(metadata=HeindQC, name="/Users/msweetlove/Desktop/historic_fish/MiMARKS_Heindler_PRJEB34858.txt",
+HeindQC@data$env_package
+HeindQC@env_package
+write.metadata.MIxS.as.ENA(metadata=HeindQC, name="/Users/msweetlove/Desktop/historic_fish/MiMARKS_Heindler_PRJEB34858.tsv",
                            unique_name_prefix="HistoricAntarcticFishDataset_2019_", checklist_accession=NA,
                            tax_name="Bacteria", ask.input=TRUE,
                            missing.data.as.empty.columns=TRUE)
