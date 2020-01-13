@@ -1,3 +1,9 @@
+### check out package down
+#pkgdown::build site run loally to build site
+
+#structure cookiecutter
+#test code testy/Travis IC
+
 #==============================================================
 # The polaRRtools package
 #       polaRRtools is a collection of user-friendly tools to download explore and analize 
@@ -9,6 +15,7 @@
 # lisence CC 4.0
 # Part of the POLA3R website (successor or mARS.biodiversity.aq)
 # version 1.0 (2019-09-20)
+# file encdong UTF-8
 #
 #   This is version includes utilities to:
 #     - download sequence data from INSDC (NCBI's SRA to be more precise)
@@ -17,16 +24,33 @@
 # 
 #==============================================================
 
+
 #library(devtools)
 #library(usethis)
-TermsLib<-read.csv("/Users/msweetlove/OneDrive_RBINS/mARS_NewSeqData/polaRRTools/Data/TermsLibrary.csv", 
+TermsLib<-read.csv("/Users/msweetlove/OneDrive_RBINS/mARS_NewSeqData/polaRRTools/Data/TermsLibrary_v2.csv", 
                       header=TRUE)
 TermsSyn <- sapply(as.character(TermsLib$synonyms), function(x){strsplit(x, ";")})
 names(TermsSyn) <- TermsLib$name 
 #usethis::use_data(MIxS_Voc, internal = FALSE)
 
+
 ENA_checklistAccession<-read.csv("/Users/msweetlove/OneDrive_RBINS/mARS_NewSeqData/polaRRTools/Data/ENA_checklistAccession.csv", 
                    header=TRUE)
+
+ENA_allowed_terms<-read.csv("/Users/msweetlove/OneDrive_RBINS/mARS_NewSeqData/polaRRTools/Data/ENA_allowed_terms.csv", 
+                                 header=TRUE, stringsAsFactors = FALSE)
+ENA_geoloc<-ENA_allowed_terms$geo_loc_name
+ENA_geoloc<-ENA_geoloc[!ENA_geoloc==""]
+ENA_instrument<-ENA_allowed_terms$instrument_model
+ENA_instrument<-ENA_instrument[!ENA_instrument==""]
+ENA_select<-ENA_allowed_terms$library_selection
+ENA_select<-ENA_select[!ENA_select==""]
+ENA_strat<-ENA_allowed_terms$library_strategy
+ENA_strat<-ENA_strat[!ENA_strat==""]
+
+
+MarsLib<-read.csv("/Users/msweetlove/OneDrive_RBINS/mARS_NewSeqData/polaRRTools/Data/MarsLibrary.csv", 
+                                 header=TRUE)
 
 TaxIDLib<-read.csv("/Users/msweetlove/OneDrive_RBINS/mARS_NewSeqData/polaRRTools/Data/TaxIDLibrary.csv", 
                                  header=TRUE, row.names=1)
@@ -87,6 +111,53 @@ check.valid.metadata.MIxS <- function(d){
   return(valid)
 }
 
+setClass("metadata.DwC", slots=list(name="character", #the name of the resource
+                                    core="data.frame", #a dataframe with the DwC core (events/occurences are rows, variables are columns)
+                                    emof="data.frame", #a dataframe with the DwC EMOF extention (=the environmental data)
+                                    type="character", #type of the core: occurence or event
+                                    eml_url="character" #the url to the EML file from the IPT
+)
+)
+
+setMethod("show",
+          "metadata.DwC",
+          function(object) {
+            N <- nrow(object@core)
+            if(nrow(object@emof)>0){
+              E <- "and an EMOF extension"
+            } else{E <- ""}
+            cat(paste("a metadata.DwC class object with ", as.character(N), " ",
+                      object@type, "s", as.character(E), ".\n", sep=""))
+          }
+)
+
+check.valid.metadata.DwC <- function(d){
+  valid <- TRUE
+  #class must be metadata.MIxS 
+  if(!class(d)=="metadata.DwC"){
+    valid <- FALSE
+  }else{
+    dcol <- ncol(d@core)
+    drow <- nrow(d@core)
+    #The core must have at least 1 sample (row) and 1 variable (column)
+    if(dcol<=0 & drow<=0){
+      valid <- FALSE
+    }
+    #type must be occurence or event
+    if(d@type="occurence"){
+      if(!"occurenceID" %in% colnames(d@core)){
+        valid <- FALSE
+      }
+    }else if(d@type="event"){
+      if(!"eventID" %in% colnames(d@core)){
+        valid <- FALSE
+      }
+    }else{
+      valid <- FALSE
+    }
+  }
+  return(valid)
+}
 
 #--------------------------------------------------------------
 # 1. Tools for formatting data
@@ -134,6 +205,8 @@ process.metadata <- function(metadata = NA, add_to = NA, strict.MIxS = FALSE,
   
   warningmessages<-c()
   
+  # 0. pre-process input
+  # 0.1. check input data
   if(!is.data.frame(metadata)){
     stop("The input must be a dataframe, with samples as rows/ variables as columns")
   }
@@ -147,9 +220,29 @@ process.metadata <- function(metadata = NA, add_to = NA, strict.MIxS = FALSE,
     warningmessages <- multi.warnings("units are not included in the output when the out.format argument is set to data.frame. To include units in the output set out.format to metadata.MIxS", warningmessages)
   }
         
+  # 0.2 formatting
   # remove empty columns
   metadata <- metadata[,colSums(is.na(metadata)) < nrow(metadata)] 
+  # clean up columnames
+  colnames(metadata) <- gsub("[\\.]+", "_", colnames(metadata)) # replace double dots with underscore
+  colnames(metadata) <- gsub("_$", "", colnames(metadata))  # remove trailing underscore
+  colnames(metadata) <- tolower(colnames(metadata)) # all to lowercase
   
+  # 0.3 check if data is in one-header table or if there are additional MiMARKS header lines
+  # for additional MIxS headers: "environmental package", "units template" => only units of importance
+  pre_def_units <- FALSE
+  if(grepl("units", tolower(row.names(metadata)[1]))){
+    units <- data.frame(var_name=c(colnames(metadata)), unit= unlist(metadata[1,]))
+    metadata <- data.frame(metadata[-1,], stringsAsFactors = FALSE)
+    pre_def_units <- TRUE
+  } else if(grepl("units", tolower(row.names(metadata)[2]))){
+    units <- data.frame(var_name=c(colnames(metadata)), unit= unlist(metadata[2,]))
+    metadata <- data.frame(metadata[-c(1,2),], stringsAsFactors = FALSE)
+    pre_def_units <- TRUE
+  }
+
+  
+  # 0.4 prepare output data:
   # make an empty output file to fill along the way
   New_metadata <- data.frame(row.names=rownames(metadata))
   
@@ -179,18 +272,34 @@ process.metadata <- function(metadata = NA, add_to = NA, strict.MIxS = FALSE,
       warningmessages <- multi.warnings(paste("assumed the \"",likely_sampNames,"\" column contained the original sample names", sep=""), warningmessages)
     }
   }else{
-    if(.row_names_info(Heind)>0){#rownames provided by the user might be the original names
-      New_metadata$original_name <- row.names(metadata)
-      warningmessages <- multi.warnings("no original sample names found, used the rownames instead", warningmessages)
-    }else{
+    if(.row_names_info(metadata)>0){#rownames provided by the user might be the original names
+      if(ask.input){
+        cat("No original sample names found...\n\tuse the rownames instead? (y/n)\n") 
+        ctu <- readline() 
+        if(ctu %in% c("y", "Y", "yes", "YES", "Yes")){
+          New_metadata$original_name <- row.names(metadata)
+          warningmessages <- multi.warnings("no original sample names found, used the rownames instead", warningmessages)
+        }else if(ctu %in% c("n", "N", "no", "NO", "No")){
+          cat("you chose no.\n\t Can you give the columnname with the original sample names instead? Type n to ignore\n") 
+          ctu2 <- readline() 
+          if(ctu2 %in% colnames(metadata)){
+            New_metadata$original_name <- metadata[,ctu3]
+          }else if(!ctu2 %in% c("n", "N", "no", "NO", "No")){
+            stop("incorrect input... only yes or no allowed.")
+          }else{
+            stop(paste("could not find the column", ctu2, "in the colnames of the dataset provided..."))
+          }
+        } else{
+          stop("incorrect input... only yes or no allowed.")
+        }
+      }
+     }else{
       warningmessages <- multi.warnings("no original sample names found", warningmessages)
     }
   }
   
-
-  
   # 2. some basic info from insdc
-  TermsSyn_insdc<-TermsSyn[as.character(TermsLib[TermsLib$insdc==TRUE,]$name)]
+  TermsSyn_insdc<-TermsSyn[as.character(TermsLib[TermsLib$name_origin=="INSDC",]$name)]
   for(item in names(TermsSyn_insdc)){
     item_shared <- intersect(TermsSyn_insdc[item][[1]], colnames(metadata))
     if(length(item_shared)==1){
@@ -200,8 +309,8 @@ process.metadata <- function(metadata = NA, add_to = NA, strict.MIxS = FALSE,
   
   # 3. dealing with latitude-longitude, and it's many possible formats...
   TermsSyn_latlon<-TermsSyn[as.character(TermsLib[TermsLib$name=="lat_lon",]$name)]
-  TermsSyn_lat<-TermsSyn[as.character(TermsLib[TermsLib$name=="DwC_decimalLatitude",]$name)]
-  TermsSyn_lon<-TermsSyn[as.character(TermsLib[TermsLib$name=="DwC_decimalLongitude",]$name)]
+  TermsSyn_lat<-TermsSyn[as.character(TermsLib[TermsLib$name=="decimalLatitude",]$name)]
+  TermsSyn_lon<-TermsSyn[as.character(TermsLib[TermsLib$name=="decimalLongitude",]$name)]
   
   QClatlon <- dataQC.LatitudeLongitudeCheck(metadata, 
                                             latlon.colnames=list(TermsSyn_latlon[[1]],
@@ -209,8 +318,8 @@ process.metadata <- function(metadata = NA, add_to = NA, strict.MIxS = FALSE,
                                                                  TermsSyn_lon[[1]]))
   warningmessages<-c(QClatlon$warningmessages, warningmessages)
   New_metadata$lat_lon <- QClatlon$values
-  New_metadata$DwC_decimalLatitude <- sapply(QClatlon$values, function(x){strsplit(x, " ")[[1]][1]})
-  New_metadata$DwC_decimalLongitude <- sapply(QClatlon$values, function(x){strsplit(x, " ")[[1]][2]})
+  New_metadata$decimalLatitude <- sapply(New_metadata$lat_lon, function(x){strsplit(x, " ")[[1]][1]})
+  New_metadata$decimalLongitude <- sapply(New_metadata$lat_lon, function(x){strsplit(x, " ")[[1]][2]})
   
   New_metadata[is.na(New_metadata)] <- ""
 
@@ -223,11 +332,9 @@ process.metadata <- function(metadata = NA, add_to = NA, strict.MIxS = FALSE,
     New_metadata$collection_date <- QCDate$values
   }
   
-  
   # 5. the core MIxS terms
   TermsSyn_MIxS <- TermsSyn[as.character(TermsLib[TermsLib$core>0,]$name)]
   TermsSyn_MIxS <- TermsSyn_MIxS[!names(TermsSyn_MIxS) %in% c("lat_lon", "collection_date")]
-  
   for(item in names(TermsSyn_MIxS)){
     item_shared <- intersect(TermsSyn_MIxS[item][[1]], colnames(metadata))
     if(length(item_shared)==1){
@@ -297,7 +404,6 @@ process.metadata <- function(metadata = NA, add_to = NA, strict.MIxS = FALSE,
     }
   }
   
-  
   if(is.null(env_package) & !strict.MIxS){
     warningmessages<-multi.warnings("No env_package could be inferred", warningmessages)
   } else{
@@ -307,7 +413,7 @@ process.metadata <- function(metadata = NA, add_to = NA, strict.MIxS = FALSE,
   if(strict.MIxS){
     if(is.null(env_package) || length(unique(env_package)) != 1){
       if(ask.input){
-        cat("Found none or more than one environmental packages. Only one allowed when strict.MIxS is TRUE\nContinue by setting strict.MIxS to FALSE? (y/n)\n") 
+        cat("Found none or more than one environmental packages. Only one allowed when strict.MIxS is TRUE\n\tContinue by setting strict.MIxS to FALSE? (y/n)\n") 
         ctn <- readline() 
         if(ctn %in% c("y", "Y", "yes", "YES", "Yes")){
           strict.MIxS<-FALSE
@@ -342,7 +448,7 @@ process.metadata <- function(metadata = NA, add_to = NA, strict.MIxS = FALSE,
     
     if(length(intersect(names(TermsSyn_MIxSpackage_minimal), names(TermsSyn_MIxSpackage))) != length(names(TermsSyn_MIxSpackage_minimal))){
       if(ask.input){
-        cat("Some of the required terms for strict.MIxS are missing...\nContinue with strict.MIxS turned off? (y/n)\n") 
+        cat("Some of the required terms for strict.MIxS are missing...\n\tContinue with strict.MIxS turned off? (y/n)\n") 
         ctu <- readline() 
         if(ctu %in% c("y", "Y", "yes", "YES", "Yes")){
           strict.MIxS<-FALSE
@@ -360,13 +466,62 @@ process.metadata <- function(metadata = NA, add_to = NA, strict.MIxS = FALSE,
   
 
   # 7. any other additionalinformation
-  TermsSyn_add<-TermsSyn[as.character(TermsLib[TermsLib$insdc==FALSE & TermsLib$official_MIxS==FALSE,]$name)]
+  # 7.1 already registered terms
+  TermsSyn_add <- TermsSyn[as.character(TermsLib[TermsLib$name_origin %in% c("DwC", "miscellaneous"),]$name)]
+  TermsSyn_add <- TermsSyn_add[!names(TermsSyn_add) %in% c("decimalLatitude", "decimalLongitude")]
   for(item in names(TermsSyn_add)){
     item_shared <- intersect(TermsSyn_add[item][[1]], colnames(metadata))
     if(length(item_shared)==1){
       New_metadata[,item] <- metadata[,item_shared]
     }
   }
+  # 7.2 novel terms
+  unknown_terms <- setdiff(colnames(metadata), unlist(TermsSyn))
+  if(length(unknown_terms) > 0 & strict.MIxS & ask.input){
+    cat("non-MIxS variables were encountere.\n\tContinue with strict.MIxS turned off? (y/n)\n") 
+    ctu <- readline() 
+    if(ctu %in% c("y", "Y", "yes", "YES", "Yes")){
+      strict.MIxS<-FALSE
+    }else if(ctu %in% c("n", "N", "no", "NO", "No")){
+      stop("Could not output metadata strictly following the MIxS rules.")
+    } else{
+      stop("incorrect input... only yes or no allowed.")
+    }
+  }
+  if(!strict.MIxS){
+    if(length(unknown_terms) > 5){
+      # if there are too much novel terms, don't go over all of them
+      if(ask.input){
+        t<-paste(unknown_terms, collapse=", ")
+        cat(paste("The following unknown variables were encountered:\n",t," \n\tAdd all to the QC'd data? (y/n)\n", sep=" ")) 
+        ctu <- readline() 
+        if(ctu %in% c("y", "Y", "yes", "YES", "Yes")){
+          for(t in unknown_terms){
+            New_metadata[,t] <- metadata[,t]
+          }
+        }
+      }else{
+        warningmessages<-multi.warnings("Some unknown variables present in the data", warningmessages)
+        for(t in unknown_terms){
+          New_metadata[,t] <- metadata[,t]
+        }
+      }
+    }else{
+      for(t in unknown_terms){
+        if(ask.input){
+          cat(paste("The following unknown variable was encountered:",t," \n\tAdd to the QC'd data? (y/n)\n", sep=" ")) 
+          ctu <- readline() 
+          if(ctu %in% c("y", "Y", "yes", "YES", "Yes")){
+            New_metadata[,t] <- metadata[,t]
+          }
+        }else{
+          New_metadata[,t] <- metadata[,t]
+          warningmessages<-multi.warnings("Some unknown variables present in the data", warningmessages)
+        }
+      }
+    }
+  }
+  
   
   # 8. some additional quality controll
   if("investigation_type" %in% colnames(New_metadata)){
@@ -376,7 +531,7 @@ process.metadata <- function(metadata = NA, add_to = NA, strict.MIxS = FALSE,
       return(x)})
   }else{
     if(ask.input){
-      cat("No investigation_type was found...\nPlease provide an investigation_type. Common ones include mimarks-survey or metagenome. Type n to ignore.\n") 
+      cat("No investigation_type was found...\n\tPlease provide an investigation_type. Common ones include mimarks-survey or metagenome. Type n to ignore.\n") 
       invtype <- readline() 
       if(! invtype %in% c("n", "N")){
         New_metadata$investigation_type <- rep(invtype, nrow(New_metadata))
@@ -386,8 +541,11 @@ process.metadata <- function(metadata = NA, add_to = NA, strict.MIxS = FALSE,
   if("target_gene" %in% colnames(New_metadata)){
     New_metadata$target_gene <- sapply(New_metadata$target_gene, function(x){
       if(grepl("16S", x)){x<-"16S ssu rRNA"
-      }else if(grepl("18S", x)){x<-"16S ssu rRNA"
-      }else if(grepl("ITS", x)){x<-"ITS"}})
+      }else if(grepl("18S", toupper(x))){x<-"18S ssu rRNA"
+      }else if(grepl("ITS", toupper(x))){x<-"ITS"
+      }else if(grepl("COI", toupper(x))){x<-"COI"
+      }
+      return(x)})
   }
   if("specific_host" %in% colnames(New_metadata)){
     host_val <- setdiff(unique(New_metadata$specific_host), c(NA, "NA", "-", "not applicable"))
@@ -395,6 +553,15 @@ process.metadata <- function(metadata = NA, add_to = NA, strict.MIxS = FALSE,
       New_metadata <- New_metadata[,!colnames(New_metadata) %in% "specific_host"]
     }
   }
+  #if("eventID" %in% colnames(New_metadata) & ask.input){
+  #  if(length(unique(New_metadata$eventID))==nrow(New_metadata)){
+  #    cat("There are the same number of events as there are samples...\n\tkeep $eventID? (y/n)\n") 
+  #    ctu <- readline() 
+  #    if(ctu %in% c("n", "N", "no", "NO", "No")){
+  #      New_metadata <- New_metadata[,!colnames(New_metadata) %in% "eventID"]
+  #    }
+  #  }
+  #}
   
   # QC on length/depth/size measurements
   # if multiple units found: do nothing
@@ -404,13 +571,27 @@ process.metadata <- function(metadata = NA, add_to = NA, strict.MIxS = FALSE,
   QC_units<-c()
   if(length(items_shared)>0){
     alternative_units<-data.frame(name=items_shared, unit_full=rep(NA, length(items_shared)))
-    possible_units <- c("nm", "um", "??m", "mm", "cm", "dm", "m", "km")
+    possible_units <- c("nm", "um", "μm", "mm", "cm", "dm", "m", "km")
     for(name_unit in items_shared){
       vals <- as.vector(as.character(New_metadata[,colnames(New_metadata) %in% name_unit]))
       names(vals)<-row.names(New_metadata)
       #extract the units
-      val_units <- unlist(lapply(vals, function(v){gsub("[0-9]|\\.|,|-", "", v)} ))
+      if(pre_def_units){
+        val_units <- as.character(units[units$var_name==name_unit,]$unit)
+        val_units <- rep(val_units,nrow(New_metadata))
+      }else{
+        val_units <- unlist(lapply(vals, function(v){gsub("[0-9]|\\.|,|-", "", v)} ))
+      }
+      val_units <- gsub(" ", "", tolower(val_units))
+      val_units <- gsub("nano", "n", tolower(val_units))
+      val_units <- gsub("micro", "u", tolower(val_units))
+      val_units <- gsub("mili", "m", tolower(val_units))
+      val_units <- gsub("centi", "c", tolower(val_units))
+      val_units <- gsub("deci", "d", tolower(val_units))
+      val_units <- gsub("kilo", "k", tolower(val_units))
+      val_units <- gsub("meter", "m", tolower(val_units))
       val_units <- intersect(unique(val_units), possible_units) #danger in this step: discards any text that is not an expected unit
+      
       vals<-unlist(lapply(vals, function(v){gsub(",", ".", v)} ))
       if(length(val_units)==1){
         for(v in 1:length(vals)){
@@ -421,20 +602,36 @@ process.metadata <- function(metadata = NA, add_to = NA, strict.MIxS = FALSE,
         QC_units[name_unit]<-val_units[1]
         New_metadata[,colnames(New_metadata)==name_unit] <- c(vals[rownames(New_metadata)])
       }
+
     }
   }
   
   # 9. finalizing and formatting the output
   # 9.1 the units
   New_metadata_units <- c()
-  for(i in 1:ncol(New_metadata)){
-    New_metadata_units[colnames(New_metadata)[i]] <- as.character(TermsLib[TermsLib$name %in% colnames(New_metadata)[i],]$expected_unit)
+  if(!pre_def_units){
+    # there were no pre defined units in a additional header line
+    for(i in 1:ncol(New_metadata)){
+      New_metadata_units[colnames(New_metadata)[i]] <- as.character(TermsLib[TermsLib$name %in% colnames(New_metadata)[i],]$expected_unit)
+    }
+  }else{
+    # there were pre defined units in a additional header line
+    # user defined units obviously have priority over assumed standard units in the TermsLib file
+    for(i in 1:ncol(New_metadata)){
+      if(colnames(New_metadata)[i] %in% units$var_name){
+        New_metadata_units[colnames(New_metadata)[i]] <- as.character(units[units$var_name==colnames(New_metadata)[i],]$unit)
+      } else{
+        New_metadata_units[colnames(New_metadata)[i]] <- as.character(TermsLib[TermsLib$name %in% colnames(New_metadata)[i],]$expected_unit)
+      }
+    }
   }
+  # QC_units
   if(length(QC_units)>0){
     for(u in 1:length(QC_units)){
       New_metadata_units[names(QC_units)[u]] <- QC_units[u]
     }
   }
+
   
   # 9.2 if strict.MIxS: concatenate all non-MIxS terms in the misc_param term
   if(strict.MIxS){
@@ -460,7 +657,11 @@ process.metadata <- function(metadata = NA, add_to = NA, strict.MIxS = FALSE,
   # 9.3 the section
   New_metadata_section <- c()
   for(i in 1:ncol(New_metadata)){
-    New_metadata_section[colnames(New_metadata)[i]] <- as.character(TermsLib[TermsLib$name %in% colnames(New_metadata)[i],]$section)
+    if(colnames(New_metadata)[i] %in%TermsLib$name){
+      New_metadata_section[colnames(New_metadata)[i]] <- as.character(TermsLib[TermsLib$name %in% colnames(New_metadata)[i],]$MIxS_section)
+    } else{
+      New_metadata_section[colnames(New_metadata)[i]] <- "miscellaneous"
+    }
   }
   
   # 9.4 env_package
@@ -508,6 +709,11 @@ process.metadata <- function(metadata = NA, add_to = NA, strict.MIxS = FALSE,
     }
   }
     return(New_metadata)
+}
+
+semantics <- function(dataset = NA, vocab=c("MIxS", "MiMARKS", "DarwinCore")){
+  # use the library to shore up the semantics of a dataset using a volcabulary (DwC or MIxS)
+  # make sure all the terms are the correct terms
 }
 
 #--------------------------------------------------------------
@@ -810,25 +1016,42 @@ download.sequences.INSDC <- function(BioPrj = c(), destination.path = NA, apiKey
   if(keep.metadata){return(metadata_all)}
 }
 
-
 #--------------------------------------------------------------
 # 3. Tools for submitting data
 #--------------------------------------------------------------
-write.metadata.MIxS.as.ENA <- function(metadata, name=NULL,
-                                 unique_name_prefix=NA, checklist_accession=NA,
-                                 tax_name=NA, ask.input=TRUE,
-                                 missing.data.as.empty.columns=TRUE){
+
+# idea: prep.metadata.ENA: output csv for editing, later convert cvs to tsv
+# idea: check if sequence files correspond to the names in the metadata file
+
+prep.metadata.ENA <- function(metadata, dest.dir=NULL, file.name=NULL,
+                              sample.unique_name_prefix=NA, checklist_accession=NA,
+                              tax_name=NA, ask.input=TRUE,
+                              insert.size=NA, library.layout=NA,
+                              library.strategy=NA, library.selection=NA,
+                              seq.file.extension=".fastq.gz"
+                              ){
   #' @author Maxime Sweetlove ccBY 4.0 2019
-  #' @description write.metadata.MIxS.as.ENA converts metadata into the right format (a tab separated text file) to submit data to ENA (version Novembre 2019)
+  #' @description converts metadata into the right format (a tab separated text file) to submit data to ENA (version Januari 2020)
   #' @param metadata a metadata.MIxS class object. The object to be written as text file suited for submission to ENA.
-  #' @param name a character string naming a file. Either a full path or a file name to write to the working directory. Invalid input will cause output to be printed to the console.
-  #' @param checklist_accession character. The name of a MIxS environmetal package or it's ENA checklist accession number.
-  #' @details ENA uses its own variant of MIxS, and has
-  #' write.metadata.MIxS.as.ENA assumes the dataset has already been subjected to process the process.metadata function to standardize in input. If this is not the case, "garbage in, garbage out" is applicable. 
-  #' @return tab separated .txt file
+  #' @param file.name a character string. A name (without a file type extension) to use for the output files.
+  #' @param dest.dir a character string. The file path to the directory where the output files must be written. If left blank files are written to the working directory.
+  #' @param sample.unique_name_prefix a character string. The unique name prefix to append to the sample names (to tie them all together). Required for ENA submissions
+  #' @param checklist_accession a character string. The name of a MIxS environmetal package or it's ENA checklist accession number.
+  #' @param tax_name a character string. The scientific name of a taxon targeted in the data (applicable to all the samples). Same as "subspecf_gen_lin" or "scientific_name" in the metadata.MIxS input.
+  #' @param ask.input boolean. Whether or not to ask for user input to make decisions or solve problems that arise during the reformatting (e.g. missing data,...)
+
+  #' @param insert_size a character string. The size of the reads (in number of basepairs), if applicable to all samples.
+  #' @param library_layout a character string. The layout of the library, either PAIRED or SINGLE, if applicable to all samples.
+  #' @param library_strategy a character string. The library strategy (e.g. AMPLICON, WGS,...), if applicable to all samples.
+  #' @param library_selection a character string. The method used to select for, enrich or or screen the material being sequenced (e.g. PCR)?, if applicable to all samples.
+  #' @param seq.file.extension a character string. The extension for the sequence files. Default is .fastq.gz
+  #' 
+  #' @details This function will reformat metadata for submission to ENA. Specifically made for ecological environmental studies (e.g. amplicon sequencing, shotgun metagenomics,...), with additional QCs build in for Antarctic and Southern Ocean data.
+  #' prep.metadata.ENA assumes the dataset has already been subjected to process the process.metadata function to standardize and QC in input.
+  #' @return a .tsv file with the sample metadata, and a _runInfo.tsv file with the technical data
   #' @example 
   #' 
-
+  
   warningmessages<-c()
   
   # 1. check input
@@ -843,29 +1066,23 @@ write.metadata.MIxS.as.ENA <- function(metadata, name=NULL,
          the data.frame.to.metadata.MIxS function.")
   } 
   # 2. check output destination
-  if(!is.character(name) | c(NULL,NA) %in% name | length(name)>1){
-    stop("No correct file name or file path provided in the name argument.")
-  } else{
-    if(grepl("/", name)){
-      file.name <- strsplit(name, "/")[[1]]
-      out.dir <- paste(file.name[1:(length(file.name)-1)], collapse="/")
-      file.name <- file.name[length(file.name)]
-      if(grepl(".txt$", file.name)){
-        file.name <- gsub(".txt$", ".tsv", file.name)
-      }
-      if(!dir.exists(file.path(out.dir))){
-        stop("Could not find the directory provided in the name argument.")
-      }
-    } else{
-      file.name <- name
-      if(grepl(".txt$", file.name)){
-        file.name <- gsub(".txt$", ".tsv", file.name)
-      }else{
-        file.name <- paste(file.name, ".tsv", sep="")
-      }
-      out.dir <- getwd()
+  if(!is.character(file.name) | c(NULL,NA) %in% file.name | length(file.name)>1 | grepl("/", file.name)){
+    stop("No correct file name provided in the file.name argument.")
+  }else{
+    if(grepl(".txt$", file.name)){
+      file.name <- gsub(".txt$", "", file.name)
+    }else if(grepl(".csv$", file.name)){
+      file.name <- gsub(".csv$", "", file.name)
     }
-    full.name <- paste(out.dir, file.name, sep="/")
+  }
+  
+  if(!is.null(dest.dir)){
+    if(!dir.exists(file.path(dest.dir))){
+      stop("Could not find the directory provided in the name argument.")
+    }
+    dest.dir<-gsub("/$","", dest.dir)
+  }else{
+    dest.dir <- getwd()
   }
   
   # 3. checklist_accession
@@ -914,33 +1131,64 @@ write.metadata.MIxS.as.ENA <- function(metadata, name=NULL,
   ena_variable <- c(ena_variable, "sample_alias")
   ena_units <- c(ena_units, "#units")
   
-  # 5.2 fixed term taxon
+  # 5.2 fixed term taxon: common_name
+  # = The taxonomic classification (based on the ENA taxIDs) of the sample
+  # for molecular data: assume environmental metagnemome unless enough evidence geven for organism/taxon
   if(c(NULL,NA) %in% tax_name){ #see if input was provided
     #look for a clue in the data
     c_taxa<-intersect(c("subspecf_gen_lin", "scientific_name"), colnames(metadata))
-    if(length(c_taxa)>1){
+    if(length(c_taxa)>=1){
       tax_name <- metadata[,colnames(metadata)==c_taxa[1]]
     }else{
-      cat("Please specify what taxon was targeted in this dataset (e.g. Bacteria, Cyanobacteria, Synechococcus,...). Type n to ignore.\n")
-      tax_name <- readline() 
-      if(!tax_name %in% c("n", "N")){
-        tax_name <- rep(tax_name, nrow(metadata))
-      } else{
-        tax_name <- rep("", nrow(metadata))
+      if(ask.input){
+        cat("No Target taxon found:\n\tPlease type a taxon name (e.g. Bacteria, Cyanobacteria, Synechococcus,...). Or type n to ignore.\n")
+        tax_name <- readline() 
+        if(!tax_name %in% c("n", "N")){
+          tax_name <- rep(tax_name, nrow(metadata))
+        } else{
+          tax_name <- rep("not collected", nrow(metadata))
+        }
+      }else{
+        tax_name <- rep("not collected", nrow(metadata))
       }
     }
   }else{
     tax_name <- rep(tax_name, nrow(metadata))
   }
-    
-  # 5.3 fixed term taxID
-  ena_metadata$tax_IDs <- sapply(tax_name, FUN=function(x){commonTax.to.NCBI.TaxID(x, fill.unknown="")})
-  ena_variable <- c(ena_variable, "tax_id")
+  # common tax name
+  ena_metadata$common_name <- tax_name
+  ena_variable <- c(ena_variable, "common_name")
   ena_units <- c(ena_units, "")
-  ena_metadata$tax_name <- tax_name
+  
+  # 5.3 fixed term taxID and scientific tax name
+  # taxID
+  # investigation_type has priority because if sample is environmental, 
+  # a unknown variety and number of organisms will be present, thus one of the environmental 
+  # metagenome taxIDs should be taken
+  if("investigation_type" %in% colnames(metadata)){
+    ena_metadata$tax_name <- sapply(metadata$investigation_type, function(x){
+      x <- gsub("mimarks-survey", "metagenome", x)
+      return(x)})
+    if(!all(unique(ena_metadata$tax_name)=="metagenome")){
+      for(itx in 1:length(ena_metadata$tax_name)){
+        if(!ena_metadata[itx,]$tax_name=="metagenome"){
+          ena_metadata[itx,]$tax_name <- tax_name[itx]
+        }
+      }
+    }
+  }else{
+    ena_metadata$tax_name <- as.character(tax_name) #just to create the column
+  }
+  # first fill in the scientific_name, already present as ena_metadata$tax_name
   ena_variable <- c(ena_variable, "scientific_name")
   ena_units <- c(ena_units, "")
   
+  # then convert scientific_name to its tax_id
+  ena_metadata$tax_IDs <- ena_metadata$tax_name
+  ena_metadata$tax_IDs <- sapply(ena_metadata$tax_IDs, FUN=function(x){commonTax.to.NCBI.TaxID(x)})
+  ena_variable <- c(ena_variable, "tax_id")
+  ena_units <- c(ena_units, "")
+
   # 5.4 fixed term sample_title	(original sample name)
   if("original_name" %in% colnames(metadata)){
     ena_metadata$sample_title<-metadata$original_name
@@ -971,76 +1219,406 @@ write.metadata.MIxS.as.ENA <- function(metadata, name=NULL,
     ena_metadata$sample_description<-metadata$sample_description
   }else{
     if(ask.input){
-      cat("No sample description was found. Could you provide an overall sample description(y/n)?\n") 
+      cat("No sample description was found:\n\tPlease type a sample description. Or type n to ignore.\n")
       descr <- readline() 
-      if(descr %in% c("y", "Y", "yes", "YES", "Yes")){
-        cat("Please type the sample description that will be used for all samples in the dataset\n") 
-        descr <- readline() 
-        ena_metadata$sample_description<-rep(descr, nrow(metadata))
-      }else if(descr %in% c("n", "N", "no", "NO", "No")){
-        ena_metadata$sample_description<-rep("", nrow(metadata))
+      if(!descr %in% c("n", "N")){
+         ena_metadata$sample_description<-rep(descr, nrow(metadata))
       }else{
-        stop("incorrect input... only yes or no allowed.")
+        ena_metadata$sample_description<-rep("", nrow(metadata))
       }
     }
   }
   ena_variable <- c(ena_variable, "sample_description")
   ena_units <- c(ena_units, "")
-  # 5.6 latlon DD
-  if("DwC_decimalLatitude" %in% colnames(metadata) & 
-     "DwC_decimalLongitude" %in% colnames(metadata)){
-    ena_metadata$DwC_decimalLatitude <- metadata$DwC_decimalLatitude
-    ena_metadata$DwC_decimalLongitude <- metadata$DwC_decimalLongitude
-    ena_variable <- c(ena_variable, "geographic location (latitude)", "geographic location (longitude)")
-    ena_units <- c(ena_units, "DD", "DD")
+  
+  # 5.6 geographic location (to get it on the right place)
+  if("geo_loc_name" %in% colnames(metadata)){
+    # for geographic location, only the names in the ENA_geoloc vector are allowed, oherwise ENA trows an error at submission 
+    # check if valid:
+    if(any(!unique(metadata$geo_loc_name) %in% ENA_geoloc)){
+      # not valid location names
+      geoloc_data <- data.frame(geoloc_orig = as.character(unique(metadata$geo_loc_name)), 
+                                geoloc_ena = as.character(unique(metadata$geo_loc_name)),
+                                stringsAsFactors = FALSE)
+      geoloc_data <- geoloc_data[!geoloc_data$geoloc_orig=="",] #empty values will be handled at the end
+      if(any(grepl(":", geoloc_data$geoloc_orig)) | 
+         any(grepl("|", geoloc_data$geoloc_orig)) |
+         any(grepl(",", geoloc_data$geoloc_orig)) |
+         any(grepl(";", geoloc_data$geoloc_orig))){
+        # probably a hierarchical order of nested locations 
+        geoloc_data$geoloc_orig <- sapply(geoloc_data$geoloc_orig, FUN=function(x){
+          gsub("|",":",x, fixed=TRUE)})
+        geoloc_data$geoloc_orig <- sapply(geoloc_data$geoloc_orig, FUN=function(x){
+          gsub(",",":",x)})
+        geoloc_data$geoloc_orig <- sapply(geoloc_data$geoloc_orig, FUN=function(x){
+          gsub(";",":",x)})
+        for(l in 1:nrow(geoloc_data)){
+          loc <- strsplit(geoloc_data[l,1], ":")[[1]]
+          loc <- trimws(loc, which="both")
+          i_loc <- intersect(tolower(loc), tolower(ENA_geoloc))
+          if(length(i_loc)<1){
+            bad_input <- TRUE
+          }else if(length(i_loc)>1){
+            if("antarctica" %in% tolower(i_loc) & "southern ocean" %in% tolower(i_loc)){
+              i_loc <- "Southern Ocean"
+              bad_input <- FALSE
+            } else{
+              bad_input <- TRUE
+            }
+          }else{
+            i_loc <- ENA_geoloc[which(grepl(i_loc, tolower(ENA_geoloc)))]
+            bad_input <- TRUE
+          }
+          if(bad_input & ask.input){
+            if(ask.input){
+              while(bad_input){
+                cat(paste("Illegal geographic location name found for \"",geoloc_data[l,1],"\".\n\tPlease type the correct name.\n\tType n to ignore.\n\tType h to see the allowed terms first.", sep=""))
+                loc_input <- readline()
+                if(!loc_input %in% c("n", "N", "h", "H") & loc_input %in% ENA_geoloc){
+                  i_loc<- loc_input
+                  bad_input <- FALSE
+                }else if(loc_input %in% c("n", "N")){
+                  i_loc <- ""
+                  bad_input <- FALSE
+                }else if(loc_input %in% c("h", "H")){
+                  print(ENA_geoloc)
+                }
+              }
+            }else{
+              i_loc <- ""
+            }
+          }
+          geoloc_data[l,2] <- as.character(i_loc)
+        }
+      }
+      ena_metadata$geo_loc_name <- unname(unlist(sapply(as.character(metadata$geo_loc_name), FUN=function(x){
+        if(x %in% geoloc_data$geoloc_orig){
+          x<-geoloc_data[geoloc_data$geoloc_orig==x,]$geoloc_ena
+        }else{
+          x<-""
+        }
+        return(x)
+        })))
+      
+    }else{
+      ena_metadata$geo_loc_name <- metadata$geo_loc_name
+    }
+    ena_variable <- c(ena_variable, get.ENAName("geo_loc_name"))
+    ena_units <- c(ena_units, "")
+  } else{
+    ena_metadata$geo_loc_name <- rep("not collected", nrow(ena_metadata))
+    ena_variable <- c(ena_variable, get.ENAName("geo_loc_name"))
+    ena_units <- c(ena_units, "")
+    }
+  
+  # 5.7 latlon DD
+  if("decimalLatitude" %in% colnames(metadata) & 
+     "decimalLongitude" %in% colnames(metadata)){
+    ena_metadata$decimalLatitude <- metadata$decimalLatitude
+    ena_metadata$decimalLongitude <- metadata$decimalLongitude
   }else if("lat_lon" %in% colnames(metadata)){
-    metadata <- separate(metadata, "lat_lon", sep=" ", into=c("DwC_decimalLatitude", "DwC_decimalLongitude"))
-    ena_metadata$DwC_decimalLatitude <- metadata$DwC_decimalLatitude
-    ena_metadata$DwC_decimalLongitude <- metadata$DwC_decimalLongitude
-    ena_variable <- c(ena_variable, "geographic location (latitude)", "geographic location (longitude)")
-    ena_units <- c(ena_units, "DD", "DD")
+    metadata <- separate(metadata, "lat_lon", sep=" ", into=c("decimalLatitude", "decimalLongitude"))
+    ena_metadata$decimalLatitude <- metadata$decimalLatitude
+    ena_metadata$decimalLongitude <- metadata$decimalLongitude
   }else{
     warningmessages <- multi.warnings("The data lacks geographical coordinates.", warningmessages)
+    ena_metadata$decimalLatitude <- rep("not collected", nrow(ena_metadata))
+    ena_metadata$decimalLongitude <- rep("not collected", nrow(ena_metadata))
   }
-  
-  # 5.7 convert remaining MIxS terms to ENA variants
-  redundant_cols <- which(colnames(metadata) %in% c("sample_description", "lat_lon", "DwC_decimalLatitude", 
-                                                   "DwC_decimalLongitude", "original_name", "subspecf_gen_lin", 
-                                                   "scientific_name"))
-  metadata <- metadata[,-redundant_cols]
+  ena_variable <- c(ena_variable, get.ENAName("decimalLatitude"), get.ENAName("decimalLongitude"))
+  ena_units <- c(ena_units, "DD", "DD")
+   
+  # 5.8 convert remaining MIxS terms to ENA variants
+  redundant_cols <- which(colnames(metadata) %in% c("sample_description", "lat_lon", "decimalLatitude", 
+                                                   "decimalLongitude", "geo_loc_name", 
+                                                   "original_name", "subspecf_gen_lin", "scientific_name"))
+  metadata_reduced <- metadata[,-redundant_cols]
   metaunits <- metaunits[-redundant_cols]
-  for(cl in 1:ncol(metadata)){
-    clName <- colnames(metadata[cl])
-    ena_name <- as.character(TermsLib[TermsLib$name==clName,]$name_variant_ENA)
+  for(cl in 1:ncol(metadata_reduced)){
+    clName <- colnames(metadata_reduced[cl])
+    ena_name <- get.ENAName(clName)
     if(length(ena_name) == 0 || ena_name==""){
       ena_name <- clName
     }
-    ena_metadata[,clName] <- c(as.character(metadata[,colnames(metadata) %in% clName]))
+    ena_metadata[,clName] <- c(as.character(metadata_reduced[,colnames(metadata_reduced) %in% clName]))
     ena_variable <- c(ena_variable, ena_name)
     ena_units <- c(ena_units, gsub("alphanumeric", "", metaunits[cl]))
   }
   
-  # 6. put lines 3 to 5 together 
+  # 6. convert missing data for required fields to ENA accepted term "not collected"
+  ENArequired_terms <- c("lat_lon", "decimalLatitude", "decimalLongitude", "geo_loc_name",
+                      "collection_date", "seq_meth", "investigation_type", "alt",
+                      "elev", "depth")
+  for(required_val in ENArequired_terms){
+    if(required_val %in% colnames(ena_metadata)){
+      ena_metadata[,required_val]<- sapply(ena_metadata[,required_val], function(x){
+        x<-as.character(x)
+        if(x==""){
+          x<-"not collected"}
+        return(x)})
+    }
+  }
+  if("host_taxid" %in% colnames(ena_metadata)){
+    ena_metadata$host_taxid<- sapply(ena_metadata$host_taxid, function(x){
+      x<-as.character(x)
+      if(x==""){
+        x<-"NCBI:txid12908"}
+      return(x)})
+  }
+  
+  
+  # 7. the runInfo data (= technical details of the samples)
+  # 7.1. sample_alias and creating the runInfo data frame
+  ena_runInfo <- data.frame(sample_alias = ena_metadata$sample_alias, 
+                            instrument_model = "", library_name = "", library_source = "", 
+                            library_selection = "", library_strategy = "", library_layout = "",
+                            design_description = "", library_construction_protocol = "", 
+                            insert_size = "", forward_file_name = "", forward_file_md5 = "", 
+                            reverse_file_name = "", reverse_file_md5 = "", 
+                            stringsAsFactors = FALSE)
+    
+  # 7.2 instrument_model
+  if("seq_meth" %in% colnames(metadata)){
+    ena_runInfo$instrument_model <- metadata$seq_meth
+  }
+  
+  if(any(! unique(ena_runInfo$instrument_model) %in% ENA_instrument) |
+     !"seq_meth" %in% colnames(metadata) &
+     ask.input){
+    bad_input <- TRUE
+    while(bad_input){
+      cat("No valid sequencing instrument model found:\n\tPlease type the correct instrument model.\n\tType n to ignore.\n\tType h to see the allowed instrument models first.\n")
+      descr <- readline() 
+      if(!descr %in% c("n", "N", "h", "H") & descr %in% ENA_instrument){
+        ena_runInfo$instrument_model <- rep(descr, nrow(ena_runInfo))
+        bad_input <- FALSE
+      } else if(descr %in% c("h", "H")){
+        print(ENA_instrument)
+      } else if(descr %in% c("n", "N")){
+        ena_runInfo$instrument_model <- rep("", nrow(ena_runInfo))
+        bad_input <- FALSE
+      }
+    }
+  }
+
+  
+  # 7.3. library_name	
+  if("original_name" %in% colnames(metadata)){
+    ena_runInfo$library_name <- metadata$original_name
+  }
+  
+  # 7.4. library_source 
+  if("library_source" %in% colnames(metadata)){
+    ena_runInfo$library_source <- toupper(metadata$library_source)
+  }else if(ask.input){
+    bad_input<-TRUE
+    while(bad_input){
+      cat("Could the data be cathegorized as:\n\ta) metagenomic\n\tb) metatranscriptomic\n\tc) genomic\n\td)viral RNA\n\te)other\n\tType one of the letters (a-e) or n to ignore.\n")
+      descr <- readline() 
+      if(tolower(descr) %in% c("a", "b", "c", "d", "e")){
+        if(tolower(descr)=="a"){
+          descr <- "METAGENOMIC"
+        }else if(tolower(descr)=="b"){
+          descr <- "METATRANSCRIPTOMIC"
+        }else if(tolower(descr)=="c"){
+          descr <- "GENOMIC"
+        }else if(tolower(descr)=="d"){
+          descr <- "VIRAL RNA"
+        }else if(tolower(descr)=="e"){
+          descr <- "OTHER"
+        }
+        ena_runInfo$library_source <- rep(descr, nrow(ena_runInfo))
+        bad_input<-FALSE
+      }else if(descr %in% c("n", "N")){
+        bad_input<-FALSE
+      }
+    }
+
+  }else if("investigation_type" %in% colnames(metadata)){
+    # metagenomic
+    ena_runInfo$library_source <- gsub("mimarks-survey", "METAGENOMIC", metadata$investigation_type)
+    ena_runInfo$library_source <- gsub("metagenome", "METAGENOMIC", ena_runInfo$library_source)
+  }
+  
+  if(any(! unique(ena_runInfo$library_source)  %in% c("GENOMIC", "METAGENOMIC",
+                                                      "OTHER", "TRANSCRIPTOMIC",
+                                                      "METATRANSCRIPTOMIC", "VRIAL RNA",
+                                                      "SYNTHETIC", ""))){
+    stop("Invalid input for \"library_source\"\n\tOnly following terms allowed: GENOMIC, METAGENOMIC,\n\tOTHER, TRANSCRIPTOMIC, METATRANSCRIPTOMIC, VRIAL RNA, or SYNTHETIC")
+  }
+
+  # 7.5. library_selection
+  if(!is.na(library.selection) && library.selection %in% ENA_select){
+    ena_runInfo$library_selection <- rep(library.selection, nrow(ena_runInfo))
+  }else if(ask.input){
+    bad_input <- TRUE
+    while(bad_input){
+      cat("What method was used to select for, enrich or or screen the material being sequenced (e.g. PCR)?\n\tType the appropriate method.\n\tType n to ignore.\n\tType h to see all the allowed methods.\n")
+      descr <- readline() 
+      if(!descr %in% c("n", "N", "h", "H") & descr %in% ENA_select){
+        ena_runInfo$library_selection <- rep(descr, nrow(ena_runInfo))
+        bad_input <- FALSE
+      } else if(descr %in% c("h", "H")){
+        print(ENA_select)
+      } else if(descr %in% c("n", "N")){
+        ena_runInfo$library_selection <- rep("unspecified", nrow(ena_runInfo))
+        bad_input <- FALSE
+      }
+    }
+  }
+  
+  # 7.6. library_strategy
+  if(!is.na(library.strategy) && library.strategy %in% ENA_strat){
+    ena_runInfo$library_strategy <- rep(library.strategy, nrow(ena_runInfo))
+  }else if("run_type" %in% colnames(metadata)){
+    ena_runInfo$library_strategy <- metadata$run_type
+  }else if("library_strategy" %in% colnames(metadata)){
+    ena_runInfo$library_strategy <- metadata$library_strategy
+  }
+  if(any(! unique(ena_runInfo$library_strategy) %in% ENA_strat) &
+     ask.input){
+    bad_input <- TRUE
+    while(bad_input){
+      cat("No valid library strategy found:\n\tPlease type the correct strategy (e.g. AMPLICON, WGS,...).\n\tType n to ignore.\n\tType h to see the allowed strategies.\n")
+      descr <- readline() 
+      if(!descr %in% c("n", "N", "h", "H") & descr %in% ENA_strat){
+        ena_runInfo$library_strategy <- rep(descr, nrow(ena_runInfo))
+        bad_input <- FALSE
+      } else if(descr %in% c("h", "H")){
+        print(ENA_strat)
+      } else if(descr %in% c("n", "N")){
+        ena_runInfo$library_strategy <- rep("", nrow(ena_runInfo))
+        bad_input <- FALSE
+      }
+    }
+  }
+  
+  # 7.7. library_layout SINGLE or PAIRED
+  if(!is.na(library.layout) && library.layout %in% c("PAIRED", "SINGLE")){
+    ena_runInfo$library_layout <- rep(library.layout, nrow(ena_runInfo))
+  }else if("library_layout" %in% colnames(metadata)){
+    ena_runInfo$library_layout <- metadata$library_layout
+  }else if(ask.input){
+    bad_input<-TRUE
+    while(bad_input){
+      cat("What was the library layout?.\n\ta) paired-end\n\tb) single-end\n\tType the appropriate letter (a-b).\n")
+      descr <- readline() 
+      if(descr %in% c("a", "A", "b", "B")){
+        descr <- gsub("a", "PAIRED", tolower(descr))
+        descr <- gsub("b", "SINGLE", tolower(descr))
+        ena_runInfo$library_layout <- rep(descr, nrow(ena_runInfo))
+        bad_input<-FALSE
+      }else{
+        cat("wrong input\n")
+      }
+    }
+  }
+  
+  # 7.8. design_description
+  if("experimental_factor" %in% colnames(metadata)){
+    ena_runInfo$design_description <- metadata$experimental_factor
+  }
+  
+  # 7.9. library_construction_protocol
+  if("lib_const_meth" %in% colnames(metadata)){
+    ena_runInfo$library_construction_protocol <- metadata$lib_const_meth
+  }
+  
+  # 7.10. insert_size
+  ## required parameter
+  if(!is.na(insert.size)){
+    ena_runInfo$insert.size <- rep(insert.size, nrow(ena_runInfo))
+  }else if("insert_size" %in% colnames(metadata)){
+    ena_runInfo$insert_size <- metadata$insert_size
+  }else if(ask.input){
+    cat("What was the insert size of the reads?.\n\tType the appropriate number, or type n to ignore.\n")
+    descr <- readline()
+    if(grepl("[0-9]",descr)){
+      ena_runInfo$insert_size <- rep(descr, nrow(ena_runInfo))
+    }
+  }
+  
+  # 7.11. forward_file_name / reverse_file_name
+  if("original_name" %in% colnames(metadata)){
+    # assuming the original names corresponds to the sequence data file names
+    for(i in 1:nrow(ena_runInfo)){
+      if(ena_runInfo[i,]$library_layout == "PAIRED"){
+        # assuming _1 for forward files and _2 for reverse files
+        ena_runInfo[i,colnames(ena_runInfo)=="forward_file_name"] <- paste(metadata[i,]$original_name, "_1", seq.file.extension, sep="")
+        ena_runInfo[i,colnames(ena_runInfo)=="reverse_file_name"] <- paste(metadata[i,]$original_name, "_2", seq.file.extension, sep="")
+      }else if(ena_runInfo[i,]$library_layout == "SINGLE"){
+        ena_runInfo[i,colnames(ena_runInfo)=="forward_file_name"] <- paste(metadata[i,]$original_name, seq.file.extension, sep="")
+        ena_runInfo[i,colnames(ena_runInfo)=="reverse_file_name"] <- paste(metadata[i,]$original_name, seq.file.extension, sep="")
+      }
+    }
+  }
+  
+
+  # 8. put everything together for the sample metadata
+  # 8.1 lines 3 to 5
   out.line03 <- paste(ena_variable, collapse='\t')
-  out.line04 <- paste("#template", paste(c(as.character(ena_metadata[1,][-1])), collapse="\t"), sep='\t')
+  out.line04 <- paste("#template", paste(rep("", ncol(ena_metadata)-1), collapse="\t"), sep='\t') #paste(c(as.character(ena_metadata[1,][-1]))
   out.line05 <- paste(ena_units, collapse='\t')
   
-  # 7. put line >5 together
+  # 8.2 line >5
   out.line99 <- apply(ena_metadata, 1, function(x) paste(x, collapse = "\t")) 
   out.line99 <- paste(out.line99, collapse="\n")
   
-  # 8. combine everything
-  output <- paste(out.line01, out.line02, out.line03, out.line04, out.line05, out.line99, sep="\n")
+  # 8.3 combine everything
+  SampleMetadata_output <- paste(out.line01, out.line02, out.line03, out.line04, out.line05, out.line99, sep="\n")
   
-  cat(paste("The data had been written to ", out.dir, "/", file.name, "\n",sep=""))
-  write.table(output, file=paste(out.dir, "/", file.name, sep=""), 
+  # 8.4 the runinfodata
+  out.runInfo1 <- paste(colnames(ena_runInfo), collapse = "\t")
+  out.runInfo2 <- apply(ena_runInfo, 1, function(x) paste(x, collapse = "\t")) 
+  out.runInfo2 <- paste(out.runInfo2, collapse="\n")
+  runInfo_output <- paste(out.runInfo1, out.runInfo2, sep="\n")
+  
+  # 9. finalize
+  metadataFile <- paste(dest.dir, "/", file.name, ".tsv", sep="")
+  runInfoFile <- paste(dest.dir, "/", file.name, "_runInfo.tsv", sep="")
+  
+  write.table(SampleMetadata_output, file=metadataFile, 
               col.names = FALSE, row.names = FALSE, quote = FALSE, fileEncoding = "UTF-8")
+  cat(paste("The sample metadata has been written to ", metadataFile, "\n",sep=""))
+  
+  write.table(runInfo_output, file=runInfoFile, 
+              col.names = FALSE, row.names = FALSE, quote = FALSE, fileEncoding = "UTF-8")
+  cat(paste("The technical runInfo data has been written to ", runInfoFile, "\n",sep=""))
+  
+  
+
+
+  
 }
 
 
 
+#--------------------------------------------------------------
+# 4. tools for getting help
+#--------------------------------------------------------------
 
+term.definition <- function(term){
+  #' @author Maxime Sweetlove ccBY 4.0 2019
+  #' @description term.defnition retrieves the definition of a variable term of MIxS or DarwinCore used in the POLAAAR portal
+  #' @param term a character string. The term of which you would like to see the definition.
+  #' @details Standerdizing microbial sequence data, metadata and environmental data can be quite difficult given the plethora of standard terms already in existance. This function returns a definition of any term that is used on the POLAAAR portal at biodiversity.aq. 
+  #' @return the definition of a term, depending on the origin of the term, which can be 1) MIxS, 2) DarwinCore or 3) the POLAAAR team
 
+  if(term %in% TermsLib$name){
+    def_out <- as.character(TermsLib[TermsLib$name==term,]$definition)
+  }else{
+    for(ls in TermsSyn){
+      if(grepl(term, ls)){
+        ### still needs to be finished!!
+        print(ls)
+      }
+    }
+  }
+  
+  
+  
+  cat(def_out)
+}
 
 
 #--------------------------------------------------------------
@@ -1048,16 +1626,34 @@ write.metadata.MIxS.as.ENA <- function(metadata, name=NULL,
 #--------------------------------------------------------------
 
 Heind <- read.csv("/Users/msweetlove/Desktop/historic_fish/MiMARKS_Heindler_PRJEB34858.csv", row.names=1)
-
+####!!!!!!!!pictures on zenodo
 HeindQC <- process.metadata(metadata = Heind, strict.MIxS = FALSE, 
                             out.format="metadata.MIxS", ask.input=TRUE)
-HeindQC@data$env_package
-HeindQC@env_package
+
+
+prep.metadata.ENA(metadata=HeindQC, dest.dir="/Users/msweetlove/Desktop/historic_fish",
+                  file.name="MiMARKS_Heindler_PRJEB34858",
+                  sample.unique_name_prefix="HistoricAntarcticFishDataset_2019_", 
+                  checklist_accession=NA, tax_name=NA, ask.input=TRUE,
+                  insert.size = NA, library.layout = "PAIRED",
+                  library.strategy = "AMPLICON", library.selection = "PCR")
+
+
+testdir <- "/Users/msweetlove/OneDrive_RBINS/mARS_NewSeqData/R_wDir/test"
+
+
+cesar <- read.csv("/Users/msweetlove/Desktop/cesar.csv", row.names=1)
+head(cesar)
+cesarQC <- process.metadata(metadata = cesar, strict.MIxS = FALSE, 
+                            out.format="metadata.MIxS", ask.input=T)
+
+head(cesarQC@data)
+write.metadata.MIxS.to.mars(cesarQC, name.prefix="cesar", out.dir=testdir,
+                                        add.missing.data.columns=TRUE, ask.input=FALSE)
+
 write.metadata.MIxS.as.ENA(metadata=HeindQC, name="/Users/msweetlove/Desktop/historic_fish/MiMARKS_Heindler_PRJEB34858.tsv",
                            unique_name_prefix="HistoricAntarcticFishDataset_2019_", checklist_accession=NA,
-                           tax_name="Bacteria", ask.input=TRUE,
-                           missing.data.as.empty.columns=TRUE)
-
+                           ask.input=TRUE, missing.data.as.empty.columns=TRUE)
 
 
 
@@ -1080,12 +1676,16 @@ setwd(wdir2)
 
 
 
-test1<- get.sample.attributes.INSDC(sampleID=NA, apiKey="5e490715dbb88b3f861565b05aab426f1408",
-                                   BioPrjct=c("PRJEB27415", "PRJNA369175"))
+cesar2<- get.sample.attributes.INSDC(sampleID=NA, apiKey="5e490715dbb88b3f861565b05aab426f1408",
+                                   BioPrjct=c("PRJNA541486"))
+test2 <- process.metadata(metadata = test1, add_to = NA, strict.MIxS = FALSE, 
+                          out.format="metadata.MIxS", ask.input=TRUE)
+
+
 test1<- get.sample.attributes.INSDC(sampleID=NA, apiKey="5e490715dbb88b3f861565b05aab426f1408",
                                     BioPrjct=c("PRJNA395930"))
 
-test2 <- process.metadata(metadata = test1, add_to = NA, strict.MIxS = FALSE, 
+test2 <- process.metadata(metadata = test, add_to = NA, strict.MIxS = FALSE, 
                              out.format="metadata.MIxS", ask.input=TRUE)
  
 
@@ -1125,6 +1725,48 @@ test<-get.BioProject.metadata.INSDC(BioPrjct=4, just.names=FALSE)
 
 test<-get.BioProject.metadata.INSDC(BioPrjct="PRJNB23732", just.names=FALSE)#shuld be error
 
+
+########
+## METHANOBASE
+
+
+#Methanobase_Metadata_MIxS
+
+# change file names
+dir_methano <- "/Users/msweetlove/Desktop/methanobase_seq"
+files <- list.files(path=dir_methano, pattern="*.fastq.gz")
+
+methano <- read.csv("/Users/msweetlove/Desktop/Methanobase_Metadata_MIxS.csv", 
+                    row.names=1, header=TRUE)
+
+methanoQC <- process.metadata(metadata = methano, strict.MIxS = FALSE, 
+                            out.format="metadata.MIxS", ask.input=TRUE)
+
+prep.metadata.ENA(metadata=HeindQC, dest.dir="/Users/msweetlove/Desktop/historic_fish",
+                  file.name="MiMARKS_Heindler_PRJEB34858",
+                  sample.unique_name_prefix="HistoricAntarcticFishDataset_2019_", 
+                  checklist_accession=NA, tax_name=NA, ask.input=TRUE,
+                  insert.size = NA, library.layout = "PAIRED",
+                  library.strategy = "AMPLICON", library.selection = "PCR")
+
+
+
+for(f in files){
+  f_pth <- paste(dcoi, f, sep="/")
+  f2 <- gsub("-1.fastq.gz", "_1.fastq.gz", f, fixed=TRUE)
+  f2 <- gsub("-2.fastq.gz", "_2.fastq.gz", f, fixed=TRUE)
+  
+  fn <- seqlist[seqlist$oldName==f2,]$NewName
+  if(length(fn)>0){
+    fn2 <- paste(dcoi, "/", fn, ".fastq.gz", sep="")
+    file.rename(f_pth, fn2)
+  }
+  
+}
+
+
+
+###########
 
 
 

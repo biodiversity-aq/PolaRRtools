@@ -9,10 +9,11 @@
 # lisence CC 4.0
 # Part of the POLA3R website (successor or mARS.biodiversity.aq)
 # version 1.0 (2019-09-20)
+# file encdong UTF-8
 #
 #==============================================================
 
-dataQC.dateCheck <- function(dataset, date.colnames=c("date", "Date")){
+dataQC.dateCheck <- function(dataset, date.colnames=c("date", "Date", "collection_date")){
   #' @author Maxime Sweetlove CC-BY 4.0 2019
   #' @description dataQC.dateCheck looks in the columns of a dataset (dataframe) for a column with dates, 
   #' and transforms them to the YYYY-MM-DD format.
@@ -35,10 +36,11 @@ dataQC.dateCheck <- function(dataset, date.colnames=c("date", "Date")){
   
   if(length(xdate)==1){
     date_values <- as.character(dataset[,xdate])
+    # try to format date in YYYY-MM-DD format
     for(i in 1:length(date_values)){
       if(!is.na(date_values[i]) && !gsub("/", "", date_values[i]) %in% NAvals && !gsub("-", "", date_values[i]) %in% NAvals){
         date_values[i] <- gsub("/", "-", date_values[i])
-        if( grepl("[A-Za-z]", date_values[i])){
+        if(grepl("[A-Za-z]", date_values[i])){
           date_values[i] <- gsub("\\sjan.+\\s|\\sJan.+\\s|\\sjan\\s|\\sJan\\s", "-01-", date_values[i])
           date_values[i] <- gsub("\\sfeb.+\\s|\\sFeb.+\\s|\\sfeb\\s|\\sFeb\\s", "-02-", date_values[i])
           date_values[i] <- gsub("\\smar.+\\s|\\sMar.+\\s|\\smar\\s|\\sMar\\s", "-03-", date_values[i])
@@ -55,11 +57,25 @@ dataQC.dateCheck <- function(dataset, date.colnames=c("date", "Date")){
         date_values[i] <- strsplit(date_values[i], "T")[[1]][1]
         date_split <- strsplit(date_values[i], "-")
         
-        if(length(date_split[[1]])==3 && nchar(date_split[[1]][3])==4){
-          date_values[i]<-paste(date_split[3], date_split[2], date_split[1], sep="-")
-        }else if(length(date_split[[1]])==2 && nchar(date_split[[1]][2])==4){
-          date_values[i]<-paste(date_split[2], date_split[1], sep="-")
-        }else if(!(length(date_split)==1 && nchar(date_split)==4)){
+        if(length(date_split[[1]])==3 && nchar(date_split[[1]][3])==4){ #assume DD-MM-YYYY
+          year <- as.character(date_split[[1]][3])
+          mnth <- as.character(sprintf("%02d", as.numeric(date_split[[1]][2])))
+          day <- as.character(sprintf("%02d", as.numeric(date_split[[1]][1])))
+          date_values[i]<-paste(year, mnth, day, sep="-")
+        }else if(length(date_split[[1]])==3 && nchar(date_split[[1]][1])==4){ #assume YYYY-MM-DD
+          year <- as.character(date_split[[1]][1])
+          mnth <- as.character(sprintf("%02d", as.numeric(date_split[[1]][2])))
+          day <- as.character(sprintf("%02d", as.numeric(date_split[[1]][3])))
+          date_values[i]<-paste(year, mnth, day, sep="-")
+        }else if(length(date_split[[1]])==2 && nchar(date_split[[1]][2])==4){ #assume YYYY-MM
+          year <- as.character(date_split[[1]][2])
+          mnth <- as.character(sprintf("%02d", as.numeric(date_split[[1]][1])))
+          date_values[i]<-paste(year, mnth, sep="-")
+        }else if(length(date_split[[1]])==2 && nchar(date_split[[1]][1])==4){ #assume MM-YYYY
+          year <- as.character(date_split[[1]][1])
+          mnth <- as.character(sprintf("%02d", as.numeric(date_split[[1]][2])))
+          date_values[i]<-paste(year, mnth, sep="-")
+        }else if(!(length(date_split)==1 && nchar(date_split)==4)){ #assume YYYY, leave value as is.
           warningmessages <- multi.warnings("check the formats of the collection dates", warningmessages)
         }
       }else{
@@ -99,7 +115,9 @@ dataQC.LatitudeLongitudeCheck <- function(dataset, latlon.colnames=list(c("lat_l
   latName <- intersect(latlon.colnames[[2]], colnames(dataset))
   lonName <- intersect(latlon.colnames[[3]], colnames(dataset))
   lat_space_lon_output<-c()
+  
   NAvals <- c("NA", "ND", "-", "/", "?", "unnkown", "")
+  
   # check format lat_lon: 1 field
   if(length(latlonName)>=1){ #case 1: latitude and longitude are in the same field
     if(length(latlonName)>1){ #more than one column detected
@@ -131,7 +149,7 @@ dataQC.LatitudeLongitudeCheck <- function(dataset, latlon.colnames=list(c("lat_l
           latlon_val <- gsub("|", " ", latlon_val)
           latlon_val <- gsub("\\s+", " ", latlon_val) #collapse multiple spaces
           latlon_val <- gsub("^\\s+|\\s+$", "", latlon_val) #remove leading and trailing spaces
-          latlon_val <- strsplit(latlon_values[i]," ")[[1]]
+          latlon_val <- strsplit(latlon_val," ")[[1]]
         }
         #weed out the NAs
         if(length(latlon_val)==1){#is the lat_lon is still not split, it must be NA
@@ -152,13 +170,9 @@ dataQC.LatitudeLongitudeCheck <- function(dataset, latlon.colnames=list(c("lat_l
             lon<-paste(latlon_val[3], latlon_val[4], sep="")
           } 
           
-          if(grepl("\302\260", lat) | grepl("\302\260", lon)){
-            lat <- degree.to.decimal(lat)
-            lon <- degree.to.decimal(lon)
-          }else{
-            lat<-lat_lonSymbol.to.value(lat)
-            lon<-lat_lonSymbol.to.value(lon)
-          }
+          #converto to decimal format
+          lat <- coordinate.to.decimal(lat)
+          lon <- coordinate.to.decimal(lon)
           lat_space_lon_output<-c(lat_space_lon_output, paste(lat, lon))
         }
       }else{
@@ -184,13 +198,8 @@ dataQC.LatitudeLongitudeCheck <- function(dataset, latlon.colnames=list(c("lat_l
           warningmessages <- multi.warnings("there are NAs in the coordinates", warningmessages)
           lat_space_lon_output<-c(lat_space_lon_output, "")
         }else{
-          if(grepl("\302\260", lat) | grepl("\302\260", lon)){
-            lat <- degree.to.decimal(lat)
-            lon <- degree.to.decimal(lon)
-          }else{
-            lat<-lat_lonSymbol.to.value(lat)
-            lon<-lat_lonSymbol.to.value(lon)
-          }
+          lat <- coordinate.to.decimal(lat)
+          lon <- coordinate.to.decimal(lon)
           lat_space_lon_output<-c(lat_space_lon_output, paste(lat, lon))
         }
       }
@@ -339,4 +348,9 @@ dataQC.measurement.to.meter <- function(dataset, meter.colnames=c("depth", "elev
   
 }
 
+### ideas for functions:
+#dataQC.footprintWKT <- function(){
+#to check if footprintWKT in DwC is correctly formatted
+#POINT, LINESTRING, POLYGON, MULTIPOINT
+#}
 
