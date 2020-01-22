@@ -235,10 +235,12 @@ process.metadata <- function(metadata = NA, add_to = NA, strict.MIxS = FALSE,
     units <- data.frame(var_name=c(colnames(metadata)), unit= unlist(metadata[1,]))
     metadata <- data.frame(metadata[-1,], stringsAsFactors = FALSE)
     pre_def_units <- TRUE
+    warningmessages <- multi.warnings("the units were taken from the row \"units template\" in the input data", warningmessages)
   } else if(grepl("units", tolower(row.names(metadata)[2]))){
     units <- data.frame(var_name=c(colnames(metadata)), unit= unlist(metadata[2,]))
     metadata <- data.frame(metadata[-c(1,2),], stringsAsFactors = FALSE)
     pre_def_units <- TRUE
+    warningmessages <- multi.warnings("the units were taken from the row \"units template\" in the input data", warningmessages)
   }
 
   
@@ -1019,9 +1021,174 @@ download.sequences.INSDC <- function(BioPrj = c(), destination.path = NA, apiKey
 #--------------------------------------------------------------
 # 3. Tools for submitting data
 #--------------------------------------------------------------
+rename.sequenceFiles <- function(name_df, colNameOld="OldName", colNameNew="NewName", 
+                                 file.dir=NULL, paired=TRUE, seq.file.extension=".fastq.gz",
+                                 ask.input=TRUE, pairedEnd.extension=c("_1", "_2")
+                                 ){
+  #' @author Maxime Sweetlove ccBY 4.0 2019
+  #' @description to quickly rename files in a directory
+  #' @param name_df a data.frame. The dataframe that lists the original sample same (without file extension) alongside the new file names (also without their file extension)
+  #' @param colNameOld a character string. The name of the column with the original file names
+  #' @param colNameNew a character string. The name of the column with the new file names
+  #' @param file.dir a character string. The path to the directory where the sequence files are stored
+  #' @param paired boolean. wether or not the sequence files are paired-end (forward _1, reverse_2) or single-end
+  #' @param seq.file.extension a character string. The file-extension of the sequence files
+  #' @param ask.input boolean. Will give a warning message before continuing.
+  #' @param  pairedEnd.extension a character vector of length 2. If the data is paired-end data, specify the forward (first element of te vector) and reverse (second) extension tags here. Default is c("_1", "_2")
+  
+  if(ask.input){
+    cat("Warnings:\n\t- This function will rename files, this is irreversible.\n\t- This function assumes the provided old names correspond with the files in the given directory.\n\t\tThis can be checked with checked sync.metadata.sequenceFiles()\nContinue? (y/n)") 
+    ctu <- readline() 
+    if(tolower(ctu) %in% c("n", "no")){
+      stop("you chose to stop the function")
+    }
+  }
+  
+  raw_fileNames <- list.files(file.dir)
+  name_df <- name_df[!name_df[, colNameOld]=="",]
+  
+  paired.fw_ext <- pairedEnd.extension[1]
+  paired.rv_ext <- pairedEnd.extension[2]
+  
+  if(paired){
+    OldName_1 <- unlist(unname(sapply(name_df[, colNameOld], FUN=function(x){
+      paste(x, paired.fw_ext, seq.file.extension, sep="")
+    })))
+    OldName_2 <- unlist(unname(sapply(name_df[, colNameOld], FUN=function(x){
+      paste(x, paired.rv_ext, seq.file.extension, sep="")
+    })))
+    NewName_1 <- unlist(unname(sapply(name_df[, colNameNew], FUN=function(x){
+      paste(x, paired.fw_ext, seq.file.extension, sep="")
+    })))
+    NewName_2 <- unlist(unname(sapply(name_df[, colNameNew], FUN=function(x){
+      paste(x, paired.rv_ext, seq.file.extension, sep="")
+    })))
+    Names <- data.frame(Old=c(OldName_1, OldName_2), New=c(NewName_1, NewName_2))
+  }else{
+    OldNames <- unlist(unname(sapply(name_df[, colNameOld], FUN=function(x){
+      paste(x, seq.file.extension, sep="")
+    })))
+    NewNames <- unlist(unname(sapply(name_df[, colNameNew], FUN=function(x){
+      paste(x, seq.file.extension, sep="")
+    })))
+    Names <- data.frame(Old=OldNames, New=NewNames)
+  }
+  
+  Names <- Names[Names$Old %in% intersect(Names$Old, raw_fileNames),]
+  for(fl in Names$Old ){
+    fl_pth <- paste(file.dir, fl, sep="/")
+    fl_new <- Names[Names$Old==fl,]$New
+    if(length(fl_new)>0){
+      fl_new_pth <- paste(file.dir, fl_new, sep="/")
+      file.rename(fl_pth, fl_new_pth)
+    }
+  }
+}
 
-# idea: prep.metadata.ENA: output csv for editing, later convert cvs to tsv
-# idea: check if sequence files correspond to the names in the metadata file
+
+sync.metadata.sequenceFiles <- function(Names, file.dir=NULL, 
+                                        paired=TRUE, seq.file.extension=".fastq.gz",
+                                        pairedEnd.extension=c("_1", "_2")){
+  #' @author Maxime Sweetlove ccBY 4.0 2019
+  #' @description checks if all records in the metadata file match with filenames in a given dir
+  #' @param Names a vector or a metadata.MIxS class object. A character vector with the sample names (without a file extension) or the object of which the sample names (original_name) should be compared to the sequence file names
+  #' @param file.dir a character string. The path to the directory where the sequence files are stored
+  #' @param paired boolean. wether or not the sequence files are paired-end (forward _1, reverse_2) or single-end
+  #' @param seq.file.extension a character string. The file-extension of the sequence files
+  #' @param pairedEnd.extension a character vector of length 2. If the data is paired-end data, specify the forward (first element of te vector) and reverse (second) extension tags here. Default is c("_1", "_2")
+
+  paired.fw_ext <- pairedEnd.extension[1]
+  paired.rv_ext <- pairedEnd.extension[2]
+  
+  # 1. check input and get expected names
+  if(check.valid.metadata.MIxS(Names)){
+    metadata <- Names@data
+    if(!any(rownames(metadata) %in% c(1:nrow(metadata))) && 
+       length(intersect(rownames(metadata), clean_fileNames))!=0){ 
+      # attempt 1: use the rownames of metadata
+      exp_names <- rownames(metadata)
+    }else if("original_name" %in% colnames(metadata) && 
+             length(intersect(metadata$original_name, clean_fileNames))!=0){ 
+      # attempt 2: use original_name
+      exp_names <- metadata$original_name
+    }else{
+      stop("could not find the sample names in the metadata object")
+    }
+  }else{
+    exp_names <- as.character(Names)
+  } 
+  
+   # 3. get and check the observed file names
+   raw_fileNames <- list.files(file.dir)
+   # only keep the sequence files 
+   raw_fileNames <- raw_fileNames[grepl(seq.file.extension, raw_fileNames)]
+   
+   if(paired){
+     clean_fileNames <- unname(gsub(paste(paired.fw_ext, seq.file.extension,sep=""), "", raw_fileNames))
+     clean_fileNames <- clean_fileNames[!grepl(seq.file.extension, clean_fileNames)]
+     
+     ## check if all files are paired
+     files_rv_check <- unname(gsub(paste(paired.rv_ext, seq.file.extension,sep=""), "", raw_fileNames))
+     files_rv_check <- files_rv_check[!grepl(seq.file.extension, files_rv_check)]
+     files_diff <- c(setdiff(clean_fileNames, files_rv_check), setdiff(files_rv_check, clean_fileNames))
+     if(length(files_diff)!=0){
+       stop(paste("non-matching forward and reverse files found for:\n",paste(files_diff, collapse="\n"), sep="" ))
+     }
+   } else{
+     clean_fileNames <- gsub(seq.file.extension, "", raw_fileNames)
+   }
+   
+   # 4. check if expected and observed file names match
+   wrn <- "" #warning messages
+   out <- list(redundant_metadata=NULL, redundant_seqFiles=NULL) #output: two lists with the non-matching file names
+   # 4.1 in expected but not in observed : warning and/or delete
+   exp_diff <- setdiff(exp_names, clean_fileNames)
+   if(length(exp_diff) != 0){
+     out$redundant_metadata <- exp_diff
+     if(length(exp_diff)>10){
+       wrn <- paste(wrn, 
+                    length(exp_diff),
+                    " samples were not found among the sequence files. Here are the first few:\n\t",
+                    paste(exp_diff[1:10], collapse="\n\t"), "\n\t...\n", sep="")
+     } else{
+       wrn <- paste(wrn, 
+                    "the following samples samples were not found among the sequence files:\n\t", 
+                    paste(exp_diff, collapse="\n\t"), sep="")
+     }
+   }
+   # 4.2 in observed but not in expected : just warning
+   obs_diff <- setdiff(clean_fileNames, exp_names)
+   if(length(obs_diff) != 0){
+     if(paired){
+       obs_diff_1 <- unname(sapply(obs_diff, FUN=function(x){paste(x, paired.fw_ext, seq.file.extension, sep="")}))
+       obs_diff_2 <- unname(sapply(obs_diff, FUN=function(x){paste(x, paired.rv_ext, seq.file.extension, sep="")}))
+       obs_diff <- c(obs_diff_1, obs_diff_2)
+     }else{
+       obs_diff <- unname(sapply(obs_diff, FUN=function(x){paste(x, seq.file.extension, sep="")}))
+     }
+     out$redundant_seqFiles <- obs_diff
+     if(length(obs_diff)>10){
+       wrn <- paste(wrn, 
+                    length(obs_diff),
+                    " sequence files did not occur in the sample list. Here are the first few:\n\t",
+                    paste(obs_diff[1:10], collapse="\n\t"),"\n\t...", sep="")
+     } else{
+       wrn <- paste(wrn, 
+                    "the following sequence files did not occur in the sample list:\n\t", 
+                    paste(obs_diff, collapse="\n\t"), sep="")
+     }
+   }
+
+   # 5 finalize
+   wrn <- gsub("^\n", "", wrn)
+   if(nchar(wrn)>0){
+     warning(wrn)
+   }else{
+     cat("all records in the metadata matched with sequence files.\n")
+   }
+   
+   return(out)
+}
 
 prep.metadata.ENA <- function(metadata, dest.dir=NULL, file.name=NULL,
                               sample.unique_name_prefix=NA, checklist_accession=NA,
@@ -1281,7 +1448,7 @@ prep.metadata.ENA <- function(metadata, dest.dir=NULL, file.name=NULL,
                   i_loc <- ""
                   bad_input <- FALSE
                 }else if(loc_input %in% c("h", "H")){
-                  print(ENA_geoloc)
+                  print(sort(ENA_geoloc))
                 }
               }
             }else{
@@ -1625,19 +1792,6 @@ term.definition <- function(term){
 # test zone
 #--------------------------------------------------------------
 
-Heind <- read.csv("/Users/msweetlove/Desktop/historic_fish/MiMARKS_Heindler_PRJEB34858.csv", row.names=1)
-####!!!!!!!!pictures on zenodo
-HeindQC <- process.metadata(metadata = Heind, strict.MIxS = FALSE, 
-                            out.format="metadata.MIxS", ask.input=TRUE)
-
-
-prep.metadata.ENA(metadata=HeindQC, dest.dir="/Users/msweetlove/Desktop/historic_fish",
-                  file.name="MiMARKS_Heindler_PRJEB34858",
-                  sample.unique_name_prefix="HistoricAntarcticFishDataset_2019_", 
-                  checklist_accession=NA, tax_name=NA, ask.input=TRUE,
-                  insert.size = NA, library.layout = "PAIRED",
-                  library.strategy = "AMPLICON", library.selection = "PCR")
-
 
 testdir <- "/Users/msweetlove/OneDrive_RBINS/mARS_NewSeqData/R_wDir/test"
 
@@ -1683,7 +1837,7 @@ test2 <- process.metadata(metadata = test1, add_to = NA, strict.MIxS = FALSE,
 
 
 test1<- get.sample.attributes.INSDC(sampleID=NA, apiKey="5e490715dbb88b3f861565b05aab426f1408",
-                                    BioPrjct=c("PRJNA395930"))
+                                    BioPrjct=c("PRJEB34858"))
 
 test2 <- process.metadata(metadata = test, add_to = NA, strict.MIxS = FALSE, 
                              out.format="metadata.MIxS", ask.input=TRUE)
@@ -1751,18 +1905,7 @@ prep.metadata.ENA(metadata=HeindQC, dest.dir="/Users/msweetlove/Desktop/historic
 
 
 
-for(f in files){
-  f_pth <- paste(dcoi, f, sep="/")
-  f2 <- gsub("-1.fastq.gz", "_1.fastq.gz", f, fixed=TRUE)
-  f2 <- gsub("-2.fastq.gz", "_2.fastq.gz", f, fixed=TRUE)
-  
-  fn <- seqlist[seqlist$oldName==f2,]$NewName
-  if(length(fn)>0){
-    fn2 <- paste(dcoi, "/", fn, ".fastq.gz", sep="")
-    file.rename(f_pth, fn2)
-  }
-  
-}
+
 
 
 

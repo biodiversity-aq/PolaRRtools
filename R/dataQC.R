@@ -27,7 +27,7 @@ dataQC.dateCheck <- function(dataset, date.colnames=c("date", "Date", "collectio
   #' @example dataQC.dateCheck(dataset, date.colnames=c("date", "Date"))
   
   warningmessages<-c()
-  NAvals <- c("NA", "ND", "unnkown", "")
+  NAvals <- c("NA", "ND", "unnkown", "", NA, NULL, "na")
   xdate <- intersect(date.colnames, colnames(dataset))
   if(length(xdate)>1){
     warningmessages <- multi.warnings(paste("multiple date columns found, only executed QC on", xdate[1]), warningmessages)
@@ -38,21 +38,25 @@ dataQC.dateCheck <- function(dataset, date.colnames=c("date", "Date", "collectio
     date_values <- as.character(dataset[,xdate])
     # try to format date in YYYY-MM-DD format
     for(i in 1:length(date_values)){
-      if(!is.na(date_values[i]) && !gsub("/", "", date_values[i]) %in% NAvals && !gsub("-", "", date_values[i]) %in% NAvals){
-        date_values[i] <- gsub("/", "-", date_values[i])
+      if(!is.na(date_values[i]) && !(gsub("/", "", date_values[i]) %in% NAvals) && !(gsub("-", "", date_values[i]) %in% NAvals)){
+        date_values[i] <- gsub("/", "-", date_values[i], fixed=TRUE)
+        date_values[i] <- gsub(" ", "", date_values[i], fixed=TRUE)
+        date_values[i] <- gsub(".", "-", date_values[i], fixed=TRUE)
+        date_values[i] <- gsub("_", "-", date_values[i], fixed=TRUE)
         if(grepl("[A-Za-z]", date_values[i])){
-          date_values[i] <- gsub("\\sjan.+\\s|\\sJan.+\\s|\\sjan\\s|\\sJan\\s", "-01-", date_values[i])
-          date_values[i] <- gsub("\\sfeb.+\\s|\\sFeb.+\\s|\\sfeb\\s|\\sFeb\\s", "-02-", date_values[i])
-          date_values[i] <- gsub("\\smar.+\\s|\\sMar.+\\s|\\smar\\s|\\sMar\\s", "-03-", date_values[i])
-          date_values[i] <- gsub("\\sapr.+\\s|\\sApr.+\\s|\\sapr\\s|\\sApr\\s", "-04-", date_values[i])
-          date_values[i] <- gsub("\\smay.+\\s|\\sMay.+\\s|\\smay\\s|\\sMay\\s", "-05-", date_values[i])
-          date_values[i] <- gsub("\\sjun.+\\s|\\sJun.+\\s|\\sjun\\s|\\sJun\\s", "-06-", date_values[i])
-          date_values[i] <- gsub("\\sjul.+\\s|\\sJul.+\\s|\\sjul\\s|\\sJul\\s", "-07-", date_values[i])
-          date_values[i] <- gsub("\\saug.+\\s|\\sAug.+\\s|\\saug\\s|\\sAug\\s", "-08-", date_values[i])
-          date_values[i] <- gsub("\\ssep.+\\s|\\sSep.+\\s|\\ssep\\s|\\sSep\\s", "-09-", date_values[i])
-          date_values[i] <- gsub("\\soct.+\\s|\\sOct.+\\s|\\soct\\s|\\sOct\\s", "-10-", date_values[i])
-          date_values[i] <- gsub("\\snov.+\\s|\\sNov.+\\s|\\snov\\s|\\sNov\\s", "-11-", date_values[i])
-          date_values[i] <- gsub("\\sdec.+\\s|\\sDec.+\\s|\\sdec\\s|\\sDec\\s", "-12-", date_values[i])
+          date_values[i] <- gsub("jan.+-|jan-", "01-", tolower(date_values[i]))
+          date_values[i] <- gsub("feb.+-|feb-", "02-", tolower(date_values[i]))
+          date_values[i] <- gsub("mar.+-|mar-", "03-", tolower(date_values[i]))
+          date_values[i] <- gsub("apr.+-|apr-", "04-", tolower(date_values[i]))
+          date_values[i] <- gsub("may.+-|may-", "05-", tolower(date_values[i]))
+          date_values[i] <- gsub("jun.+-|jun-", "06-", tolower(date_values[i]))
+          date_values[i] <- gsub("jul.+-|jul-", "07-", tolower(date_values[i]))
+          date_values[i] <- gsub("aug.+-|aug-", "08-", tolower(date_values[i]))
+          date_values[i] <- gsub("sep.+-|sep-", "09-", tolower(date_values[i]))
+          date_values[i] <- gsub("oct.+-|oct-", "10-", tolower(date_values[i]))
+          date_values[i] <- gsub("nov.+-|nov-", "11-", tolower(date_values[i]))
+          date_values[i] <- gsub("dec.+-|dec-", "12-", tolower(date_values[i]))
+          #how it was written before: date_values[i] <- gsub("\\sdec.+\\s|\\sdec\\s", "-12-", tolower(date_values[i]))
         }
         date_values[i] <- strsplit(date_values[i], "T")[[1]][1]
         date_split <- strsplit(date_values[i], "-")
@@ -67,11 +71,11 @@ dataQC.dateCheck <- function(dataset, date.colnames=c("date", "Date", "collectio
           mnth <- as.character(sprintf("%02d", as.numeric(date_split[[1]][2])))
           day <- as.character(sprintf("%02d", as.numeric(date_split[[1]][3])))
           date_values[i]<-paste(year, mnth, day, sep="-")
-        }else if(length(date_split[[1]])==2 && nchar(date_split[[1]][2])==4){ #assume YYYY-MM
+        }else if(length(date_split[[1]])==2 && nchar(date_split[[1]][2])==4){ #assume MM-YYYY
           year <- as.character(date_split[[1]][2])
           mnth <- as.character(sprintf("%02d", as.numeric(date_split[[1]][1])))
           date_values[i]<-paste(year, mnth, sep="-")
-        }else if(length(date_split[[1]])==2 && nchar(date_split[[1]][1])==4){ #assume MM-YYYY
+        }else if(length(date_split[[1]])==2 && nchar(date_split[[1]][1])==4){ #assume YYYY-MM
           year <- as.character(date_split[[1]][1])
           mnth <- as.character(sprintf("%02d", as.numeric(date_split[[1]][2])))
           date_values[i]<-paste(year, mnth, sep="-")

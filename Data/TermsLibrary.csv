@@ -1,387 +1,413 @@
-name,name_variant_ENA,corresponding_DwC,section,expected_unit,synonyms,official_MIxS,insdc,core,air,built_environment,host_associated,human_associated,human_gut,human_oral,human_skin,human_vaginal,microbial_mat_biofilm,miscellaneous_natural_or_artificial_environment,plant_associated,sediment,soil,wastewater_sludge,water
-adapters,adapters,,sequencing,alphanumeric,adapters,TRUE,FALSE,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-annot_source,annotation source,,sequencing,alphanumeric,annot_source;annotation source,TRUE,FALSE,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-assembly,assembly,,sequencing,alphanumeric,assembly,TRUE,FALSE,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-assembly_name,assembly name,,sequencing,alphanumeric,assembly_name;assembly name,TRUE,FALSE,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-chimera_check,chimera check,,sequencing,alphanumeric,chimera_check;chimera check,TRUE,FALSE,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-finishing_strategy,finishing strategy,,sequencing,alphanumeric,finishing_strategy;finishing strategy,TRUE,FALSE,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-lib_const_meth,library const method,,sequencing,alphanumeric,lib_const_meth;library const method,TRUE,FALSE,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-lib_reads_seqd,library reads seqd,,sequencing,alphanumeric,lib_reads_seqd;library reads seqd,TRUE,FALSE,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-lib_screen,library screen,,sequencing,alphanumeric,lib_screen;library screen,TRUE,FALSE,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-lib_size,library size,,sequencing,alphanumeric,lib_size;library size,TRUE,FALSE,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-lib_vector,library vector,,sequencing,alphanumeric,lib_vector;library vector,TRUE,FALSE,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-mid,multiplex identifiers,,sequencing,alphanumeric,mid;multiplex_ident_1;multiplex_identifiers;multiplex identifiers,TRUE,FALSE,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-nucl_acid_amp,nucl acid amp,,sequencing,alphanumeric,nucl_acid_amp,TRUE,FALSE,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-nucl_acid_ext,nucl acid ext,,sequencing,alphanumeric,nucl_acid_ext,TRUE,FALSE,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-pcr_cond,pcr cond,,sequencing,alphanumeric,pcr_cond,TRUE,FALSE,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-pcr_primers,pcr primers,,sequencing,alphanumeric,pcr_primers;primers;Primers;Forward primer;forward primer;Forward Primer;forward_primer;Reverse primer;reverse primer;Reverse Primer;reverse_primer,TRUE,FALSE,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-seq_meth,sequencing method,,sequencing,alphanumeric,seq_meth;Platform;sequencing method,TRUE,FALSE,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-seq_quality_check,seq quality check,,sequencing,alphanumeric,seq_quality_check;seq quality check,TRUE,FALSE,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-sop,sop,,sequencing,alphanumeric,sop,TRUE,FALSE,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-target_gene,target gene,,sequencing,alphanumeric,target_gene;target gene;Target Gene,TRUE,FALSE,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-target_subfragment,target subfragment,,sequencing,alphanumeric,target_subfragment;target subfragment,TRUE,FALSE,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-url,url,,sequencing,alphanumeric,url;download_path,TRUE,FALSE,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-abs_air_humidity,abs air humidity,,package,alphanumeric,abs_air_humidity;abs air humidity,TRUE,FALSE,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0
-agrochem_addition,agrochem addition,,package,alphanumeric,agrochem_addition;agrochem addition,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
-air_temp,air temperature,,package,degreesCelcius,air_temp;air temperature,TRUE,FALSE,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0
-air_temp_regm,air temperature regime,,package,degreesCelcius,air_temp_regm;air temperature regime,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0
-al_sat,al sat,,package,alphanumeric,al_sat;al sat,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
-al_sat_meth,al sat method,,package,alphanumeric,al_sat_meth;al sat method,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
-alkalinity,alkalinity,,package,alphanumeric,alkalinity,TRUE,FALSE,0,0,0,0,0,0,0,0,0,1,1,0,1,0,1,1
-alkyl_diethers,alkyl diethers,,package,alphanumeric,alkyl_diethers;alkyl diethers,TRUE,FALSE,0,0,0,0,0,0,0,0,0,1,0,0,1,0,0,1
-alt,altitude,,package,alphanumeric,alt;altitude;Altitude,TRUE,FALSE,0,2,0,1,0,0,0,0,0,1,1,1,1,1,0,1
-aminopept_act,aminopept act,,package,alphanumeric,aminopept_act;aminopept act,TRUE,FALSE,0,0,0,0,0,0,0,0,0,1,0,0,1,0,0,1
-ammonium,ammonium,,package,alphanumeric,aminopept_act,TRUE,FALSE,0,0,0,0,0,0,0,0,0,1,1,0,1,0,0,1
-amniotic_fluid_color,amniotic fluid color,,package,alphanumeric,amniotic_fluid_color;amniotic fluid color,TRUE,FALSE,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0
-annual_season_precpt,annual season precpt,,package,alphanumeric,annual_season_precpt;annual season precpt,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
-annual_season_temp,annual season temp,,package,degreesCelcius,annual_season_temp;annual season temp,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
-antibiotic_regm,antibiotic regime,,package,alphanumeric,antibiotic_regm;antibiotic regime,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0
-atmospheric_data,atmospheric data,,package,alphanumeric,atmospheric_data;atmospheric data,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
-bac_prod,bac prod,,package,alphanumeric,bac_prod;bac prod,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
-bac_resp,bac resp,,package,alphanumeric,bac_resp;bac resp,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
-bacteria_carb_prod,bacteria carbon prod,,package,alphanumeric,bacteria_carb_prod;bacteria carbon prod,TRUE,FALSE,0,0,0,0,0,0,0,0,0,1,0,0,1,0,0,1
-barometric_press,barometric press,,package,alphanumeric,barometric_press;atm_press;barometric press,TRUE,FALSE,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-biochem_oxygen_dem,biochem oxygen dem,,package,alphanumeric,biochem_oxygen_dem;biochem oxygen dem,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0
-biomass,biomass,,package,alphanumeric,biomass,TRUE,FALSE,0,0,0,0,0,0,0,0,0,1,1,0,1,0,0,1
-birth_control,birth control,,package,alphanumeric,birth_control;birth control,TRUE,FALSE,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0
-bishomohopanol,bishomohopanol,,package,alphanumeric,bishomohopanol,TRUE,FALSE,0,0,0,0,0,0,0,0,0,1,0,0,1,0,0,1
-blood_blood_disord,blood blood disord,,package,alphanumeric,blood_blood_disord;blood blood disord,TRUE,FALSE,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0
-bromide,bromide,,package,alphanumeric,bromide,TRUE,FALSE,0,0,0,0,0,0,0,0,0,1,1,0,1,0,0,1
-build_occup_type,build occup type,,package,alphanumeric,build_occup_type;build occup type,TRUE,FALSE,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0
-building_setting,building setting,,package,alphanumeric,building_setting;building setting,TRUE,FALSE,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0
-calcium,calcium,,package,alphanumeric,calcium,TRUE,FALSE,0,0,0,0,0,0,0,0,0,1,1,0,1,0,0,1
-carb_dioxide,carbon dioxide,,package,alphanumeric,carb_dioxide;carbon dioxide;CO2,TRUE,FALSE,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0
-carb_monoxide,carbon monoxide,,package,alphanumeric,carb_monoxide;carbon monoxide;CO,TRUE,FALSE,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-carb_nitro_ratio,carbon/nitrogen ratio,,package,alphanumeric,carb_nitro_ratio;carbon/nitrogen ratio,TRUE,FALSE,0,0,0,0,0,0,0,0,0,1,0,0,1,0,0,1
-chem_administration,chemical administration,,package,alphanumeric,chem_administration;chemical administration,TRUE,FALSE,0,1,0,1,1,1,1,1,1,1,1,1,1,0,1,1
-chem_mutagen,chemical mutagen,,package,alphanumeric,chem_mutagen;chemical mutagen,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0
-chem_oxygen_dem,chemical oxygen dem,,package,alphanumeric,chem_oxygen_dem;chemical oxygen dem,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0
-chloride,chloride,,package,alphanumeric,chloride,TRUE,FALSE,0,0,0,0,0,0,0,0,0,1,1,0,1,0,0,1
-chlorophyll,chlorophyll,,package,alphanumeric,chlorophyll,TRUE,FALSE,0,0,0,0,0,0,0,0,0,1,1,0,1,0,0,1
-climate_environment,climate environment,,package,alphanumeric,climate_environment;climate environment,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0
-conduc,conductivity,,package,alphanumeric,conduc;conductivity;cond;cond.;Cond;,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
-crop_rotation,crop rotation,,package,alphanumeric,crop_rotation;crop rotation,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
-cur_land_use,current land use,,package,alphanumeric,cur_land_use;current land use,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
-cur_vegetation,current vegetation,,package,alphanumeric,cur_vegetation;current vegetation,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
-cur_vegetation_meth,current vegetation method,,package,alphanumeric,cur_vegetation_meth;current vegetation method,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
-dermatology_disord,dermatology disord,,package,alphanumeric,dermatology_disord;dermatology disord,TRUE,FALSE,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0
-dew_point,dew point,,package,alphanumeric,dew_point;dew point,TRUE,FALSE,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0
-diet_last_six_month,diet last six month,,package,alphanumeric,diet_last_six_month;diet last six month,TRUE,FALSE,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0
-diether_lipids,diether lipids,,package,alphanumeric,diether_lipids;diether lipids,TRUE,FALSE,0,0,0,0,0,0,0,0,0,1,1,0,1,0,0,1
-diss_carb_dioxide,dissolved carbon dioxide,,package,alphanumeric,diss_carb_dioxide;dissolved carbon dioxide,TRUE,FALSE,0,0,0,0,0,0,0,0,0,1,1,0,1,0,0,1
-diss_hydrogen,dissolved hydrogen,,package,alphanumeric,diss_hydrogen;dissolved hydrogen,TRUE,FALSE,0,0,0,0,0,0,0,0,0,1,1,0,1,0,0,1
-diss_inorg_carb,dissolved inorganic carbon,,package,alphanumeric,diss_inorg_carb;dissolved inorganic carbon,TRUE,FALSE,0,0,0,0,0,0,0,0,0,1,1,0,1,0,0,1
-diss_inorg_nitro,dissolved inorganic nitrogen,,package,alphanumeric,diss_inorg_nitro;dissolved_inorganic_nitrogen;dissolved inorganic nitrogen,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
-diss_inorg_phosp,dissolved inorganic phosphor,,package,alphanumeric,diss_inorg_phosp;dissolved inorganic phosphor,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
-diss_org_carb,dissolved organic carbon,,package,alphanumeric,diss_org_carb;dissolved_organic_carbon;dissolved organic carbon,TRUE,FALSE,0,0,0,0,0,0,0,0,0,1,0,0,1,0,0,1
-diss_org_nitro,dissolved organic nitrogen,,package,alphanumeric,diss_org_nitro;dissolved_organic_nitrogen;dissolved organic nitrogen,TRUE,FALSE,0,0,0,0,0,0,0,0,0,1,1,0,1,0,0,1
-diss_oxygen,dissolved oxygen,,package,alphanumeric,diss_oxygen;oxygen;dissolved_oxygen,TRUE,FALSE,0,0,0,0,0,0,0,0,0,1,1,0,1,0,0,1
-dominant_hand,dominant hand,,package,alphanumeric,dominant_hand;dominant hand,TRUE,FALSE,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0
-douche,douche,,package,alphanumeric,douche,TRUE,FALSE,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0
-down_par,down par,,package,alphanumeric,down_par;down par,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
-drainage_class,drainage class,,package,alphanumeric,drainage_class;drainage class,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
-drug_usage,drug usage,,package,alphanumeric,drug_usage;drug usage,TRUE,FALSE,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0
-efficiency_percent,efficiency percent,,package,alphanumeric,efficiency_percent;efficiency percent,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0
-elev,elevation,,package,alphanumeric,elev;elevation;Elevation;geographic location (elevation);geographic_location_altitude;geographic location altitude,TRUE,FALSE,0,1,0,1,0,0,0,0,0,2,1,1,2,2,0,1
-emulsions,emulsions,,package,alphanumeric,emulsions,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0
-extreme_event,extreme event,,package,alphanumeric,extreme_event;extreme event,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
-extreme_salinity,extreme salinity,,package,alphanumeric,extreme_salinity;extreme salinity,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
-fao_class,fao class,,package,alphanumeric,fao_class;fao class,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
-fertilizer_regm,fertilizer regime,,package,alphanumeric,fertilizer_regm;fertilizer regime,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0
-filter_type,filter type,,package,alphanumeric,filter_type;filter type,TRUE,FALSE,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0
-fire,fire,,package,alphanumeric,fire,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
-flooding,flooding,,package,alphanumeric,flooding,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
-fluor,fluorescence,,package,alphanumeric,fluor;fluorescence,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
-foetal_health_stat,foetal health stat,,package,alphanumeric,foetal_health_stat;foetal health stat,TRUE,FALSE,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0
-fungicide_regm,fungicide regime,,package,alphanumeric,fungicide_regm;fungicide regime,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0
-gaseous_environment,gaseous environment,,package,alphanumeric,gaseous_environment;gaseous environment,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0
-gaseous_substances,gaseous substances,,package,alphanumeric,gaseous_substances;gaseous substances,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0
-gastrointest_disord,gastrointest disord,,package,alphanumeric,gastrointest_disord;gastrointest disord,TRUE,FALSE,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0
-gestation_state,gestation state,,package,alphanumeric,gestation_state;gestation state,TRUE,FALSE,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0
-glucosidase_act,glucosidase act,,package,alphanumeric,glucosidase_act;glucosidase act,TRUE,FALSE,0,0,0,0,0,0,0,0,0,1,0,0,1,0,0,1
-gravidity,gravidity,,package,alphanumeric,gravidity,TRUE,FALSE,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
-gravity,gravity,,package,alphanumeric,gravity,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0
-growth_hormone_regm,growth hormone regime,,package,alphanumeric,growth_hormone_regm;growth hormone regime,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0
-growth_med,growth med,,package,alphanumeric,growth_med;growth med,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0
-gynecologic_disord,gynecologic disorder,,package,alphanumeric,gynecologic_disord;gynecologic disorder,TRUE,FALSE,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0
-heat_cool_type,heat cool type,,package,alphanumeric,heat_cool_type;heat cool type,TRUE,FALSE,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0
-heavy_metals,heavy metals,,package,alphanumeric,heavy_metals;heavy metals,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
-heavy_metals_meth,heavy metals method,,package,alphanumeric,heavy_metals_meth;heavy metals method,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
-herbicide_regm,herbicide regime,,package,alphanumeric,herbicide_regm;herbicide regime,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0
-horizon,horizon,,package,alphanumeric,horizon,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
-horizon_meth,horizon method,,package,alphanumeric,horizon_meth;horizon method,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
-host_age,host age,,package,alphanumeric,host_age;host age,TRUE,FALSE,0,0,0,1,1,1,1,1,1,0,0,1,0,0,0,0
-host_blood_press_diast,host blood press diast,,package,alphanumeric,host_blood_press_diast;host blood press diast,TRUE,FALSE,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
-host_blood_press_syst,host blood press syst,,package,alphanumeric,host_blood_press_syst;host blood press syst,TRUE,FALSE,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
-host_body_habitat,host body habitat,,package,alphanumeric,host_body_habitat;host body habitat,TRUE,FALSE,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
-host_body_mass_index,host body mass index,,package,alphanumeric,host_body_mass_index;host body mass index,TRUE,FALSE,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0
-host_body_product,host body product,,package,alphanumeric,host_body_product;host body product,TRUE,FALSE,0,0,0,1,1,1,1,1,1,0,0,0,0,0,0,0
-host_body_site,host body site,,package,alphanumeric,host_body_site;host body site,TRUE,FALSE,0,0,0,1,1,1,1,1,1,0,0,0,0,0,0,0
-host_body_temp,host body temp,,package,degreesCelcius,host_body_temp;host body temp,TRUE,FALSE,0,0,0,1,1,1,1,1,1,0,0,0,0,0,0,0
-host_color,host color,,package,alphanumeric,host_color;host color,TRUE,FALSE,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
-host_common_name,host common name,,package,alphanumeric,host_common_name;host common name,TRUE,FALSE,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0
-host_diet,host diet,,package,alphanumeric,host_diet;host diet,TRUE,FALSE,0,0,0,1,1,1,1,1,1,0,0,0,0,0,0,0
-host_disease_stat,host disease stat,,package,alphanumeric,host_disease_stat;host disease stat,TRUE,FALSE,0,0,0,1,1,1,1,1,1,0,0,1,0,0,0,0
-host_dry_mass,host dry mass,,package,alphanumeric,host_dry_mass;host dry mass,TRUE,FALSE,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0
-host_family_relationship,host family relationship,,package,alphanumeric,host_family_relationship;host family relationship,TRUE,FALSE,0,0,0,1,1,1,1,1,1,0,0,0,0,0,0,0
-host_genotype,host genotype,,package,alphanumeric,host_genotype;host genotype,TRUE,FALSE,0,0,0,1,1,1,1,1,1,0,0,1,0,0,0,0
-host_growth_cond,host growth conditions,,package,alphanumeric,host_growth_cond;host growth conditions,TRUE,FALSE,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
-host_height,host height,,package,alphanumeric,host_height;host height,TRUE,FALSE,0,0,0,1,1,1,1,1,1,0,0,1,0,0,0,0
-host_hiv_stat,host hiv status,,package,alphanumeric,host_hiv_stat;host hiv status,TRUE,FALSE,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0
-host_infra_specific_name,host infra-specific name,,package,alphanumeric,host_infra_specific_name;host infra-specific name,TRUE,FALSE,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0
-host_infra_specific_rank,host infra-specific rank,,package,alphanumeric,host_infra_specific_rank;host infra-specific rank,TRUE,FALSE,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0
-host_last_meal,host last meal,,package,alphanumeric,host_last_meal;host last meal,TRUE,FALSE,0,0,0,1,1,1,1,1,1,0,0,0,0,0,0,0
-host_length,host length,,package,alphanumeric,host_length;host length,TRUE,FALSE,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0
-host_life_stage,host life stage,,package,alphanumeric,host_life_stage;host life stage,TRUE,FALSE,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0
-host_occupation,host occupation,,package,alphanumeric,host_occupation;host occupation,TRUE,FALSE,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0
-host_phenotype,host phenotype,,package,alphanumeric,host_phenotype;host phenotype,TRUE,FALSE,0,0,0,1,1,1,1,1,1,0,0,1,0,0,0,0
-host_pulse,host pulse,,package,alphanumeric,host_pulse;host pulse,TRUE,FALSE,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0
-host_sex,host sex,,package,alphanumeric,host_sex;host sex,TRUE,FALSE,0,0,0,1,1,1,1,1,1,0,0,0,0,0,0,0
-host_shape,host shape,,package,alphanumeric,host_shape;host shape,TRUE,FALSE,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
-host_subject_id,host subject id,,package,alphanumeric,host_subject_id;host subject id,TRUE,FALSE,0,0,0,1,1,1,1,1,1,0,0,0,0,0,0,0
-host_substrate,host substrate,,package,alphanumeric,host_substrate;host substrate,TRUE,FALSE,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
-host_taxid,host taxid,,package,alphanumeric,host_taxid;host taxid,TRUE,FALSE,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0
-host_tot_mass,host tot mass,,package,alphanumeric,host_tot_mass;host tot mass,TRUE,FALSE,0,0,0,1,1,1,1,1,1,0,0,1,0,0,0,0
-host_wet_mass,host wet mass,,package,alphanumeric,host_wet_mass;host wet mass,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0
-hrt,hrt,,package,alphanumeric,hrt,TRUE,FALSE,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0
-humidity,humidity,,package,alphanumeric,humidity,TRUE,FALSE,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-humidity_regm,humidity regime,,package,alphanumeric,humidity_regm;humidity regime,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0
-hysterectomy,hysterectomy,,package,alphanumeric,hysterectomy,TRUE,FALSE,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0
-ihmc_ethnicity,ihmc ethnicity,,package,alphanumeric,ihmc_ethnicity;ihmc ethnicity,TRUE,FALSE,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0
-ihmc_medication_code,ihmc medication code,,package,alphanumeric,ihmc_medication_code;ihmc medication code,TRUE,FALSE,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0
-indoor_space,indoor space,,package,alphanumeric,indoor_space;indoor space,TRUE,FALSE,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0
-indoor_surf,indoor surf,,package,alphanumeric,indoor_surf;indoor surf,TRUE,FALSE,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0
-indust_eff_percent,indust eff percent,,package,alphanumeric,indust_eff_percent;indust eff percent,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0
-inorg_particles,inorganic particles,,package,alphanumeric,inorg_particles;inorganic particles,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0
-kidney_disord,kidney disord,,package,alphanumeric,kidney_disord;kidney disord,TRUE,FALSE,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0
-light_intensity,light intensity,,package,alphanumeric,light_intensity;light intensity,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
-light_type,light type,,package,alphanumeric,light_type;light type,TRUE,FALSE,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0
-link_addit_analys,link addit analys,,package,alphanumeric,link_addit_analys;link addit analys,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
-link_class_info,link class info,,package,alphanumeric,link_class_info;link class info,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
-link_climate_info,link climate info,,package,alphanumeric,link_climate_info;link climate info,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
-liver_disord,liver disord,,package,alphanumeric,liver_disord;liver disord,TRUE,FALSE,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0
-local_class,local class,,package,alphanumeric,local_class;local class,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
-local_class_meth,local class method,,package,alphanumeric,local_class_meth;local class method,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
-magnesium,magnesium,,package,alphanumeric,magnesium,TRUE,FALSE,0,0,0,0,0,0,0,0,0,1,0,0,1,0,0,1
-maternal_health_stat,maternal health status,,package,alphanumeric,maternal_health_stat;maternal health status,TRUE,FALSE,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0
-mean_frict_vel,mean frict vel,,package,alphanumeric,mean_frict_vel;mean frict vel,TRUE,FALSE,0,0,0,0,0,0,0,0,0,1,0,0,1,0,0,1
-mean_peak_frict_vel,mean peak frict vel,,package,alphanumeric,mean_peak_frict_vel;mean peak frict vel,TRUE,FALSE,0,0,0,0,0,0,0,0,0,1,0,0,1,0,0,1
-mechanical_damage,mechanical damage,,package,alphanumeric,mechanical_damage;mechanical damage,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0
-medic_hist_perform,medic hist perform,,package,alphanumeric,medic_hist_perform;medic hist perform,TRUE,FALSE,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0
-menarche,menarche,,package,alphanumeric,menarche,TRUE,FALSE,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0
-menopause,menopause,,package,alphanumeric,menopause,TRUE,FALSE,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0
-methane,methodane,,package,alphanumeric,methane,TRUE,FALSE,0,1,0,0,0,0,0,0,0,1,0,0,1,0,0,0
-microbial_biomass,microbial biomass,,package,alphanumeric,microbial_biomass;microbial biomass,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
-microbial_biomass_meth,microbial biomass method,,package,alphanumeric,microbial_biomass_meth;microbial biomass method,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
-mineral_nutr_regm,mineral nutr regime,,package,alphanumeric,mineral_nutr_regm;mineral nutr regime,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0
-misc_param,miscellaneous parameter,dynamicProperties,package,alphanumeric,misc_param;miscellaneous parameter,TRUE,FALSE,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
-n_alkanes,n alkanes,,package,alphanumeric,n_alkanes;n alkanes,TRUE,FALSE,0,0,0,0,0,0,0,0,0,1,0,0,1,0,0,1
-nitrate,nitrate,,package,alphanumeric,nitrate;NO3,TRUE,FALSE,0,0,0,0,0,0,0,0,0,1,1,0,1,0,1,1
-nitrite,nitrite,,package,alphanumeric,nitrite;NO2,TRUE,FALSE,0,0,0,0,0,0,0,0,0,1,1,0,1,0,0,1
-nitro,nitrogen,,package,alphanumeric,nitro;nitrogen,TRUE,FALSE,0,0,0,0,0,0,0,0,0,1,1,0,1,0,0,1
-non_mineral_nutr_regm,non mineral nutr regime,,package,alphanumeric,non_mineral_nutr_regm;non mineral nutr regime,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0
-nose_mouth_teeth_throat_disord,nose mouth teeth throat disord,,package,alphanumeric,nose_mouth_teeth_throat_disord;nose mouth teeth throat disord,TRUE,FALSE,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0
-nose_throat_disord,nose throat disord,,package,alphanumeric,nose_throat_disord;nose throat disord,TRUE,FALSE,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0
-occup_samp,occup samp,,package,alphanumeric,occup_samp;occup samp,TRUE,FALSE,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0
-occupant_dens_samp,occupant dens samp,,package,alphanumeric,occupant_dens_samp;occupant dens samp,TRUE,FALSE,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0
-org_carb,organic carbon,,package,alphanumeric,org_carb;organic carbon;organic C;org_carb;carbon;total organic carbon,TRUE,FALSE,0,0,0,0,0,0,0,0,0,1,1,0,1,0,0,1
-org_matter,organic matter,,package,alphanumeric,org_matter;organic matter,TRUE,FALSE,0,0,0,0,0,0,0,0,0,1,1,0,1,0,0,1
-org_nitro,organic nitrogen,,package,alphanumeric,org_nitro;organic nitrogen,TRUE,FALSE,0,0,0,0,0,0,0,0,0,1,1,0,1,0,0,1
-org_particles,organic particles,,package,alphanumeric,org_particles;organic particles,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0
-organism_count,organism count,,package,alphanumeric,organism_count;organism count,TRUE,FALSE,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
-oxy_stat_samp,oxygen status sample,,package,alphanumeric,oxy_stat_samp;oxygen status sample,TRUE,FALSE,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
-oxygen,oxygen,,package,alphanumeric,oxygen,TRUE,FALSE,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-part_org_carb,particular organic carbon,,package,alphanumeric,part_org_carb;particular organic carbon,TRUE,FALSE,0,0,0,0,0,0,0,0,0,1,0,0,1,0,0,1
-part_org_nitro,particular organic nitrogen,,package,alphanumeric,part_org_nitro;particular organic nitrogen,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
-particle_class,particle class,,package,alphanumeric,particle_class;particle class,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0
-perturbation,perturbation,,package,alphanumeric,perturbation,TRUE,FALSE,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
-pesticide_regm,pesticide regime,,package,alphanumeric,pesticide_regm;pesticide regime,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0
-pet_farm_animal,pet farm animal,,package,alphanumeric,pet_farm_animal;pet farm animal,TRUE,FALSE,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0
-petroleum_hydrocarb,petroleum hydrocarbon,,package,alphanumeric,petroleum_hydrocarb;petroleum hydrocarbon,TRUE,FALSE,0,0,0,0,0,0,0,0,0,1,0,0,1,0,0,1
-ph,ph,,package,log(H+),ph,TRUE,FALSE,0,0,0,0,0,0,0,0,0,1,1,0,1,1,1,1
-ph_meth,ph method,,package,alphanumeric,ph_meth;ph method,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
-ph_regm,ph regime,,package,alphanumeric,ph_regm;ph regime,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0
-phaeopigments,phaeopigments,,package,alphanumeric,phaeopigments,TRUE,FALSE,0,0,0,0,0,0,0,0,0,1,0,0,1,0,0,1
-phosphate,phosphorhate,,package,alphanumeric,phosphate,TRUE,FALSE,0,0,0,0,0,0,0,0,0,1,1,0,1,0,1,1
-phosplipid_fatt_acid,phosphorlipid fatt acid,,package,alphanumeric,phosplipid_fatt_acid;phosphorlipid fatt acid,TRUE,FALSE,0,0,0,0,0,0,0,0,0,1,1,0,1,0,0,1
-photon_flux,photon flux,,package,alphanumeric,photon_flux;photon flux,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
-plant_body_site,plant body site,,package,alphanumeric,plant_body_site;plant body site,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0
-plant_product,plant product,,package,alphanumeric,plant_product;plant product,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0
-pollutants,pollutants,,package,alphanumeric,pollutants,TRUE,FALSE,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-pool_dna_extracts,pool dna extracts,,package,alphanumeric,pool_dna_extracts;pool dna extracts,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
-porosity,porosity,,package,alphanumeric,porosity,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0
-potassium,potassium,,package,alphanumeric,potassium,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,1,0,1,0,0,1
-pre_treatment,pre treatment,,package,alphanumeric,pre_treatment;pre treatment,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0
-pregnancy,pregnancy,,package,alphanumeric,pregnancy,TRUE,FALSE,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0
-pressure,pressure,,package,alphanumeric,pressure,TRUE,FALSE,0,0,0,0,0,0,0,0,0,1,1,0,1,0,0,1
-previous_land_use,previous land use,,package,alphanumeric,previous_land_use;previous land use,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
-previous_land_use_meth,previous land use method,,package,alphanumeric,previous_land_use_meth;previous land use method,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
-primary_prod,primary production,,package,alphanumeric,primary_prod;primary production,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
-primary_treatment,primary treatment,,package,alphanumeric,primary_treatment;primary treatment,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0
-profile_position,profile position,,package,alphanumeric,profile_position;profile position,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
-pulmonary_disord,pulmonary disord,,package,alphanumeric,pulmonary_disord;pulmonary disord,TRUE,FALSE,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0
-radiation_regm,radiation regime,,package,alphanumeric,radiation_regm;radiation regime,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0
-rainfall_regm,rainfall regime,,package,alphanumeric,rainfall_regm;rainfall regime,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0
-reactor_type,reactor type,,package,alphanumeric,reactor_type;reactor type,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0
-redox_potential,redox potential,,package,alphanumeric,redox_potential;redox potential,TRUE,FALSE,0,0,0,0,0,0,0,0,0,1,0,0,1,0,0,1
-rel_air_humidity,relative air humidity,,package,alphanumeric,rel_air_humidity;relative air humidity,TRUE,FALSE,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0
-resp_part_matter,resp part matter,,package,alphanumeric,resp_part_matter;resp part matter,TRUE,FALSE,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-salinity,salinity,,package,alphanumeric,salinity;Salinity,TRUE,FALSE,0,0,0,0,0,0,0,0,0,1,1,0,1,0,0,1
-salinity_meth,salinity method,,package,alphanumeric,salinity_meth;salinity method,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
-salt_regm,salt regime,,package,alphanumeric,salt_regm;salt regime,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0
-samp_salinity,samp salinity,,package,alphanumeric,samp_salinity;salinity;Salinity,TRUE,FALSE,0,1,0,1,1,1,1,1,1,0,0,1,0,0,1,0
-samp_sort_meth,samp sort method,,package,alphanumeric,samp_sort_meth;samp sort method,TRUE,FALSE,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0
-samp_store_dur,samp store dur,,package,alphanumeric,samp_store_dur;samp store dur,TRUE,FALSE,0,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1
-samp_store_loc,samp store loc,,package,alphanumeric,samp_store_loc;samp store loc,TRUE,FALSE,0,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1
-samp_store_temp,samp store temp,,package,degreesCelcius,samp_store_temp;samp store temp,TRUE,FALSE,0,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1
-samp_vol_we_dna_ext,samp vol we dna ext,,package,alphanumeric,samp_vol_we_dna_ext;sample weight for DNA extraction;sample volume for DNA extraction;sample weight or volume for DNA extraction,TRUE,FALSE,0,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1
-season_environment,season environment,,package,alphanumeric,season_environment;season environment,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0
-secondary_treatment,secondary treatment,,package,alphanumeric,secondary_treatment;secondary treatment,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0
-sediment_type,sediment type,,package,alphanumeric,sediment_type;sediment type,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0
-sewage_type,sewage type,,package,alphanumeric,sewage_type;sewage type,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0
-sexual_act,sexual act,,package,alphanumeric,sexual_act;sexual act,TRUE,FALSE,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0
-sieving,sieving,,package,alphanumeric,sieving,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
-silicate,silicate,,package,alphanumeric,silicate,TRUE,FALSE,0,0,0,0,0,0,0,0,0,1,1,0,1,0,0,1
-slope_aspect,slope aspect,,package,alphanumeric,slope_aspect;slope aspect,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
-slope_gradient,slope gradient,,package,alphanumeric,slope_gradient;slope gradient,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
-sludge_retent_time,sludge retent time,,package,alphanumeric,sludge_retent_time;sludge retent time,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0
-smoker,smoker,,package,alphanumeric,smoker,TRUE,FALSE,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0
-sodium,sodium,,package,alphanumeric,sodium,TRUE,FALSE,0,0,0,0,0,0,0,0,0,1,1,0,1,0,1,1
-soil_type,soil type,,package,alphanumeric,soil_type;soil type,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
-soil_type_meth,soil type method,,package,alphanumeric,soil_type_meth;soil type method,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
-solar_irradiance,solar irradiance,,package,alphanumeric,solar_irradiance;solar irradiance,TRUE,FALSE,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-soluble_inorg_mat,soluble inorganic material,,package,alphanumeric,soluble_inorg_mat;soluble inorganic material,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0
-soluble_org_mat,soluble organic material,,package,alphanumeric,soluble_org_mat;soluble organic material,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0
-soluble_react_phosp,soluble reactive phosphor,,package,alphanumeric,soluble_react_phosp;soluble reactive phosphor,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
-space_typ_state,space type state,,package,alphanumeric,space_typ_state;space type state,TRUE,FALSE,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0
-special_diet,special diet,,package,alphanumeric,special_diet;special diet,TRUE,FALSE,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0
-standing_water_regm,standing water regime,,package,alphanumeric,standing_water_regm;standing water regime,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0
-store_cond,storeage conditions,,package,alphanumeric,store_cond;storeage conditions,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
-study_complt_stat,study complt stat,,package,alphanumeric,study_complt_stat;study complt stat,TRUE,FALSE,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0
-substructure_type,substructure type,,package,alphanumeric,substructure_type;substructure type,TRUE,FALSE,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0
-sulfate,sulfate,,package,alphanumeric,sulfate,TRUE,FALSE,0,0,0,0,0,0,0,0,0,1,1,0,1,0,0,1
-sulfide,sulfide,,package,alphanumeric,sulfide,TRUE,FALSE,0,0,0,0,0,0,0,0,0,1,1,0,1,0,0,1
-surf_air_cont,surface air conditions,,package,alphanumeric,surf_air_cont;surface air conditions,TRUE,FALSE,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0
-surf_humidity,surface humidity,,package,alphanumeric,surf_humidity;surface humidity,TRUE,FALSE,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0
-surf_material,surface material,,package,alphanumeric,surf_material;surface material,TRUE,FALSE,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0
-surf_moisture,surface moisture,,package,alphanumeric,surf_moisture;surface moisture,TRUE,FALSE,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0
-surf_moisture_ph,surface moisture ph,,package,alphanumeric,surf_moisture_ph;surface moisture ph,TRUE,FALSE,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0
-surf_temp,surface temperature,,package,degreesCelcius,surf_temp;surface temperature,TRUE,FALSE,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0
-suspend_part_matter,suspend particular matter,,package,alphanumeric,suspend_part_matter;suspend particular matter,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
-suspend_solids,suspend solids,,package,alphanumeric,suspend_solids;suspend solids,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0
-temp,temperature,,package,degreesCelcius,temp;temperature;Temperature;Temp,TRUE,FALSE,0,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1
-tertiary_treatment,tertiary treatment,,package,alphanumeric,tertiary_treatment;tertiary treatment,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0
-texture,texture,,package,alphanumeric,texture,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
-texture_meth,texture method,,package,alphanumeric,texture_meth;texture method,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
-tidal_stage,tidal stage,,package,alphanumeric,tidal_stage;tidal stage,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1
-tillage,tillage,,package,alphanumeric,tillage,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
-time_last_toothbrush,time last toothbrush,,package,alphanumeric,time_last_toothbrush;time last toothbrush,TRUE,FALSE,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0
-time_since_last_wash,time since last wash,,package,alphanumeric,time_since_last_wash;time since last wash,TRUE,FALSE,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0
-tiss_cult_growth_med,tissue culture growth method,,package,alphanumeric,tiss_cult_growth_med;tissue culture growth method,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0
-tot_carb,total carbon,,package,alphanumeric,tot_carb;total carbon,TRUE,FALSE,0,0,0,0,0,0,0,0,0,1,0,0,1,0,0,0
-tot_depth_water_col,total depth water column,,package,alphanumeric,tot_depth_water_col;total depth water column,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
-tot_diss_nitro,total dissolved nitrogen,,package,alphanumeric,tot_diss_nitro;total dissolved nitrogen,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
-tot_inorg_nitro,total inorganic nitrogen,,package,alphanumeric,tot_inorg_nitro;total inorganic nitrogen,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
-tot_n_meth,total nitrogen method,,package,alphanumeric,tot_n_meth;total nitrogen method,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
-tot_nitro,total nitrogen,,package,alphanumeric,tot_nitro;total nitrogen,TRUE,FALSE,0,0,0,0,0,0,0,0,0,1,0,0,1,1,1,1
-tot_org_c_meth,total organic carbon method,,package,alphanumeric,tot_org_c_meth;total organic carbon method,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
-tot_org_carb,total organic carbon,,package,alphanumeric,tot_org_carb;total organic carbon,TRUE,FALSE,0,0,0,0,0,0,0,0,0,1,0,0,1,1,0,0
-tot_phosp,total phosphor,,package,alphanumeric,tot_phosp;total phosphor,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
-tot_phosphate,total phosphorhate,,package,alphanumeric,tot_phosphate;total phosphorhate,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0
-travel_out_six_month,travel out six month,,package,alphanumeric,travel_out_six_month;travel out six month,TRUE,FALSE,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0
-turbidity,turbidity,,package,alphanumeric,turbidity,TRUE,FALSE,0,0,0,0,0,0,0,0,0,1,0,0,1,0,0,0
-twin_sibling,twin sibling,,package,alphanumeric,twin_sibling;twin sibling,TRUE,FALSE,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0
-typ_occupant_dens,typ occupant dens,,package,alphanumeric,typ_occupant_dens;typ occupant dens,TRUE,FALSE,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0
-urine_collect_meth,urine collect method,,package,alphanumeric,urine_collect_meth;urine collect method,TRUE,FALSE,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0
-urogenit_disord,urogenit disord,,package,alphanumeric,urogenit_disord;urogenit disord,TRUE,FALSE,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0
-urogenit_tract_disor,urogenit tract disor,,package,alphanumeric,urogenit_tract_disor;urogenit tract disor,TRUE,FALSE,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0
-ventilation_rate,ventilation rate,,package,alphanumeric,ventilation_rate;ventilation rate,TRUE,FALSE,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-ventilation_type,ventilation type,,package,alphanumeric,ventilation_type;ventilation type,TRUE,FALSE,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0
-volatile_org_comp,volatile organic compoundss,,package,alphanumeric,volatile_org_comp;volatile organic compoundss,TRUE,FALSE,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-wastewater_type,wastewater type,,package,alphanumeric,wastewater_type;wastewater type,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0
-water_content,water content,,package,alphanumeric,water_content;water content,TRUE,FALSE,0,0,0,0,0,0,0,0,0,1,0,0,1,1,0,0
-water_content_soil_meth,water content soil method,,package,alphanumeric,water_content_soil_meth;water content soil method,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
-water_current,water current,,package,alphanumeric,water_current;water current,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1
-water_temp_regm,water temp regime,,package,degreesCelcius,water_temp_regm;water temp regime,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0
-watering_regm,watering regime,,package,alphanumeric,watering_regm;watering regime,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0
-weight_loss_3_month,weight loss 3 month,,package,alphanumeric,weight_loss_3_month;weight loss 3 month,TRUE,FALSE,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0
-wind_direction,wind direction,,package,alphanumeric,wind_direction;wind direction,TRUE,FALSE,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-wind_speed,wind speed,,package,alphanumeric,wind_speed;wind speed,TRUE,FALSE,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-biotic_relationship,biotic relationship,,nucleic_acid_sequence_source,alphanumeric,biotic_relationship;biotic relationship,TRUE,FALSE,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-encoded_traits,encoded traits,,nucleic_acid_sequence_source,alphanumeric,encoded_traits;encoded traits,TRUE,FALSE,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-estimated_size,estimated size,,nucleic_acid_sequence_source,alphanumeric,estimated_size;estimated size,TRUE,FALSE,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-extrachrom_elements,extrachromosomal elements,,nucleic_acid_sequence_source,alphanumeric,extrachrom_elements;extrachromosomal elements,TRUE,FALSE,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-health_disease_stat,health disease stat,,nucleic_acid_sequence_source,alphanumeric,health_disease_stat;health disease stat,TRUE,FALSE,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-host_spec_range,host spec range,,nucleic_acid_sequence_source,alphanumeric,host_spec_range;host spec range,TRUE,FALSE,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-isol_growth_condt,isolation and growth condition,,nucleic_acid_sequence_source,alphanumeric,isol_growth_condt;isolation and growth condition,TRUE,FALSE,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-num_replicons,number of replicons,,nucleic_acid_sequence_source,alphanumeric,num_replicons;number of replicons,TRUE,FALSE,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-pathogenicity,pathogenicity,,nucleic_acid_sequence_source,alphanumeric,pathogenicity,TRUE,FALSE,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-ploidy,ploidy,,nucleic_acid_sequence_source,alphanumeric,ploidy,TRUE,FALSE,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-propagation,propagation,,nucleic_acid_sequence_source,alphanumeric,propagation,TRUE,FALSE,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-ref_biomaterial,reference for biomaterial,,nucleic_acid_sequence_source,alphanumeric,ref_biomaterial;reference for biomaterial,TRUE,FALSE,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-rel_to_oxygen,relationship to oxygen,,nucleic_acid_sequence_source,alphanumeric,rel_to_oxygen;relationship to oxygen,TRUE,FALSE,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-samp_collect_device,sample collection device,,nucleic_acid_sequence_source,alphanumeric,samp_collect_device;sample collection device,TRUE,FALSE,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-samp_mat_process,sample material process,,nucleic_acid_sequence_source,alphanumeric,samp_mat_process;sample material process,TRUE,FALSE,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-samp_size,sample size,,nucleic_acid_sequence_source,,samp_size;samp size;sample size;amount_or_size_of_sample_collected;amount or size of sample collected,TRUE,FALSE,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-source_mat_id,source mat id,,nucleic_acid_sequence_source,alphanumeric,source_mat_id;Title;title;source material id;source mat id,TRUE,FALSE,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-specific_host,specific host,,nucleic_acid_sequence_source,alphanumeric,specific_host;host;specific host,TRUE,FALSE,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-subspecf_gen_lin,common_name,,nucleic_acid_sequence_source,alphanumeric,subspecf_gen_lin;common_name,TRUE,FALSE,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-trophic_level,trophic level,,nucleic_acid_sequence_source,alphanumeric,trophic_level;trophic level,TRUE,FALSE,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-density,density,,miscellaneous_natural_or_artificial_environment,alphanumeric,density,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,1,0,1,0,0,1
-additional_mid,,,miscellaneous,alphanumeric,additional_mid,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-bacteria_count,,,miscellaneous,alphanumeric,bacteria_count;organism count,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-bioproject,,,miscellaneous,alphanumeric,bioproject;Bioproject;BioProject,FALSE,TRUE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-biosample,,,miscellaneous,alphanumeric,biosample;Biosample;BioSample,FALSE,TRUE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-bottle,,,miscellaneous,alphanumeric,bottle,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-carbon_14,,,miscellaneous,alphanumeric,carbon_14,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-cast,,,miscellaneous,alphanumeric,cast,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-DwC_decimalLatitude,geographic location (latitude),decimalLatitude,miscellaneous,decimalCoordinates,DwC_decimalLatitude;lat;latitude;Latitude;decimalLatitude;decimal_latitude;Latitude End;geographic location (latitude);geographic_location_latitude;decimalLatitude,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-DwC_decimalLongitude,geographic location (longitude),decimalLongitude,miscellaneous,decimalCoordinates,DwC_decimalLongitude;lon;longitude;Longitude;decimallongitude;decimal_longitude;Longitude End;geographic location (longitude);geographic_location_longitude;decimalLlongitude,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-DwC_event,,event,miscellaneous,alphanumeric,DwC_event;event,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-DwC_eventID,,eventID,miscellaneous,alphanumeric,DwC_eventID;eventID,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-DwC_locality,,locality,miscellaneous,alphanumeric,DwC_locality;locality,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-DwC_parentEvent,,parentEvent,miscellaneous,alphanumeric,DwC_parentEvent;parentEvent,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-DwC_parentEventID,,parentEventID,miscellaneous,alphanumeric,DwC_parentEventID;parentEventID,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-DwC_occurenceID,,occurenceID,miscellaneous,alphanumeric,DwC_occurenceID;occurenceID,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-filter_size,,,miscellaneous,alphanumeric,filter_size,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-forward_primer,,,miscellaneous,alphanumeric,forward_primer,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-forward_primer_sequence,,,miscellaneous,alphanumeric,forward_primer_sequence,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-genbank_accession_numbers,,,miscellaneous,alphanumeric,genbank_accession_numbers,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-institute,,ownerInstitutionCode,miscellaneous,alphanumeric,institute;Institute;CenterName;ownerInstitutionCode;ownerInstitution,FALSE,TRUE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-leucine,,,miscellaneous,alphanumeric,leucine,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-nitrite_plus_nitrate,,,miscellaneous,alphanumeric,nitrite_plus_nitrate,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-number_of_bases_predicted,,,miscellaneous,alphanumeric,number_of_bases_predicted;bases,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-number_of_spots_in_sra,,,miscellaneous,alphanumeric,number_of_spots_in_sra;spots,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-original_name,,,miscellaneous,alphanumeric,original_name;original name;name;Name;SampleName;samle name;sample_name;samp name;LibraryName;lib;Library;library;alias;Alias,FALSE,TRUE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-reverse_primer,,,miscellaneous,alphanumeric,reverse_primer,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-reverse_primer_sequence,,,miscellaneous,alphanumeric,reverse_primer_sequence,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-run_type,,,miscellaneous,alphanumeric,run_type;LibraryLayout,FALSE,TRUE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-sra_experiment,,,miscellaneous,alphanumeric,sra_experiment;experiment;Experiment,FALSE,TRUE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-sra_number,,,miscellaneous,alphanumeric,sra_number;Submission,FALSE,TRUE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-sra_run_number,,,miscellaneous,alphanumeric,sra_run_number;run;Run,FALSE,TRUE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-sra_sample_accession_numbers,,,miscellaneous,alphanumeric,sra_sample_accession_numbers;sample;Sample,FALSE,TRUE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-sample_description,sample_description,,miscellaneous,alphanumeric,sample_description;Description;description;sample description,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-scientific_name,scientific_name,,miscellaneous,alphanumeric,scientific_name;scientific name,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-taxID,tax_id,scientificNameID,miscellaneous,alphanumeric,TaxID;taxID;tax_id;scientificNameID,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-env_package,environmental package,,migs_mims_mimarks_extension,alphanumeric,env_package;env package;Enviornmental package;package;ENA checklist;ENA_checklist,TRUE,FALSE,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-experimental_factor,experimental factor,,investigation,alphanumeric,experimental_factor;treatment,TRUE,FALSE,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-investigation_type,investigation type,,investigation,alphanumeric,investigation_type;LibraryStrategy;investigation type,TRUE,FALSE,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-project_name,project name,datasetName,investigation,alphanumeric,project_name;Project name;project name;datasetName,TRUE,FALSE,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-submitted_to_insdc,submitted to insdc,,investigation,boolean,submitted_to_insdc;submitted to insdc,TRUE,FALSE,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-alt_elev,altitude elevation,,environment,meter,alt_elev;altitude elevation,TRUE,FALSE,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-collection_date,collection date,eventDate,environment,UTC,collection_date;collection date;colection_date;colection date;Event date / Time;Event_date_/_Time,TRUE,FALSE,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-depth,depth,maximumDepthInMeters,environment,meter,depth;Depth;geographic_location_depth;geographic location depth;geographic location (depth);geographic_location_(depth);maximumDepthInMeters;minimumDepthInMeters,TRUE,FALSE,1,0,0,1,0,0,0,0,0,2,1,1,2,2,1,2
-env_biome,environment (biome),habitat,environment,alphanumeric,env_biome;Environment (biome);environment (biome);Biome;biome,TRUE,FALSE,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-env_feature,environment (feature),,environment,alphanumeric,env_feature;Environment (feature);Environment (featurael);environment (feature);feature;Feature,TRUE,FALSE,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-env_material,environment (material),,environment,alphanumeric,env_material;environment (material);Environment (material);material;Material;isolation_source,TRUE,FALSE,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-geo_loc_name,geographic location (country and/or sea),,environment,alphanumeric,geo_loc_name;geographic location (country and/or sea);geographic_location_country_and_or_sea_region;geographic_location,TRUE,FALSE,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-geo_loc_name_locality,geographic location (region and locality),,miscellaneous,alphanumeric,geographic location (region and locality);geographic_location_region_and_locality,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-lat_lon,geographic location (latitude and longitude),,environment,decimalCoordinates,lat_lon;lat lon;geographic_location_latitude_and_longitude;geographic location latitude and longitude;latitude and longitude;geographic location (latitude and longitude),TRUE,FALSE,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-alias,alias,,miscellaneous,alphanumeric,alias;Alias,FALSE,TRUE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-INSDC_SampleID,,associatedSequences,miscellaneous,alphanumeric,INSDC_SampleID,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-associatedReferences,,associatedReferences,miscellaneous,alphanumeric,associatedReferences,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-lisence,,lisence,miscellaneous,alphanumeric,lisence,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-rightsHolder,,rightsHolder,miscellaneous,alphanumeric,rightsHolder,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-basisOfRecord,,basisOfRecord,miscellaneous,alphanumeric,basisOfRecord,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-catalogNumber,,catalogNumber,miscellaneous,alphanumeric,catalogNumber,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-otherCatalogNumbers,,otherCatalogNumbers,miscellaneous,alphanumeric,otherCatalogNumbers,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+name,name_variant_ENA,corresponding_DwC,section,expected_unit,synonyms,vocabulary,MIxS,DwC,INSDC,core,air,built_environment,host_associated,human_associated,human_gut,human_oral,human_skin,human_vaginal,microbial_mat_biofilm,miscellaneous_natural_or_artificial_environment,plant_associated,sediment,soil,wastewater_sludge,water
+adapters,adapters,,sequencing,alphanumeric,adapters,MIxS,TRUE,FALSE,FALSE,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+annot_source,annotation source,,sequencing,alphanumeric,annot_source;annotation_source,MIxS,TRUE,FALSE,FALSE,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+assembly,assembly,,sequencing,alphanumeric,assembly,MIxS,TRUE,FALSE,FALSE,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+assembly_name,assembly name,,sequencing,alphanumeric,assembly_name,MIxS,TRUE,FALSE,FALSE,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+chimera_check,chimera check,,sequencing,alphanumeric,chimera_check;chimeracheck,MIxS,TRUE,FALSE,FALSE,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+finishing_strategy,finishing strategy,,sequencing,alphanumeric,finishing_strategy;finishingstrategy,MIxS,TRUE,FALSE,FALSE,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+lib_const_meth,library const method,,sequencing,alphanumeric,lib_const_meth;library_const_method,MIxS,TRUE,FALSE,FALSE,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+lib_reads_seqd,library reads seqd,,sequencing,alphanumeric,lib_reads_seqd;library_reads_sequenced,MIxS,TRUE,FALSE,FALSE,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+lib_screen,library screen,,sequencing,alphanumeric,lib_screen,MIxS,TRUE,FALSE,FALSE,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+lib_size,library size,,sequencing,alphanumeric,lib_size;library_size,MIxS,TRUE,FALSE,FALSE,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+lib_vector,library vector,,sequencing,alphanumeric,lib_vector;library_vector,MIxS,TRUE,FALSE,FALSE,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+mid,multiplex identifiers,,sequencing,alphanumeric,mid;multiplex_ident_1;multiplex_identifiers,MIxS,TRUE,FALSE,FALSE,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+nucl_acid_amp,nucl acid amp,,sequencing,alphanumeric,nucl_acid_amp,MIxS,TRUE,FALSE,FALSE,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+nucl_acid_ext,nucl acid ext,,sequencing,alphanumeric,nucl_acid_ext,MIxS,TRUE,FALSE,FALSE,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+pcr_cond,pcr cond,,sequencing,alphanumeric,pcr_cond,MIxS,TRUE,FALSE,FALSE,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+pcr_primers,pcr primers,,sequencing,alphanumeric,pcr_primers;primers;forward_primer;forwardprimer;reverse_primer;reverseprimer,MIxS,TRUE,FALSE,FALSE,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+seq_meth,sequencing method,,sequencing,alphanumeric,seq_meth;Platform;sequencing_method,MIxS,TRUE,FALSE,FALSE,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+seq_quality_check,seq quality check,,sequencing,alphanumeric,seq_quality_check,MIxS,TRUE,FALSE,FALSE,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+sop,sop,,sequencing,alphanumeric,sop,MIxS,TRUE,FALSE,FALSE,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+target_gene,target gene,,sequencing,alphanumeric,target_gene,MIxS,TRUE,FALSE,FALSE,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+target_subfragment,target subfragment,,sequencing,alphanumeric,target_subfragment,MIxS,TRUE,FALSE,FALSE,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+url,url,,sequencing,alphanumeric,url;download_path,MIxS,TRUE,FALSE,FALSE,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+abs_air_humidity,abs air humidity,,package,alphanumeric,abs_air_humidity,MIxS,TRUE,FALSE,FALSE,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0
+agrochem_addition,agrochem addition,,package,alphanumeric,agrochem_addition,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
+air_temp,air temperature,,package,degreesCelcius,air_temp;air_temperature,MIxS,TRUE,FALSE,FALSE,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0
+air_temp_regm,air temperature regime,,package,degreesCelcius,air_temp_regm;air_temperature_regime,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0
+al_sat,al sat,,package,alphanumeric,al_sat,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
+al_sat_meth,al sat method,,package,alphanumeric,al_sat_meth;al_sat_method,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
+alkalinity,alkalinity,,package,alphanumeric,alkalinity,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,1,1,0,1,0,1,1
+alkyl_diethers,alkyl diethers,,package,alphanumeric,alkyl_diethers,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,1,0,0,1,0,0,1
+alt,altitude,,package,alphanumeric,alt;altitude,MIxS,TRUE,FALSE,FALSE,0,2,0,1,0,0,0,0,0,1,1,1,1,1,0,1
+aminopept_act,aminopept act,,package,alphanumeric,aminopept_act,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,1,0,0,1,0,0,1
+ammonium,ammonium,,package,alphanumeric,ammonium,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,1,1,0,1,0,0,1
+amniotic_fluid_color,amniotic fluid color,,package,alphanumeric,amniotic_fluid_color,MIxS,TRUE,FALSE,FALSE,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0
+annual_season_precpt,annual season precpt,,package,alphanumeric,annual_season_precpt,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
+annual_season_temp,annual season temp,,package,degreesCelcius,annual_season_temp,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
+antibiotic_regm,antibiotic regime,,package,alphanumeric,antibiotic_regm;antibiotic_regime,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0
+atmospheric_data,atmospheric data,,package,alphanumeric,atmospheric_data,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
+bac_prod,bac prod,,package,alphanumeric,bac_prod,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
+bac_resp,bac resp,,package,alphanumeric,bac_resp,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
+bacteria_carb_prod,bacteria carbon prod,,package,alphanumeric,bacteria_carb_prod;bacteria_carbon_prod,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,1,0,0,1,0,0,1
+barometric_press,barometric press,,package,alphanumeric,barometric_press;atm_press,MIxS,TRUE,FALSE,FALSE,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+biochem_oxygen_dem,biochem oxygen dem,,package,alphanumeric,biochem_oxygen_dem,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0
+biomass,biomass,,package,alphanumeric,biomass,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,1,1,0,1,0,0,1
+birth_control,birth control,,package,alphanumeric,birth_control,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0
+bishomohopanol,bishomohopanol,,package,alphanumeric,bishomohopanol,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,1,0,0,1,0,0,1
+blood_blood_disord,blood blood disord,,package,alphanumeric,blood_blood_disord,MIxS,TRUE,FALSE,FALSE,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0
+bromide,bromide,,package,alphanumeric,bromide,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,1,1,0,1,0,0,1
+build_occup_type,build occup type,,package,alphanumeric,build_occup_type,MIxS,TRUE,FALSE,FALSE,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0
+building_setting,building setting,,package,alphanumeric,building_setting,MIxS,TRUE,FALSE,FALSE,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0
+calcium,calcium,,package,alphanumeric,calcium,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,1,1,0,1,0,0,1
+carb_dioxide,carbon dioxide,,package,alphanumeric,carb_dioxide;carbon_dioxide;CO2,MIxS,TRUE,FALSE,FALSE,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0
+carb_monoxide,carbon monoxide,,package,alphanumeric,carb_monoxide;carbon_monoxide;CO,MIxS,TRUE,FALSE,FALSE,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+carb_nitro_ratio,carbon/nitrogen ratio,,package,alphanumeric,carb_nitro_ratio;carbon_nitrogen_ratio,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,1,0,0,1,0,0,1
+chem_administration,chemical administration,,package,alphanumeric,chem_administration;chemical_administration,MIxS,TRUE,FALSE,FALSE,0,1,0,1,1,1,1,1,1,1,1,1,1,0,1,1
+chem_mutagen,chemical mutagen,,package,alphanumeric,chem_mutagen;chemical_mutagen,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0
+chem_oxygen_dem,chemical oxygen dem,,package,alphanumeric,chem_oxygen_dem;chemical_oxygen_dem,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0
+chloride,chloride,,package,alphanumeric,chloride,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,1,1,0,1,0,0,1
+chlorophyll,chlorophyll,,package,alphanumeric,chlorophyll,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,1,1,0,1,0,0,1
+climate_environment,climate environment,,package,alphanumeric,climate_environment,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0
+conduc,conductivity,,package,alphanumeric,conduc;conductivity;cond,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
+crop_rotation,crop rotation,,package,alphanumeric,crop_rotation,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
+cur_land_use,current land use,,package,alphanumeric,cur_land_use;current_land_use,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
+cur_vegetation,current vegetation,,package,alphanumeric,cur_vegetation;current_vegetation,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
+cur_vegetation_meth,current vegetation method,,package,alphanumeric,cur_vegetation_meth;current_vegetation_method,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
+dermatology_disord,dermatology disord,,package,alphanumeric,dermatology_disord,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0
+dew_point,dew point,,package,alphanumeric,dew_point,MIxS,TRUE,FALSE,FALSE,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0
+diet_last_six_month,diet last six month,,package,alphanumeric,diet_last_six_month,MIxS,TRUE,FALSE,FALSE,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0
+diether_lipids,diether lipids,,package,alphanumeric,diether_lipids,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,1,1,0,1,0,0,1
+diss_carb_dioxide,dissolved carbon dioxide,,package,alphanumeric,diss_carb_dioxide;dissolved_carbon_dioxide,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,1,1,0,1,0,0,1
+diss_hydrogen,dissolved hydrogen,,package,alphanumeric,diss_hydrogen;dissolved_hydrogen,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,1,1,0,1,0,0,1
+diss_inorg_carb,dissolved inorganic carbon,,package,alphanumeric,diss_inorg_carb;dissolved_inorganic_carbon,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,1,1,0,1,0,0,1
+diss_inorg_nitro,dissolved inorganic nitrogen,,package,alphanumeric,diss_inorg_nitro;dissolved_inorganic_nitrogen,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
+diss_inorg_phosp,dissolved inorganic phosphor,,package,alphanumeric,diss_inorg_phosp;dissolved_inorganic_phosphor,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
+diss_org_carb,dissolved organic carbon,,package,alphanumeric,diss_org_carb;dissolved_organic_carbon,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,1,0,0,1,0,0,1
+diss_org_nitro,dissolved organic nitrogen,,package,alphanumeric,diss_org_nitro;dissolved_organic_nitrogen,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,1,1,0,1,0,0,1
+diss_oxygen,dissolved oxygen,,package,alphanumeric,diss_oxygen;oxygen;dissolved_oxygen,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,1,1,0,1,0,0,1
+dominant_hand,dominant hand,,package,alphanumeric,dominant_hand,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0
+douche,douche,,package,alphanumeric,douche,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0
+down_par,down par,,package,alphanumeric,down_par,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
+drainage_class,drainage class,,package,alphanumeric,drainage_class,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
+drug_usage,drug usage,,package,alphanumeric,drug_usage,MIxS,TRUE,FALSE,FALSE,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0
+efficiency_percent,efficiency percent,,package,alphanumeric,efficiency_percent,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0
+elev,elevation,,package,meter,elev;elevation;geographic_location_elevation;geographic_location_altitude,MIxS,TRUE,FALSE,FALSE,0,1,0,1,0,0,0,0,0,2,1,1,2,2,0,1
+emulsions,emulsions,,package,alphanumeric,emulsions,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0
+extreme_event,extreme event,,package,alphanumeric,extreme_event,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
+extreme_salinity,extreme salinity,,package,alphanumeric,extreme_salinity,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
+fao_class,fao class,,package,alphanumeric,fao_class,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
+fertilizer_regm,fertilizer regime,,package,alphanumeric,fertilizer_regm;fertilizer_regime,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0
+filter_type,filter type,,package,alphanumeric,filter_type,MIxS,TRUE,FALSE,FALSE,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0
+fire,fire,,package,alphanumeric,fire,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
+flooding,flooding,,package,alphanumeric,flooding,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
+fluor,fluorescence,,package,alphanumeric,fluor;fluorescence,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
+foetal_health_stat,foetal health stat,,package,alphanumeric,foetal_health_stat,MIxS,TRUE,FALSE,FALSE,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0
+fungicide_regm,fungicide regime,,package,alphanumeric,fungicide_regm;fungicide_regime,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0
+gaseous_environment,gaseous environment,,package,alphanumeric,gaseous_environment,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0
+gaseous_substances,gaseous substances,,package,alphanumeric,gaseous_substances,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0
+gastrointest_disord,gastrointest disord,,package,alphanumeric,gastrointest_disord,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0
+gestation_state,gestation state,,package,alphanumeric,gestation_state,MIxS,TRUE,FALSE,FALSE,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0
+glucosidase_act,glucosidase act,,package,alphanumeric,glucosidase_act,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,1,0,0,1,0,0,1
+gravidity,gravidity,,package,alphanumeric,gravidity,MIxS,TRUE,FALSE,FALSE,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
+gravity,gravity,,package,alphanumeric,gravity,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0
+growth_hormone_regm,growth hormone regime,,package,alphanumeric,growth_hormone_regm;growth_hormone_regime,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0
+growth_med,growth med,,package,alphanumeric,growth_med,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0
+gynecologic_disord,gynecologic disorder,,package,alphanumeric,gynecologic_disord;gynecologic_disorder,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0
+heat_cool_type,heat cool type,,package,alphanumeric,heat_cool_type,MIxS,TRUE,FALSE,FALSE,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0
+heavy_metals,heavy metals,,package,alphanumeric,heavy_metals,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
+heavy_metals_meth,heavy metals method,,package,alphanumeric,heavy_metals_meth;heavy_metals_method,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
+herbicide_regm,herbicide regime,,package,alphanumeric,herbicide_regm;herbicide_regime,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0
+horizon,horizon,,package,alphanumeric,horizon,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
+horizon_meth,horizon method,,package,alphanumeric,horizon_meth;horizon_method,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
+host_age,host age,,package,alphanumeric,host_age,MIxS,TRUE,FALSE,FALSE,0,0,0,1,1,1,1,1,1,0,0,1,0,0,0,0
+host_blood_press_diast,host blood press diast,,package,alphanumeric,host_blood_press_diast,MIxS,TRUE,FALSE,FALSE,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
+host_blood_press_syst,host blood press syst,,package,alphanumeric,host_blood_press_syst,MIxS,TRUE,FALSE,FALSE,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
+host_body_habitat,host body habitat,,package,alphanumeric,host_body_habitat,MIxS,TRUE,FALSE,FALSE,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
+host_body_mass_index,host body mass index,,package,alphanumeric,host_body_mass_index,MIxS,TRUE,FALSE,FALSE,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0
+host_body_product,host body product,,package,alphanumeric,host_body_product,MIxS,TRUE,FALSE,FALSE,0,0,0,1,1,1,1,1,1,0,0,0,0,0,0,0
+host_body_site,host body site,,package,alphanumeric,host_body_site,MIxS,TRUE,FALSE,FALSE,0,0,0,1,1,1,1,1,1,0,0,0,0,0,0,0
+host_body_temp,host body temp,,package,degreesCelcius,host_body_temp,MIxS,TRUE,FALSE,FALSE,0,0,0,1,1,1,1,1,1,0,0,0,0,0,0,0
+host_color,host color,,package,alphanumeric,host_color,MIxS,TRUE,FALSE,FALSE,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
+host_common_name,host common name,,package,alphanumeric,host_common_name,MIxS,TRUE,FALSE,FALSE,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0
+host_diet,host diet,,package,alphanumeric,host_diet,MIxS,TRUE,FALSE,FALSE,0,0,0,1,1,1,1,1,1,0,0,0,0,0,0,0
+host_disease_stat,host disease stat,,package,alphanumeric,host_disease_stat,MIxS,TRUE,FALSE,FALSE,0,0,0,1,1,1,1,1,1,0,0,1,0,0,0,0
+host_dry_mass,host dry mass,,package,alphanumeric,host_dry_mass,MIxS,TRUE,FALSE,FALSE,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0
+host_family_relationship,host family relationship,,package,alphanumeric,host_family_relationship,MIxS,TRUE,FALSE,FALSE,0,0,0,1,1,1,1,1,1,0,0,0,0,0,0,0
+host_genotype,host genotype,,package,alphanumeric,host_genotype,MIxS,TRUE,FALSE,FALSE,0,0,0,1,1,1,1,1,1,0,0,1,0,0,0,0
+host_growth_cond,host growth conditions,,package,alphanumeric,host_growth_cond;host_growth_conditions,MIxS,TRUE,FALSE,FALSE,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
+host_height,host height,,package,alphanumeric,host_height,MIxS,TRUE,FALSE,FALSE,0,0,0,1,1,1,1,1,1,0,0,1,0,0,0,0
+host_hiv_stat,host hiv status,,package,alphanumeric,host_hiv_stat;host_hiv_status,MIxS,TRUE,FALSE,FALSE,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0
+host_infra_specific_name,host infra-specific name,,package,alphanumeric,host_infra_specific_name,MIxS,TRUE,FALSE,FALSE,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0
+host_infra_specific_rank,host infra-specific rank,,package,alphanumeric,host_infra_specific_rank,MIxS,TRUE,FALSE,FALSE,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0
+host_last_meal,host last meal,,package,alphanumeric,host_last_meal,MIxS,TRUE,FALSE,FALSE,0,0,0,1,1,1,1,1,1,0,0,0,0,0,0,0
+host_length,host length,,package,alphanumeric,host_length,MIxS,TRUE,FALSE,FALSE,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0
+host_life_stage,host life stage,,package,alphanumeric,host_life_stage,MIxS,TRUE,FALSE,FALSE,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0
+host_occupation,host occupation,,package,alphanumeric,host_occupation,MIxS,TRUE,FALSE,FALSE,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0
+host_phenotype,host phenotype,,package,alphanumeric,host_phenotype,MIxS,TRUE,FALSE,FALSE,0,0,0,1,1,1,1,1,1,0,0,1,0,0,0,0
+host_pulse,host pulse,,package,alphanumeric,host_pulse,MIxS,TRUE,FALSE,FALSE,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0
+host_sex,host sex,,package,alphanumeric,host_sex,MIxS,TRUE,FALSE,FALSE,0,0,0,1,1,1,1,1,1,0,0,0,0,0,0,0
+host_shape,host shape,,package,alphanumeric,host_shape,MIxS,TRUE,FALSE,FALSE,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
+host_subject_id,host subject id,,package,alphanumeric,host_subject_id,MIxS,TRUE,FALSE,FALSE,0,0,0,1,1,1,1,1,1,0,0,0,0,0,0,0
+host_substrate,host substrate,,package,alphanumeric,host_substrate,MIxS,TRUE,FALSE,FALSE,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
+host_taxid,host taxid,,package,alphanumeric,host_taxid,MIxS,TRUE,FALSE,FALSE,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0
+host_tot_mass,host tot mass,,package,alphanumeric,host_tot_mass,MIxS,TRUE,FALSE,FALSE,0,0,0,1,1,1,1,1,1,0,0,1,0,0,0,0
+host_wet_mass,host wet mass,,package,alphanumeric,host_wet_mass,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0
+hrt,hrt,,package,alphanumeric,hrt,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0
+humidity,humidity,,package,alphanumeric,humidity,MIxS,TRUE,FALSE,FALSE,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+humidity_regm,humidity regime,,package,alphanumeric,humidity_regm;humidity_regime,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0
+hysterectomy,hysterectomy,,package,alphanumeric,hysterectomy,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0
+ihmc_ethnicity,ihmc ethnicity,,package,alphanumeric,ihmc_ethnicity,MIxS,TRUE,FALSE,FALSE,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0
+ihmc_medication_code,ihmc medication code,,package,alphanumeric,ihmc_medication_code,MIxS,TRUE,FALSE,FALSE,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0
+indoor_space,indoor space,,package,alphanumeric,indoor_space,MIxS,TRUE,FALSE,FALSE,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0
+indoor_surf,indoor surf,,package,alphanumeric,indoor_surf,MIxS,TRUE,FALSE,FALSE,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0
+indust_eff_percent,indust eff percent,,package,alphanumeric,indust_eff_percent,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0
+inorg_particles,inorganic particles,,package,alphanumeric,inorg_particles;inorganic_particles,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0
+kidney_disord,kidney disord,,package,alphanumeric,kidney_disord,MIxS,TRUE,FALSE,FALSE,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0
+light_intensity,light intensity,,package,alphanumeric,light_intensity,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
+light_type,light type,,package,alphanumeric,light_type,MIxS,TRUE,FALSE,FALSE,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0
+link_addit_analys,link addit analys,,package,alphanumeric,link_addit_analys,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
+link_class_info,link class info,,package,alphanumeric,link_class_info,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
+link_climate_info,link climate info,,package,alphanumeric,link_climate_info,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
+liver_disord,liver disord,,package,alphanumeric,liver_disord,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0
+local_class,local class,,package,alphanumeric,local_class,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
+local_class_meth,local class method,,package,alphanumeric,local_class_meth;local_class_method,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
+magnesium,magnesium,,package,alphanumeric,magnesium,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,1,0,0,1,0,0,1
+maternal_health_stat,maternal health status,,package,alphanumeric,maternal_health_stat;maternal_health_status,MIxS,TRUE,FALSE,FALSE,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0
+mean_frict_vel,mean frict vel,,package,alphanumeric,mean_frict_vel,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,1,0,0,1,0,0,1
+mean_peak_frict_vel,mean peak frict vel,,package,alphanumeric,mean_peak_frict_vel,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,1,0,0,1,0,0,1
+mechanical_damage,mechanical damage,,package,alphanumeric,mechanical_damage,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0
+medic_hist_perform,medic hist perform,,package,alphanumeric,medic_hist_perform,MIxS,TRUE,FALSE,FALSE,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0
+menarche,menarche,,package,alphanumeric,menarche,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0
+menopause,menopause,,package,alphanumeric,menopause,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0
+methane,methodane,,package,alphanumeric,methane,MIxS,TRUE,FALSE,FALSE,0,1,0,0,0,0,0,0,0,1,0,0,1,0,0,0
+microbial_biomass,microbial biomass,,package,alphanumeric,microbial_biomass,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
+microbial_biomass_meth,microbial biomass method,,package,alphanumeric,microbial_biomass_meth;microbial_biomass_method,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
+mineral_nutr_regm,mineral nutr regime,,package,alphanumeric,mineral_nutr_regm;mineral_nutr_regime,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0
+misc_param,miscellaneous parameter,dynamicProperties,package,alphanumeric,misc_param;miscellaneous_parameter,MIxS,TRUE,FALSE,FALSE,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+n_alkanes,n alkanes,,package,alphanumeric,n_alkanes,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,1,0,0,1,0,0,1
+nitrate,nitrate,,package,alphanumeric,nitrate;NO3,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,1,1,0,1,0,1,1
+nitrite,nitrite,,package,alphanumeric,nitrite;NO2,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,1,1,0,1,0,0,1
+nitro,nitrogen,,package,alphanumeric,nitro;nitrogen,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,1,1,0,1,0,0,1
+non_mineral_nutr_regm,non mineral nutr regime,,package,alphanumeric,non_mineral_nutr_regm;non_mineral_nutr_regime,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0
+nose_mouth_teeth_throat_disord,nose mouth teeth throat disord,,package,alphanumeric,nose_mouth_teeth_throat_disord,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0
+nose_throat_disord,nose throat disord,,package,alphanumeric,nose_throat_disord,MIxS,TRUE,FALSE,FALSE,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0
+occup_samp,occup samp,,package,alphanumeric,occup_samp,MIxS,TRUE,FALSE,FALSE,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0
+occupant_dens_samp,occupant dens samp,,package,alphanumeric,occupant_dens_samp,MIxS,TRUE,FALSE,FALSE,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0
+org_carb,organic carbon,,package,alphanumeric,org_carb;organic_carbon;organic_C;org_carb;carbon;total_organic_carbon,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,1,1,0,1,0,0,1
+org_matter,organic matter,,package,alphanumeric,org_matter;organic_matter,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,1,1,0,1,0,0,1
+org_nitro,organic nitrogen,,package,alphanumeric,org_nitro;organic_nitrogen,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,1,1,0,1,0,0,1
+org_particles,organic particles,,package,alphanumeric,org_particles;organic_particles,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0
+organism_count,organism count,,package,alphanumeric,organism_count,MIxS,TRUE,FALSE,FALSE,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+oxy_stat_samp,oxygen status sample,,package,alphanumeric,oxy_stat_samp;oxygen_status_sample,MIxS,TRUE,FALSE,FALSE,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+oxygen,oxygen,,package,alphanumeric,oxygen,MIxS,TRUE,FALSE,FALSE,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+part_org_carb,particular organic carbon,,package,alphanumeric,part_org_carb;particular_organic_carbon,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,1,0,0,1,0,0,1
+part_org_nitro,particular organic nitrogen,,package,alphanumeric,part_org_nitro;particular_organic_nitrogen,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
+particle_class,particle class,,package,alphanumeric,particle_class,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0
+perturbation,perturbation,,package,alphanumeric,perturbation,MIxS,TRUE,FALSE,FALSE,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+pesticide_regm,pesticide regime,,package,alphanumeric,pesticide_regm;pesticide_regime,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0
+pet_farm_animal,pet farm animal,,package,alphanumeric,pet_farm_animal,MIxS,TRUE,FALSE,FALSE,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0
+petroleum_hydrocarb,petroleum hydrocarbon,,package,alphanumeric,petroleum_hydrocarb,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,1,0,0,1,0,0,1
+ph,ph,,package,log(H+),ph,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,1,1,0,1,1,1,1
+ph_meth,ph method,,package,alphanumeric,ph_meth;ph_method,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
+ph_regm,ph regime,,package,alphanumeric,ph_regm;ph_regime,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0
+phaeopigments,phaeopigments,,package,alphanumeric,phaeopigments,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,1,0,0,1,0,0,1
+phosphate,phosphorhate,,package,alphanumeric,phosphate,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,1,1,0,1,0,1,1
+phosplipid_fatt_acid,phosphorlipid fatt acid,,package,alphanumeric,phosplipid_fatt_acid,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,1,1,0,1,0,0,1
+photon_flux,photon flux,,package,alphanumeric,photon_flux,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
+plant_body_site,plant body site,,package,alphanumeric,plant_body_site,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0
+plant_product,plant product,,package,alphanumeric,plant_product,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0
+pollutants,pollutants,,package,alphanumeric,pollutants,MIxS,TRUE,FALSE,FALSE,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+pool_dna_extracts,pool dna extracts,,package,alphanumeric,pool_dna_extracts,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
+porosity,porosity,,package,alphanumeric,porosity,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0
+potassium,potassium,,package,alphanumeric,potassium,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,1,0,1,0,0,1
+pre_treatment,pre treatment,,package,alphanumeric,pre_treatment,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0
+pregnancy,pregnancy,,package,alphanumeric,pregnancy,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0
+pressure,pressure,,package,alphanumeric,pressure,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,1,1,0,1,0,0,1
+previous_land_use,previous land use,,package,alphanumeric,previous_land_use,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
+previous_land_use_meth,previous land use method,,package,alphanumeric,previous_land_use_meth;previous_land_use_method,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
+primary_prod,primary production,,package,alphanumeric,primary_prod;primary_production,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
+primary_treatment,primary treatment,,package,alphanumeric,primary_treatment,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0
+profile_position,profile position,,package,alphanumeric,profile_position,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
+pulmonary_disord,pulmonary disord,,package,alphanumeric,pulmonary_disord,MIxS,TRUE,FALSE,FALSE,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0
+radiation_regm,radiation regime,,package,alphanumeric,radiation_regm;radiation_regime,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0
+rainfall_regm,rainfall regime,,package,alphanumeric,rainfall_regm;rainfall_regime,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0
+reactor_type,reactor type,,package,alphanumeric,reactor_type,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0
+redox_potential,redox potential,,package,alphanumeric,redox_potential,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,1,0,0,1,0,0,1
+rel_air_humidity,relative air humidity,,package,alphanumeric,rel_air_humidity;relative_air_humidity,MIxS,TRUE,FALSE,FALSE,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0
+resp_part_matter,resp part matter,,package,alphanumeric,resp_part_matter,MIxS,TRUE,FALSE,FALSE,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+salinity,salinity,,package,alphanumeric,salinity,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,1,1,0,1,0,0,1
+salinity_meth,salinity method,,package,alphanumeric,salinity_meth;salinity_method,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
+salt_regm,salt regime,,package,alphanumeric,salt_regm;salt_regime,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0
+samp_salinity,samp salinity,,package,alphanumeric,samp_salinity,MIxS,TRUE,FALSE,FALSE,0,1,0,1,1,1,1,1,1,0,0,1,0,0,1,0
+samp_sort_meth,samp sort method,,package,alphanumeric,samp_sort_meth;samp_sort_method,MIxS,TRUE,FALSE,FALSE,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0
+samp_store_dur,samp store dur,,package,alphanumeric,samp_store_dur;sample_storage_duration,MIxS,TRUE,FALSE,FALSE,0,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1
+samp_store_loc,samp store loc,,package,alphanumeric,samp_store_loc;sample_storage_location,MIxS,TRUE,FALSE,FALSE,0,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1
+samp_store_temp,samp store temp,,package,degreesCelcius,samp_store_temp;sample_storage_temperature,MIxS,TRUE,FALSE,FALSE,0,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1
+samp_vol_we_dna_ext,samp vol we dna ext,,package,alphanumeric,samp_vol_we_dna_ext;sample_weight_for_dna_extraction;sample_volume_for_dna_extraction;sample_weight_or_volume_for_dna_extraction,MIxS,TRUE,FALSE,FALSE,0,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1
+season_environment,season environment,,package,alphanumeric,season_environment,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0
+secondary_treatment,secondary treatment,,package,alphanumeric,secondary_treatment,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0
+sediment_type,sediment type,,package,alphanumeric,sediment_type,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0
+sewage_type,sewage type,,package,alphanumeric,sewage_type,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0
+sexual_act,sexual act,,package,alphanumeric,sexual_act,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0
+sieving,sieving,,package,alphanumeric,sieving,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
+silicate,silicate,,package,alphanumeric,silicate,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,1,1,0,1,0,0,1
+slope_aspect,slope aspect,,package,alphanumeric,slope_aspect,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
+slope_gradient,slope gradient,,package,alphanumeric,slope_gradient,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
+sludge_retent_time,sludge retent time,,package,alphanumeric,sludge_retent_time,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0
+smoker,smoker,,package,alphanumeric,smoker,MIxS,TRUE,FALSE,FALSE,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0
+sodium,sodium,,package,alphanumeric,sodium,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,1,1,0,1,0,1,1
+soil_type,soil type,,package,alphanumeric,soil_type,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
+soil_type_meth,soil type method,,package,alphanumeric,soil_type_meth;soil_type_method,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
+solar_irradiance,solar irradiance,,package,alphanumeric,solar_irradiance,MIxS,TRUE,FALSE,FALSE,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+soluble_inorg_mat,soluble inorganic material,,package,alphanumeric,soluble_inorg_mat;soluble_inorganic_material,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0
+soluble_org_mat,soluble organic material,,package,alphanumeric,soluble_org_mat;soluble_organic_material,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0
+soluble_react_phosp,soluble reactive phosphor,,package,alphanumeric,soluble_react_phosp;soluble_reactive_phosphor,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
+space_typ_state,space type state,,package,alphanumeric,space_typ_state,MIxS,TRUE,FALSE,FALSE,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0
+special_diet,special diet,,package,alphanumeric,special_diet,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0
+standing_water_regm,standing water regime,,package,alphanumeric,standing_water_regm;standing_water_regime,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0
+store_cond,storeage conditions,,package,alphanumeric,store_cond;storeage_conditions,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
+study_complt_stat,study complt stat,,package,alphanumeric,study_complt_stat,MIxS,TRUE,FALSE,FALSE,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0
+substructure_type,substructure type,,package,alphanumeric,substructure_type,MIxS,TRUE,FALSE,FALSE,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0
+sulfate,sulfate,,package,alphanumeric,sulfate,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,1,1,0,1,0,0,1
+sulfide,sulfide,,package,alphanumeric,sulfide,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,1,1,0,1,0,0,1
+surf_air_cont,surface air conditions,,package,alphanumeric,surf_air_cont;surface_air_conditions,MIxS,TRUE,FALSE,FALSE,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0
+surf_humidity,surface humidity,,package,alphanumeric,surf_humidity;surface_humidity,MIxS,TRUE,FALSE,FALSE,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0
+surf_material,surface material,,package,alphanumeric,surf_material;surface_material,MIxS,TRUE,FALSE,FALSE,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0
+surf_moisture,surface moisture,,package,alphanumeric,surf_moisture;surface_moisture,MIxS,TRUE,FALSE,FALSE,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0
+surf_moisture_ph,surface moisture ph,,package,alphanumeric,surf_moisture_ph;surface_moisture_ph,MIxS,TRUE,FALSE,FALSE,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0
+surf_temp,surface temperature,,package,degreesCelcius,surf_temp;surface_temperature,MIxS,TRUE,FALSE,FALSE,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0
+suspend_part_matter,suspend particular matter,,package,alphanumeric,suspend_part_matter;suspend_particular_matter,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
+suspend_solids,suspend solids,,package,alphanumeric,suspend_solids,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0
+temp,temperature,,package,degreesCelcius,temp;temperature;temp_c;temperature_c;tempc;temperaturec,MIxS,TRUE,FALSE,FALSE,0,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1
+tertiary_treatment,tertiary treatment,,package,alphanumeric,tertiary_treatment,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0
+texture,texture,,package,alphanumeric,texture,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
+texture_meth,texture method,,package,alphanumeric,texture_meth;texture_method,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
+tidal_stage,tidal stage,,package,alphanumeric,tidal_stage,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1
+tillage,tillage,,package,alphanumeric,tillage,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
+time_last_toothbrush,time last toothbrush,,package,alphanumeric,time_last_toothbrush,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0
+time_since_last_wash,time since last wash,,package,alphanumeric,time_since_last_wash,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0
+tiss_cult_growth_med,tissue culture growth method,,package,alphanumeric,tiss_cult_growth_med;tissue_culture_growth_method,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0
+tot_carb,total carbon,,package,alphanumeric,tot_carb;total_carbon,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,1,0,0,1,0,0,0
+tot_depth_water_col,total depth water column,,package,alphanumeric,tot_depth_water_col;total_depth_water_column,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
+tot_diss_nitro,total dissolved nitrogen,,package,alphanumeric,tot_diss_nitro;total_dissolved_nitrogen,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
+tot_inorg_nitro,total inorganic nitrogen,,package,alphanumeric,tot_inorg_nitro;total_inorganic_nitrogen,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
+tot_n_meth,total nitrogen method,,package,alphanumeric,tot_n_meth;total_nitrogen_method,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
+tot_nitro,total nitrogen,,package,alphanumeric,tot_nitro;total_nitrogen,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,1,0,0,1,1,1,1
+tot_org_c_meth,total organic carbon method,,package,alphanumeric,tot_org_c_meth;total_organic_carbon_method,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
+tot_org_carb,total organic carbon,,package,alphanumeric,tot_org_carb;total_organic_carbon,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,1,0,0,1,1,0,0
+tot_phosp,total phosphor,,package,alphanumeric,tot_phosp;total_phosphor,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
+tot_phosphate,total phosphorhate,,package,alphanumeric,tot_phosphate;total_phosphorhate,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0
+travel_out_six_month,travel out six month,,package,alphanumeric,travel_out_six_month,MIxS,TRUE,FALSE,FALSE,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0
+turbidity,turbidity,,package,alphanumeric,turbidity,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,1,0,0,1,0,0,0
+twin_sibling,twin sibling,,package,alphanumeric,twin_sibling,MIxS,TRUE,FALSE,FALSE,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0
+typ_occupant_dens,typ occupant dens,,package,alphanumeric,typ_occupant_dens,MIxS,TRUE,FALSE,FALSE,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0
+urine_collect_meth,urine collect method,,package,alphanumeric,urine_collect_meth;urine_collect_method,MIxS,TRUE,FALSE,FALSE,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0
+urogenit_disord,urogenit disord,,package,alphanumeric,urogenit_disord,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0
+urogenit_tract_disor,urogenit tract disor,,package,alphanumeric,urogenit_tract_disor,MIxS,TRUE,FALSE,FALSE,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0
+ventilation_rate,ventilation rate,,package,alphanumeric,ventilation_rate,MIxS,TRUE,FALSE,FALSE,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+ventilation_type,ventilation type,,package,alphanumeric,ventilation_type,MIxS,TRUE,FALSE,FALSE,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0
+volatile_org_comp,volatile organic compoundss,,package,alphanumeric,volatile_org_comp;volatile_organic_compoundss,MIxS,TRUE,FALSE,FALSE,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+wastewater_type,wastewater type,,package,alphanumeric,wastewater_type,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0
+water_content,water content,,package,alphanumeric,water_content,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,1,0,0,1,1,0,0
+water_content_soil_meth,water content soil method,,package,alphanumeric,water_content_soil_meth;water_content_soil_method,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0
+water_current,water current,,package,alphanumeric,water_current,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1
+water_temp_regm,water temp regime,,package,degreesCelcius,water_temp_regm;water_temp_regime,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0
+watering_regm,watering regime,,package,alphanumeric,watering_regm;watering_regime,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0
+weight_loss_3_month,weight loss 3 month,,package,alphanumeric,weight_loss_3_month,MIxS,TRUE,FALSE,FALSE,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0
+wind_direction,wind direction,,package,alphanumeric,wind_direction,MIxS,TRUE,FALSE,FALSE,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+wind_speed,wind speed,,package,alphanumeric,wind_speed,MIxS,TRUE,FALSE,FALSE,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+biotic_relationship,biotic relationship,,nucleic_acid_sequence_source,alphanumeric,biotic_relationship,MIxS,TRUE,FALSE,FALSE,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+encoded_traits,encoded traits,,nucleic_acid_sequence_source,alphanumeric,encoded_traits,MIxS,TRUE,FALSE,FALSE,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+estimated_size,estimated size,,nucleic_acid_sequence_source,alphanumeric,estimated_size,MIxS,TRUE,FALSE,FALSE,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+extrachrom_elements,extrachromosomal elements,,nucleic_acid_sequence_source,alphanumeric,extrachrom_elements,MIxS,TRUE,FALSE,FALSE,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+health_disease_stat,health disease stat,,nucleic_acid_sequence_source,alphanumeric,health_disease_stat,MIxS,TRUE,FALSE,FALSE,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+host_spec_range,host spec range,,nucleic_acid_sequence_source,alphanumeric,host_spec_range,MIxS,TRUE,FALSE,FALSE,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+isol_growth_condt,isolation and growth condition,,nucleic_acid_sequence_source,alphanumeric,isol_growth_condt;isolation_and_growth_condition,MIxS,TRUE,FALSE,FALSE,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+num_replicons,number of replicons,,nucleic_acid_sequence_source,alphanumeric,num_replicons;number_of_replicons,MIxS,TRUE,FALSE,FALSE,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+pathogenicity,pathogenicity,,nucleic_acid_sequence_source,alphanumeric,pathogenicity,MIxS,TRUE,FALSE,FALSE,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+ploidy,ploidy,,nucleic_acid_sequence_source,alphanumeric,ploidy,MIxS,TRUE,FALSE,FALSE,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+propagation,propagation,,nucleic_acid_sequence_source,alphanumeric,propagation,MIxS,TRUE,FALSE,FALSE,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+ref_biomaterial,reference for biomaterial,,nucleic_acid_sequence_source,alphanumeric,ref_biomaterial;reference_for_biomaterial,MIxS,TRUE,FALSE,FALSE,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+rel_to_oxygen,relationship to oxygen,,nucleic_acid_sequence_source,alphanumeric,rel_to_oxygen;relationship_to_oxygen,MIxS,TRUE,FALSE,FALSE,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+samp_collect_device,sample collection device,,nucleic_acid_sequence_source,alphanumeric,samp_collect_device;sample_collection_device,MIxS,TRUE,FALSE,FALSE,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+samp_mat_process,sample material process,,nucleic_acid_sequence_source,alphanumeric,samp_mat_process;sample_material_process,MIxS,TRUE,FALSE,FALSE,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+samp_size,sample size,,nucleic_acid_sequence_source,,samp_size;sample_size;amount_or_size_of_sample_collected,MIxS,TRUE,FALSE,FALSE,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+source_mat_id,source mat id,,nucleic_acid_sequence_source,alphanumeric,source_mat_id;title;source_material_id,MIxS,TRUE,FALSE,FALSE,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+specific_host,specific host,,nucleic_acid_sequence_source,alphanumeric,specific_host;host,MIxS,TRUE,FALSE,FALSE,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+subspecf_gen_lin,common_name,,nucleic_acid_sequence_source,alphanumeric,subspecf_gen_lin;common_name,MIxS,TRUE,FALSE,FALSE,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+trophic_level,trophic level,,nucleic_acid_sequence_source,alphanumeric,trophic_level,MIxS,TRUE,FALSE,FALSE,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+density,density,,miscellaneous_natural_or_artificial_environment,alphanumeric,density,MIxS,TRUE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,1,0,1,0,0,1
+additional_mid,,,miscellaneous,alphanumeric,additional_mid,miscellaneous,FALSE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+bacteria_count,,,miscellaneous,alphanumeric,bacteria_count;organism_count,miscellaneous,FALSE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+bioproject,,,miscellaneous,alphanumeric,bioproject,INSDC,FALSE,FALSE,TRUE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+biosample,,,miscellaneous,alphanumeric,biosample,INSDC,FALSE,FALSE,TRUE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+bottle,,,miscellaneous,alphanumeric,bottle,miscellaneous,FALSE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+carbon_14,,,miscellaneous,alphanumeric,carbon_14,miscellaneous,FALSE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+cast,,,miscellaneous,alphanumeric,cast,miscellaneous,FALSE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+decimalLatitude,geographic location (latitude),decimalLatitude,miscellaneous,decimalCoordinates,latitude;decimallatitude;decimal_latitude;latitude_end;geographic_location_latitude;lat,DwC,FALSE,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+decimalLongitude,geographic location (longitude),decimalLongitude,miscellaneous,decimalCoordinates,longitude;decimallongitude;decimal_longitude;longitude_end;geographic_location_longitude;lon;long,DwC,FALSE,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+event,,event,miscellaneous,alphanumeric,event,DwC,FALSE,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+eventID,,eventID,,,eventid,DwC,FALSE,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+eventRemarks,,eventRemarks,miscellaneous,alphanumeric,eventremarks,DwC,FALSE,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+locality,,locality,miscellaneous,alphanumeric,locality;geographic_location_region_and_locality;geo_loc_name_locality,DwC,FALSE,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+parentEvent,,parentEvent,miscellaneous,alphanumeric,parentevent,DwC,FALSE,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+parentEventID,,parentEventID,miscellaneous,alphanumeric,parenteventid,DwC,FALSE,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+occurenceID,,occurenceID,miscellaneous,alphanumeric,occurenceid,DwC,FALSE,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+filter_size,,,miscellaneous,alphanumeric,filter_size,miscellaneous,FALSE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+forward_primer,,,miscellaneous,alphanumeric,forward_primer,miscellaneous,FALSE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+forward_primer_sequence,,,miscellaneous,alphanumeric,forward_primer_sequence,miscellaneous,FALSE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+genbank_accession_numbers,,,miscellaneous,alphanumeric,genbank_accession_numbers,INSDC,FALSE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+institute,,ownerInstitutionCode,miscellaneous,alphanumeric,institute;centername;ownerinstitutioncode;ownerinstitution,INSDC,FALSE,TRUE,TRUE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+leucine,,,miscellaneous,alphanumeric,leucine,miscellaneous,FALSE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+nitrite_plus_nitrate,,,miscellaneous,alphanumeric,nitrite_plus_nitrate,miscellaneous,FALSE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+number_of_bases_predicted,,,miscellaneous,alphanumeric,number_of_bases_predicted;bases,INSDC,FALSE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+number_of_spots_in_sra,,,miscellaneous,alphanumeric,number_of_spots_in_sra;spots,INSDC,FALSE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+original_name,,,miscellaneous,alphanumeric,original_name;name;samplename;samle_name;samp_name;libraryname;lib;library;alias,INSDC,FALSE,FALSE,TRUE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+reverse_primer,,,miscellaneous,alphanumeric,reverse_primer,miscellaneous,FALSE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+reverse_primer_sequence,,,miscellaneous,alphanumeric,reverse_primer_sequence,miscellaneous,FALSE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+run_type,,,miscellaneous,alphanumeric,run_type;librarylayout,INSDC,FALSE,FALSE,TRUE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+sra_experiment,,,miscellaneous,alphanumeric,sra_experiment;experiment,INSDC,FALSE,FALSE,TRUE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+sra_number,,,miscellaneous,alphanumeric,sra_number;submission,INSDC,FALSE,FALSE,TRUE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+sra_run_number,,,miscellaneous,alphanumeric,sra_run_number;run,INSDC,FALSE,FALSE,TRUE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+sra_sample_accession_numbers,,associated_sequences,miscellaneous,alphanumeric,sra_sample_accession_numbers;sample;associated_sequences,INSDC,FALSE,FALSE,TRUE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+sample_description,sample_description,,miscellaneous,alphanumeric,sample_description;description,miscellaneous,FALSE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+scientificName,scientific_name,,miscellaneous,alphanumeric,scientificname;scientific_name,DwC,FALSE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+taxID,tax_id,scientificNameID,miscellaneous,alphanumeric,taxid;scientificnameid,DwC,FALSE,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+env_package,environmental package,,migs_mims_mimarks_extension,alphanumeric,env_package;enviornmental_package;package;ena_checklist,MIxS,TRUE,FALSE,FALSE,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+experimental_factor,experimental factor,,investigation,alphanumeric,experimental_factor;treatment,MIxS,TRUE,FALSE,FALSE,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+investigation_type,investigation type,,investigation,alphanumeric,investigation_type;librarystrategy,MIxS,TRUE,FALSE,FALSE,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+project_name,project name,datasetName,investigation,alphanumeric,project_name;datasetname,MIxS,TRUE,FALSE,FALSE,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+submitted_to_insdc,submitted to insdc,,investigation,boolean,submitted_to_insdc,MIxS,TRUE,FALSE,FALSE,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+alt_elev,altitude elevation,,environment,meter,alt_elev;altitude_elevation,MIxS,TRUE,FALSE,FALSE,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+collection_date,collection date,eventDate,environment,UTC,collection_date;colection_date;event_date_Time;date,MIxS,TRUE,FALSE,FALSE,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+collection_time,,,miscellaneous,UTC,collection_time,miscellaneous,FALSE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+depth,depth,maximumDepthInMeters,environment,meter,depth;geographic_location_depth;maximumdepthinmeters;minimumdepthinmeters;depth_m,MIxS,TRUE,TRUE,FALSE,1,0,0,1,0,0,0,0,0,2,1,1,2,2,1,2
+env_biome,environment (biome),habitat,environment,alphanumeric,env_biome;environment_biome;biome,MIxS,TRUE,TRUE,FALSE,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+env_feature,environment (feature),,environment,alphanumeric,env_feature;environment_feature;environment_featurael;feature,MIxS,TRUE,FALSE,FALSE,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+env_material,environment (material),,environment,alphanumeric,env_material;environment_material;material;isolation_source,MIxS,TRUE,FALSE,FALSE,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+geo_loc_name,geographic location (country and/or sea),,environment,alphanumeric,geo_loc_name;geographic_location_country_and_or_sea;geographic_location_country_and_or_sea_region,MIxS,TRUE,FALSE,FALSE,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+lat_lon,geographic location (latitude and longitude),,environment,decimalCoordinates,lat_lon;geographic_location_latitude_and_longitude;latitude_and_longitude,MIxS,TRUE,FALSE,FALSE,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+alias,alias,,miscellaneous,alphanumeric,alias,INSDC,FALSE,FALSE,TRUE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+INSDC_SampleID,,associatedSequences,miscellaneous,alphanumeric,insdc_sampleid,miscellaneous,FALSE,FALSE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+associatedReferences,,associatedReferences,miscellaneous,alphanumeric,associatedreferences,DwC,FALSE,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+lisence,,lisence,miscellaneous,alphanumeric,lisence,DwC,FALSE,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+rightsHolder,,rightsHolder,miscellaneous,alphanumeric,rightsholder,DwC,FALSE,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+basisOfRecord,,basisOfRecord,miscellaneous,alphanumeric,basisofrecord,DwC,FALSE,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+catalogNumber,,catalogNumber,miscellaneous,alphanumeric,catalognumber,DwC,FALSE,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+otherCatalogNumbers,,otherCatalogNumbers,miscellaneous,alphanumeric,othercatalognumbers,DwC,FALSE,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+footprintWKT,,footprintWKT,miscellaneous,alphanumeric,footprintWKT,DwC,FALSE,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+resource_relationship,,resource_relationship,miscellaneous,alphanumeric,resource_relationship,DwC,FALSE,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+parent_sample,,parent_sample,miscellaneous,alphanumeric,parent_sample,DwC,FALSE,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+samplingProtocol,,samplingProtocol,miscellaneous,alphanumeric,samplingProtocol,DwC,FALSE,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+scientificNameID,,scientificNameID,miscellaneous,alphanumeric,scientificnameid,DwC,FALSE,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+acceptedNameUsageID,,acceptedNameUsageID,miscellaneous,alphanumeric,acceptednameusageid,DwC,FALSE,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+parentNameUsageID,,parentNameUsageID,miscellaneous,alphanumeric,parentnameusageid,DwC,FALSE,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+originalNameUsageID,,originalNameUsageID,miscellaneous,alphanumeric,originalnameusageid,DwC,FALSE,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+nameAccordingToID,,nameAccordingToID,miscellaneous,alphanumeric,nameaccordingtoid,DwC,FALSE,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+taxonConceptID,,taxonConceptID,miscellaneous,alphanumeric,taxonconceptid,DwC,FALSE,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+scientificName,,scientificName,miscellaneous,alphanumeric,scientificname,DwC,FALSE,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+nameAccordingTo,,nameAccordingTo,miscellaneous,alphanumeric,nameaccordingto,DwC,FALSE,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+higherClassification,,higherClassification,miscellaneous,alphanumeric,higherclassification,DwC,FALSE,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+kingdom,,kingdom,miscellaneous,alphanumeric,kingdom,DwC,FALSE,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+phylum,,phylum,miscellaneous,alphanumeric,phylum,DwC,FALSE,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+class,,class,miscellaneous,alphanumeric,class,DwC,FALSE,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+order,,order,miscellaneous,alphanumeric,order,DwC,FALSE,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+family,,family,miscellaneous,alphanumeric,family,DwC,FALSE,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+genus,,genus,miscellaneous,alphanumeric,genus,DwC,FALSE,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+subgenus,,subgenus,miscellaneous,alphanumeric,subgenus,DwC,FALSE,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+specificEpithet,,specificEpithet,miscellaneous,alphanumeric,specificepithet,DwC,FALSE,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+infraspecificEpithet,,infraspecificEpithet,miscellaneous,alphanumeric,infraspecificepithet,DwC,FALSE,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+taxonRank,,taxonRank,miscellaneous,alphanumeric,taxonrank,DwC,FALSE,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+scientificNameAuthorship,,scientificNameAuthorship,miscellaneous,alphanumeric,scientificnameauthorship,DwC,FALSE,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+vernacularName,,vernacularName,miscellaneous,alphanumeric,vernacularname,DwC,FALSE,TRUE,FALSE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0

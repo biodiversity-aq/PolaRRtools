@@ -313,11 +313,20 @@ coordinate.to.decimal<-function(val){
   #' @param val a character string. A single latitude or longitude value to be transformed.
   #' @details NSWE as well as degrees, minutes and seconds are recognized and turned into a numeric decimal coordinate value
   
-  degreeSym <- c('°', '\302\260', '\241', "<U+00B0>", "\u00b0", "<c2><b0>", "<U+00C2>", "\u00c2", "\u00c2\u00b0")
-  minSym <- c('\'', '\342\200\262', "'")
-  secSym <- c('\"', '\342\200\263')
-  
   val<-as.character(val)
+  
+  # remove illegal characters:
+  val <- gsub(" ", "", val)[[1]]
+  val <- gsub("~", "", val, fixed=TRUE)[[1]]
+  val <- gsub("%", "", val, fixed=TRUE)[[1]]
+  val <- gsub("$", "", val, fixed=TRUE)[[1]]
+  val <- gsub("#", "", val, fixed=TRUE)[[1]]
+  val <- gsub("*", "", val, fixed=TRUE)[[1]]
+  val <- gsub("ˆ", "", val, fixed=TRUE)[[1]]
+  val <- gsub("?", "", val, fixed=TRUE)[[1]]
+  val <- gsub("!", "", val, fixed=TRUE)[[1]]
+  val <- gsub("ca.", "", val, fixed=TRUE)[[1]]
+  
   Encoding(val)<-"UTF-8"
   
   if(grepl("S|W", val)){
@@ -326,12 +335,41 @@ coordinate.to.decimal<-function(val){
   }else{
     s=1
     val <- gsub("N|E", "", val)[[1]]
-    }
-  val <- gsub(paste(degreeSym, collapse="|"), "DDD", val)[[1]]
-  val <- gsub(paste(minSym, collapse="|"), "MMM", val)[[1]]
-  val <- gsub(paste(secSym, collapse="|"), "SSS", val)[[1]]
-  val <- gsub(" ", "", val)[[1]]
+  }
+  
+  # identify values:
+  # replace all the weird reincarnations of the latitude symbols with something understandable
+  # need to use fixed=T, so can't do it in a single line...
+  # DEGREE == DDD
+  val <- gsub('°', "DDD", val, fixed=TRUE)[[1]]
+  
+  val <- gsub('\302\260', "DDD", val, fixed=TRUE)[[1]]
+  val <- gsub('\241', "DDD", val, fixed=TRUE)[[1]]
+  val <- gsub("\u00b0", "DDD", val, fixed=TRUE)[[1]]
+  val <- gsub("\u00c2", "DDD", val, fixed=TRUE)[[1]]
+  val <- gsub("\u00c2\u00b0", "DDD", val, fixed=TRUE)[[1]]
+  
+  val <- gsub("<U+00B0>", "DDD", val, fixed=TRUE)[[1]]
+  val <- gsub("<U+00C2>", "DDD", val, fixed=TRUE)[[1]]
+  val <- gsub("<c2><b0>>", "DDD", val, fixed=TRUE)[[1]]
 
+  # MINUTE == MMM
+  val <- gsub('\'', "MMM", val, fixed=TRUE)[[1]]
+  val <- gsub("'", "MMM", val, fixed=TRUE)[[1]]
+  
+  val <- gsub('\342\200\262', "MMM", val, fixed=TRUE)[[1]]
+  val <- gsub('\u00b4', "MMM", val, fixed=TRUE)[[1]]
+  
+  val <- gsub('<U+00B4>', "MMM", val, fixed=TRUE)[[1]]
+  
+  
+
+  # SECOND == SSS
+  val <- gsub('\"', "SSS", val, fixed=TRUE)[[1]]
+
+  val <- gsub('\342\200\263', "SSS", val, fixed=TRUE)[[1]]
+
+  # now interpret the values
   if(grepl("DDD", val)){
     degrees <- as.numeric(strsplit(val, "DDD")[[1]][1])
     degrees2 <- strsplit(val, "DDD")[[1]][2]
@@ -352,6 +390,27 @@ coordinate.to.decimal<-function(val){
   }
   return(decimal)
 }
+
+get.boundingBox<-function(latitudes, longitudes){
+  #' @author Maxime Sweetlove CC-BY 4.0 2019
+  #' @description finds the (square) bounding box given decimal latitudes and longitudes
+  #' @usage get.boundingBox(latitudes, longitudes)
+  #' 
+  #' @param latitudes numeric vector. one ore more decimal latitude values
+  #'@param longitudes numeric vector. one ore more decimal longitude values
+
+  latitudes<- as.numeric(latitudes)
+  longitudes<- as.numeric(longitudes)
+  
+  S<-paste("South = ", min(latitudes))
+  N<-paste("North = ", max(latitudes))
+
+  E<-paste("East = ", max(longitudes))
+  W<-paste("West = ", min(longitudes))
+
+  
+  cat(paste(S, "\n", N, '\n\n', W, "\n", E, "\n", sep=""))
+  }
 
 parse.primer.text<-function(primerstring){
   #' @author Maxime Sweetlove CC-BY 4.0 2019
@@ -432,6 +491,25 @@ get.ENAName <- function(variable){
   return(ENAName)
 }
 
+get.insertSize <- function(file_path=NA){
+  #' @author Maxime Sweetlove ccBY 4.0 2020
+  #' @description get.insertSize gets the insert size (i.e. number of bases) of a fastq or fastq.gz file
+  #' @param file_path the file path to the file
+  con <- file(file_path,"r")
+  first_seq <- readLines(con,n=2)
+  close(con)
+  insertSize <- paste("the insert size of the sequences is:   ", nchar(first_seq[[2]]), sep="")
+  return(insertSize)
+}
+
+unicodeHex.to.letterApproximation <- function(dataset){
+  #<U+00F6> o
+  #<U+00F8> o
+  #<U+201D> "
+  #<U+2013> -
+}
+
+
 parse.citation <- function(citation){
   #' @author Maxime Sweetlove ccBY 4.0 2019
   #' @description parse.citation splits a character string with a scientific citation into the following components: autors, year, title, journal, issue, volume, pages, dio
@@ -495,10 +573,9 @@ parse.citation <- function(citation){
     # first initial(s), than name
   } else{
     # first name, (then initial(s))
-    authors <- c(authors, ref[1]=ref[2])
+    authors <- c(authors)#, ref[1]=ref[2])
   }
 }
-
 
 
 
