@@ -12,6 +12,18 @@
 # file encdong UTF-8
 #
 #==============================================================
+## ideas to work out: do a QC on the Biome (use : as sep, envo vocab,...)
+#    # assume words of one terms are separated by a " ", ".", and "_" => change this to space
+#Metadata$env_biome <-gsub(".", " ", Metadata$env_biome, fixed=TRUE)
+#Metadata$env_biome <-gsub("_", " ", Metadata$env_biome, fixed=TRUE)
+#Metadata$env_biome<-gsub("\\s+", " ", Metadata$env_biome, fixed=FALSE)
+# change possible hyrarchy separators to ":"
+#Metadata$env_biome <-gsub(",", ":", Metadata$env_biome, fixed=TRUE)
+#Metadata$env_biome<-gsub(">", ":", Metadata$env_biome, fixed=TRUE)
+#Metadata$env_biome<-gsub(";", ":", Metadata$env_biome, fixed=TRUE)
+#Metadata$env_biome<-gsub("|", ":", Metadata$env_biome, fixed=TRUE)
+#Metadata$env_biome<-gsub(":+", ":", Metadata$env_biome, fixed=FALSE)
+
 
 dataQC.dateCheck <- function(dataset, date.colnames=c("date", "Date", "collection_date")){
   #' @author Maxime Sweetlove CC-BY 4.0 2019

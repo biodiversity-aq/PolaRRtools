@@ -1,0 +1,17 @@
+id,name
+1,air
+2,built_environment
+3,host_associated
+4,human_associated
+5,human_gut
+6,human_oral
+7,human_skin
+8,human_vaginal
+9,microbial_mat_biofilm
+10,miscellaneous_natural_or_artificial_environment
+11,plant_associated
+12,sediment
+13,soil
+14,wastewater_sludge
+15,water
+16,not_specified
