@@ -316,6 +316,426 @@ dataQC.guess.env_package.from.data <- function(dataset, pckge.colnames=c("env_pa
   return(list(values=env_package, warningmessages=warningmessages))
 }
 
+dataQC.TermsCheck <- function(observed=NA, exp.standard="MIxS", exp.section=NA, fuzzy.match=TRUE,
+                        out.type="full"){
+  #' @author Maxime Sweetlove ccBY 4.0 2020
+  #' @description checks a set of terms (e.g. columnnames) to a Standard, and flags inconsistencies, gives solutions if possible.
+  #' 
+  #' @usage Check.terms(observed, exp.standard="MIxS", exp.section="core")
+  #' 
+  #' @param observed character vector. The terms to be checked
+  #' @param exp.standard character. The expected standard to which he terms should comply. Either MIxS (Minimum Information on any x sequence), DwC (DarwinCore) or INSDC (International Nucleotide Sequence Database Consortium)
+  #' @param exp.section character. Optionally an specific section standard where the terms should come from. When exp.standard is MIxS, the allowed sections are: core,  air, built_environment, host_associated, human_associated, human_gut, human_oral, human_skin, human_vaginal, microbial_mat_biofilm, miscellaneous_natural_or_artificial_environment, plant_associated, sediment, soil, wastewater_sludge, water. When exp.standard is DwC, the allowed sections are: event, occurence, emof
+  #' @param fuzzy.match logical. If TRUE, fuzzy matching will be done when no corresponding term is found in the Standard
+  #' @param out.type character. The type of the output. Either "full" (the output is a list of three lists: terms_OK=the correct terms, terms_wrongWithSolution = wrong terms with a proposed solution, and terms_notFound = terms that had no match), "logical" (output is logical vector for exact matches or not) or "best_match" (output returns a vector with the best matching terms). default full
+  
+  
+  require(RecordLinkage)
+  
+  MIxS_sections <- c("core",  "air", "built_environment", "host_associated",
+                     "human_associated", "human_gut", "human_oral", "human_skin", 
+                     "human_vaginal", "microbial_mat_biofilm", "sediment", "soil", 
+                     "miscellaneous_natural_or_artificial_environment", "plant_associated", 
+                     "wastewater_sludge", "water")
+  DwC_sections <- c("event", "occurrence", "emof")
+  
+  #chage terms to lowercase: lowers number of possible differences
+  names(observed) <- observed
+  observed <- tolower(observed)
+  
+  # 1. check input
+  if(!tolower(out.type) %in% c("full", "logical", "best_match")){
+    stop("out.type should be either:\n\t \"full\": output will be a list of three lists, with:\n\t\t1) the correct terms\n\t\t2) wrong terms with a solution\n\t\t3) terms that had no match\n\t\"logical\": the output will be a TRUE/FALSE vector\n\t\"best_match\": the output will be the best matching term")
+  }
+  
+  if(!tolower(exp.standard) %in% c("mixs", "dwc", "insdc")){
+    stop("expected standard should be either \"MIxS\", \"DwC\" or \"INSDC\".")
+  }
+  if(tolower(exp.standard) == "mixs"){
+    exp.standard<-"MIxS"
+    if(!(is.na(exp.section)) && !tolower(exp.section) %in% MIxS_sections || length(exp.section)>1){
+      stop(paste("expected section for MIxS should be NA or ONE of the following:\n\t", paste(MIxS_sections, collapse="\n\t"), sep=""))
+    }
+  }
+  if(tolower(exp.standard) == "dwc"){
+    exp.standard<-"DwC"
+    if(!(is.na(exp.section)) && !tolower(exp.section) %in% DwC_sections || length(exp.section)>1){
+      stop(paste("expected section for DwC should be NA or ONE of the following:\n\t", paste(DwC_sections, collapse="\n\t"), sep=""))
+    }
+  }
+  if(tolower(exp.standard) == "insdc"){
+    exp.standard<-"INSDC"
+    exp.section <- NA
+  }
+  
+  # 2. get the right synonym list
+  if(is.na(exp.section)){
+    synonymList <- sapply(as.character(TermsLib[TermsLib$name_origin %in% exp.standard,]$synonyms), function(x){strsplit(x, ";")})
+    names(synonymList) <- TermsLib[TermsLib$name_origin %in% exp.standard,]$name 
+  }else{
+    exp.section <- gsub("^core$", "MIxS_core", exp.section, fixed=FALSE)
+    exp.section <- gsub("^event$", "DwC_Event", exp.section, fixed=FALSE)
+    exp.section <- gsub("^occurrence$", "DwC_Occurrence", exp.section, fixed=FALSE)
+    exp.section <- gsub("^emof$", "DwC_eMoF", exp.section, fixed=FALSE)
+    synonymList <- sapply(as.character(TermsLib[TermsLib[,exp.section] > 0,]$synonyms), function(x){strsplit(x, ";")})
+    names(synonymList) <- TermsLib[TermsLib[,exp.section] > 0,]$name 
+  }
+  
+  # 3. check terms
+  terms_OK <- c()
+  terms_wrongWithSolution <- c()
+  terms_notFound <- c()
+  for(obs_term in observed){
+    obs_termName <- names(observed[grepl(paste("\\b", obs_term, "\\b", sep=""), observed, fixed=FALSE)])
+    # first look for complete matches
+    term_match <- synonymList[grepl(paste("\\b", obs_term, "\\b", sep=""), synonymList, fixed=FALSE)]
+    if(length(term_match)==1){
+      # one complete match
+      if(obs_termName==names(term_match)){
+        # terms is completely OK
+        terms_OK <- c(terms_OK, obs_termName)
+      }else{
+        # term is one of the synonyms
+        solutionNames <- names(terms_wrongWithSolution) #the names are the obsrved terms
+        terms_wrongWithSolution <- c(terms_wrongWithSolution, names(term_match)) #the values are the matching term from the standard
+        names(terms_wrongWithSolution) <- c(solutionNames, obs_termName)
+      }
+    }else{
+      # no match found: check for spelling errors with a fuzzy match
+      if(fuzzy.match){
+        distances <- RecordLinkage::jarowinkler(obs_term, unlist(synonymList)) # caluculate all word distances
+        if(max(distances)>0.85){ #treshold step, not bothering with worse matches
+          dist_mtch <- match(max(distances),distances) #get index of best match
+          if(length(dist_mtch)==1){ #only one match can be best, otherwise need human input
+            dist_mtch <- unlist(synonymList)[dist_mtch] #get term that matched best
+            term_match <- synonymList[grepl(paste("\\b", dist_mtch, "\\b", sep=""), synonymList, fixed=FALSE)]
+            # return best solution
+            solutionNames <- names(terms_wrongWithSolution)
+            terms_wrongWithSolution <- c(terms_wrongWithSolution, names(term_match))
+            names(terms_wrongWithSolution) <- c(solutionNames, obs_termName)
+          }else{
+            terms_notFound <- c(terms_notFound, obs_termName)
+          }
+        }else{
+          terms_notFound <- c(terms_notFound, obs_termName)
+        }
+      }else{
+        terms_notFound <- c(terms_notFound, obs_termName)
+      }
+    }
+  }
+  
+  
+  if(out.type=="full"){
+    out<-list(terms_OK = terms_OK,
+              terms_wrongWithSolution = terms_wrongWithSolution,
+              terms_notFound = terms_notFound)
+  }else if(out.type=="logical"){
+    out <- sapply(observed, function(w){
+      if(w %in% terms_OK){w<-TRUE}else{w<-FALSE}
+    })
+  }else if(out.type=="best_match"){
+    out <- sapply(observed, function(w){
+      if(w %in% terms_wrongWithSolution){w<-names(terms_wrongWithSolution[terms_wrongWithSolution %in% w])
+      }else if(w %in% terms_notFound){w<-NA
+      }else{w}})
+  }
+  
+  
+  return(out)
+}
+
+dataQC.generate.footprintWKT <- function(dataset, NA.val=""){
+  #' @author Maxime Sweetlove ccBY 4.0 2020
+  #' @description generate a footprintWKT column for a dataset (preferably DarwinCore eventCore). Lowest level events must be point locations.
+  #' @param dataset data.frame. A data.frame with Event data, formatted as a DarwinCore EventCore file. Must include decimalLatitude, decimalLongitude, eventID and parentEventID.
+  #' @param NA.val character. What the fill in when there is no data. Default ""
+  #' @usage dataQC.generate.footprintWKT(dataset)
+  #' @details This function will format the geographic coordinates of an event (in the fields decimalLatitude and decimalLongitude) into the WellKnownText format. For events that are at the lowest level of the hierarchy, it assumes a single point location. Higher level events are desribed by polygons based on the coordinates of the child events.
+  require(mapview)
+  if(!"decimalLatitude" %in% colnames(dataset) | 
+     !"decimalLongitude" %in% colnames(dataset) |
+     !"eventID" %in% colnames(dataset)){
+    stop("The data must include the following columns:\n\tdecimalLatitude, decimalLongitude, eventID")
+  }
+  footprintWKT_vec <- c()
+  if("parentEventID" %in% colnames(dataset)){
+    for(ev in dataset$eventID){
+      if(!ev %in% dataset$parentEventID){
+        # in this case the event is at the lowest level, assume it is a point
+        lat<-dataset[dataset$eventID==ev,]$decimalLatitude
+        lon<-dataset[dataset$eventID==ev,]$decimalLongitude
+        if(!is.na(lat) & !is.na(lon) & lat!="" & lon!=""){
+          footprintWKT_vec <- c(footprintWKT_vec, paste("POINT (", as.character(lat), " ", as.character(lon), ")", sep=""))
+        } else{
+          footprintWKT_vec <- c(footprintWKT_vec, NA.val)
+        }
+      }else{
+        # this event is the parent of one or more child events. we need to find all the coordinates of the lowest events under this parent
+        child_ev <- dataset[dataset$parentEventID == ev,]$eventID #the direct descendants
+        doneList<-c()
+        n_added <- length(child_ev)
+        while(! n_added == 0){ #loop through the events to add all the other descendants
+          n_added = 0
+          for(d in child_ev){
+            if(!d %in% doneList){
+              d2 <- dataset[dataset$parentEventID == d,]$eventID
+              doneList <- c(doneList,d)
+              if(length(d2)>0){
+                child_ev<- c(child_ev, d2)
+                n_added <- n_added +1
+              }
+            }
+          }
+        }
+        child_ev <- setdiff(child_ev, unique(dataset$parentEventID))
+        
+        lat<-dataset[dataset$eventID %in% child_ev,]$decimalLatitude
+        lon<-dataset[dataset$eventID %in% child_ev,]$decimalLongitude
+        if(!all(is.na(lat)) & !all(is.na(lon)) & all(lat!="") & all(lon!="")){
+          coords <- as.matrix(data.frame(x=as.numeric(lat), y=as.numeric(lon)))
+          polygx <- mapview::coords2Polygons(coords, hole=FALSE, ID=ev)
+          footprintWKT_vec <- c(footprintWKT_vec, writeWKT(polygx))
+        } else{
+          footprintWKT_vec <- c(footprintWKT_vec, NA.val)
+        }
+      }
+    }
+  }else{
+    footprintWKT_vec <- paste("POINT (", as.character(dataset$decimalLatitude),
+                              ", ", as.character(dataset$decimalLongitude), ")", 
+                              sep="")
+  }
+  
+  footprintWKT_vec <- gsub("POINT (NA NA)", NA.val, footprintWKT_vec, fixed=TRUE)
+  return(footprintWKT_vec)
+  
+}
+
+
+dataQC.eventStructure <- function(dataset, check.parentEventID=TRUE, 
+                                  complete.hierarchy=FALSE, ask.input=TRUE){
+  #' @author Maxime Sweetlove ccBY 4.0 2020
+  #' @description checks if an eventID is present in a (QC'd) dataset, and generates one if not. Does the same of parentEventID if check.parentEventID is TRUE, and check the hierarchical relationships between eventID and parentEventID
+  #' @param dataset data.frame. A data.frame
+  #' @param check.parentEventID logical. If TRUE, the function will check for the presence of a parentEventID, and generate one if needed. The hierarchy between the eventIDs and the parentEventIDs is then also checked. Default TRUE.
+  #' @param complete.hierarchy logical. If TRUE, the event-parentEvent hierarchy structure will be completed upt to a root. Any parentEvents that are not listed among the eventIDs will also be created. Default FALSE.
+  #' @param ask.input logical. If TRUE, console input will be requested to the user when a problem occurs. Default TRUE
+  
+  #' @usage dataQC.eventStructure(dataset, check.parentEventID=TRUE, complete.hierarchy=FALSE, ask.input=TRUE)
+  
+  require(stringr)
+  eventIDs<-c()
+  parentEventIDs<-c()
+  
+  eventTable <- data.frame(eventID=rep(NA, nrow(dataset)), 
+                           original_event=rep(TRUE, nrow(dataset)),
+                           project=rep(NA, nrow(dataset)))
+  rownames(eventTable)<-rownames(dataset)
+  
+  if(complete.hierarchy & !check.parentEventID){
+    warning("complete.hierarchy is meaningless without checking the parentEventID column.")
+  }
+  
+  # 1. check for the presence of eventID, if not, try to generate one
+  if("eventID" %in% colnames(dataset)){
+    eventTable$eventID <- dataset$eventID
+    # QC the eventIDs: they have to be unique
+    if(length(unique(eventTable$eventID)) != nrow(dataset)){
+      if(dealWithErrors){
+        # make the eventIDs unique
+        eventTable$eventID <- make.names(eventTable$eventID, unique=TRUE)
+      }else{
+        stop("Some eventIDs were not unique.")
+      }
+    }
+  }else{ ## there is no eventID
+    # try to generate an eventID from sample names (but these have to be unique with non-missing values)
+    for(attempt in c("original_name", "INSDC_SampleID", "sra_run_number", 
+                     "genbank_accession_numbers")){
+      if(attempt %in% colnames(dataset)){
+        if(length(unique(dataset[,attempt]))==nrow(dataset) & 
+           !any(is.na(dataset[,attempt])) & 
+           !any(dataset[,attempt]=="")){
+          eventTable$eventID <- dataset[,attempt]
+          if(attempt!="original_name"){
+            eventTable$eventID <- paste("INSDC:", eventTable$eventID, sep="")
+          }
+          break
+        }
+      }
+    }
+    if(all(is.na(eventTable$eventID))){
+      # if no decent eventID could be found, generate one based on the project name
+      for(attempt in c("biosample", "project_name","bioproject")){
+        if(attempt %in% colnames(dataset)){
+          eventTable$eventID <- dataset[,attempt]
+          eventTable$eventID <- paste(eventTable$eventID, ":E",
+                            stringr::str_pad(1:nrow(dataset), nchar(nrow(dataset)), pad = "0"), 
+                            sep="")
+          eventTable$eventID<-gsub("^:","", eventTable$eventID)
+          eventTable$eventID<-gsub(" ","_", eventTable$eventID)
+          eventTable$eventID<-gsub("-","_", eventTable$eventID)
+          break
+          }
+        }
+    }
+    if(all(is.na(eventTable$eventID))){
+      # still no eventID has been generated, just give it a number
+      if(ask.input){
+        cat("No eventIDs were found.\n\tPlease provide an eventID prefix, or type n to ignore.") 
+        doNext <- readline() 
+        if(!tolower(doNext) %in% c("n")){
+          eventTable$eventID <- paste(doNext, ":E",
+                            stringr::str_pad(1:nrow(dataset), nchar(nrow(dataset)), pad = "0"), 
+                            sep="")
+        }else{
+          eventTable$eventID <- paste("unnamed_event:E",
+                            stringr::str_pad(1:nrow(dataset), nchar(nrow(dataset)), pad = "0"), 
+                            sep="")
+        }
+      }
+    }
+  }
+  
+  # 2. check for the presence of parentEventID, if not present, generate one
+  if(check.parentEventID){
+    if("parentEventID" %in% colnames(dataset)){
+      eventTable$parentEventID <- dataset$parentEventID
+    }else{
+      # generate a parentEventID based on the project name
+      if("project_name" %in% colnames(dataset)){
+        eventTable$parentEventID <- dataset$project_name
+        eventTable$project <- dataset$project_name
+        eventTable$parentEventID<-gsub(" ","_", eventTable$parentEventID)
+        eventTable$parentEventID<-gsub("-","_", eventTable$parentEventID)
+      }
+    }
+  }
+  
+  if(all(is.na(eventTable$parentEventID))){
+    if(ask.input){
+      cat("No parentEventID was found.\n\tPlease provide an one that is equivalent to the scientific project in which the data was generated, or type n to ignore.") 
+      doNext <- readline() 
+      if(!tolower(doNext) %in% c("n")){
+        eventTable$parentEventID<-rep(doNext, nrow(dataset))
+        eventTable$project <- doNext
+      }
+    }else{
+      eventTable$parentEventID<-rep("unnamed_project", nrow(dataset))
+      eventTable$project <- "unnamed_project"
+    }
+  }
+  
+  #try to find a project name, or ask for one
+  if(all(is.na(eventTable$project))){
+    if("project_name" %in% colnames(dataset)){
+      eventTable$project <- dataset$project_name
+    }else if(ask.input){
+      cat("No project name was found.\n\tPlease provide a project name, or type n to ignore.") 
+      doNext <- readline() 
+      if(!tolower(doNext) %in% c("n")){
+        eventTable$project <- doNext
+      }else{
+        eventTable$project <- "unnamed_project"
+      }
+    }
+  }
+  
+  #if there is just one project: this will be the root project
+  #if there are multiple projects: create a root project
+  if(complete.hierarchy){
+    if(length(unique(eventTable$project)==1) && !unique(eventTable$project)==""){
+      PRJ <- unique(eventTable$project)
+    }else if(ask.input){
+      if("" %in% unique(eventTable$project) & length(unique(eventTable$project))>1){
+        cat("Multiple projects found or some sample had no project.\n\tPlease provide an overarching project name that can be used to unite all samples, or type n to ignore.") 
+      }else if("" %in% unique(eventTable$project) & length(unique(eventTable$project))==1){
+        cat("No project found.\n\tPlease provide an overarching project name that can be used to unite all samples, or type n to ignore.") 
+      }else{
+        cat("Multiple projects found.\n\tPlease provide an overarching project name that can be used to unite all samples, or type n to ignore.") 
+      }
+      doNext <- readline() 
+      if(!tolower(doNext) %in% c("n")){
+        PRJ <- doNext
+      }else{
+        PRJ <- "unnamed_project"
+      }
+    }
+    
+    ## complete the event hierarchy
+    # first
+    
+    # then the overarching project
+    PRJ
+    
+    
+    # 6. include higer level events
+    # add any parentEventIDs that are missing from the EventIDs
+    if(length(missing_parents)>0){
+      for(mp in missing_parents){
+        dataset[nrow(dataset)+1,]<-NA
+        rownames(dataset)[nrow(dataset)] <- mp
+        dataset[nrow(dataset),]$eventID <- mp
+        dataset[nrow(dataset),]$parentEventID <- ""
+      }
+    }
+    
+    # use the project as a root to all EventIDs and parentEventIDs
+    if(length(missing_project)>0){
+      if(length(PRJ)>1){
+        PRJ <- "unnamed_project"
+      }
+      dataset[dataset$parentEventID=="","parentEventID"] <- PRJ
+      dataset[nrow(dataset)+1,]<-NA
+      rownames(dataset)[nrow(dataset)] <- "project"
+      dataset[nrow(dataset),]$eventID <- PRJ
+      dataset[nrow(dataset),]$parentEventID <- ""
+    }
+    
+    
+
+    
+    
+  }
+  
+  
+  # 5. check if the EventIDs match the parentEventIDs
+  if(check.parentEventID){
+    missing_project<-c()
+    missing_parents<-c()
+    u_ev <- unique(dataset$eventID)
+    u_pev <- unique(dataset$parentEventID)
+    if(!"" %in% u_pev){
+      missing_project<-c("") #the allows a project-level parent event to be added
+    }else{
+      #check if eventIDs with no parentEvent is also the parent of an event
+      if(!all(dataset[dataset$parentEventID=="",]$eventID %in% dataset$parentEventID)){
+        # if not, a project-level parent can be added
+        missing_project<-c("")
+      }else{
+        if(length(dataset[dataset$parentEventID=="",]$eventID)>1){
+          missing_project<-c("") # multiple high-ranking parents can be united by adding project-level parent
+        }
+      }
+    }
+    if(!all(u_pev[u_pev!=""] %in% u_ev)){
+      missing_parents <- c(setdiff(u_pev, u_ev))
+    }
+  }
+  
+
+  
+
+  
+  if(check.parentEventID){
+    data.out <- dataset[,colnames(dataset) %in% c("eventID", "parentEventID")]
+  }else{
+    data.out <- dataset[,colnames(dataset) %in% c("eventID")]
+  }
+  return(data.out)
+}
+
 
 
 

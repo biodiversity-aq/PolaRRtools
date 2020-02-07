@@ -44,7 +44,7 @@ combine.data.frame <- function(df1, df2, fill=NA, merge.cols=TRUE){
   #' @example
   #' > df1 <- data.frame(col1=c(9,7,5), col2=c("ts",4,3))
   #' > df2 <- data.frame(col2=c(8,6), col3=c(8,7))
-  #' > combine.data.frame(df1, df2, fill=NA, merge.cols=TRUE, merge.rows=FALSE)
+  #' > combine.data.frame(df1, df2, fill=NA, merge.cols=TRUE, merge.by="rownames)
   #'     col1 col2 rowNames col3
   #'1     9    ts        1   NA
   #'2     7    4        2   NA
@@ -68,47 +68,72 @@ combine.data.frame <- function(df1, df2, fill=NA, merge.cols=TRUE){
       df2[,nc] <- as.character(df2[,nc])
     }
   }
+  
   shared_cols <- intersect(colnames(df1), colnames(df2))
   if(merge.cols){
     df11 <- df1[,!colnames(df1) %in% shared_cols, drop=FALSE]
     df22 <- df2[,!colnames(df2) %in% shared_cols, drop=FALSE]
-  }else{df22 <- df2; df11 <- df1}
+  }else{
+    df22 <- df2
+    df11 <- df1
+    if(length(shared_cols)>0){
+      colnames(df22)[colnames(df22) %in% shared_cols] <- paste(colnames(df22)[colnames(df22) %in% shared_cols], "_2", sep="")
+      colnames(df2) <- colnames(df22)
+      shared_cols <- c()
+    }
+  }
   shared_rows <- intersect(rownames(df1), rownames(df2))
-  
-  if(length(shared_rows)>0){ #new column with original rownames
-    df1$original_rowName <- row.names(df1)
-    df2$original_rowName <- row.names(df2)
-    shared_cols<-c(shared_cols, "original_rowName")
-  }
-  
-  if(!ncol(df22)==0){ #if ncol(df22)==0, then df2 has no other colnames than df1
-    df_UpRight <- data.frame(matrix(nrow = nrow(df1), ncol = ncol(df22), data=fill))
-    colnames(df_UpRight) <- colnames(df22)
-    rownames(df_UpRight) <- rownames(df1)
-    df1_b <- cbind(df1, df_UpRight)
-  }else{
-    df1_b <- df1
-  }
-  
-  if(!ncol(df11)==0){
-    df11 <- df1[,!colnames(df1) %in% shared_cols, drop=FALSE]
-    df_DownLeft <- data.frame(matrix(nrow = nrow(df2), ncol = ncol(df11), data=fill))
-    rownames(df_DownLeft) <- rownames(df2)
-    colnames(df_DownLeft) <- colnames(df11)
-    df2_b <- cbind(df_DownLeft, df2)
-  }else{
-    df2_b <- df2
-  }
-  
-  df_out <- data.frame(rbind(df1_b, df2_b))
-  colnames(df_out)<-colnames(df1_b)
-  
+
   if(merge.cols){
+    if(length(shared_rows)>0){ #new column with original rownames
+      df1$original_rowName <- row.names(df1)
+      df2$original_rowName <- row.names(df2)
+      shared_cols<-c(shared_cols, "original_rowName")
+    }
+    
+    if(!ncol(df22)==0){ #if ncol(df22)==0, then df2 has no other colnames than df1
+      df_UpRight <- data.frame(matrix(nrow = nrow(df1), ncol = ncol(df22), data=fill))
+      colnames(df_UpRight) <- colnames(df22)
+      rownames(df_UpRight) <- rownames(df1)
+      df1_b <- cbind(df1, df_UpRight)
+    }else{
+      df1_b <- df1
+    }
+    if(!ncol(df11)==0){
+      df11 <- df1[,!colnames(df1) %in% shared_cols, drop=FALSE]
+      df_DownLeft <- data.frame(matrix(nrow = nrow(df2), ncol = ncol(df11), data=fill))
+      rownames(df_DownLeft) <- rownames(df2)
+      colnames(df_DownLeft) <- colnames(df11)
+      df2_b <- cbind(df_DownLeft, df2)
+    }else{
+      df2_b <- df2
+    }
+    
+    df_out <- data.frame(rbind(df1_b, df2_b))
+    colnames(df_out)<-colnames(df1_b)
+    
     df_out[c((nrow(df1_b)+1):(nrow(df_out))),shared_cols]<-df2[,shared_cols, drop=FALSE]
   }else{
-    if(length(shared_rows)>0){
-      df_out[c((nrow(df1_b)+1):(nrow(df_out))),"rowNames"]<-df2[,"rowNames", drop=FALSE]
+    if(length(setdiff(rownames(df1), shared_rows))>0){
+      df_x <- data.frame(matrix(nrow = nrow(df1)-length(shared_rows), ncol = ncol(df22), data=fill))
+      colnames(df_x) <- colnames(df22)
+      rownames(df_x) <- setdiff(rownames(df1), shared_rows)
+      df_notshared_1 <- cbind(df1[setdiff(rownames(df1), shared_rows),], df_x)
+    }else{
+      df_notshared_1 <- data.frame()
     }
+    if(length(setdiff(rownames(df2), shared_rows))>0){
+      df_x <- data.frame(matrix(nrow = nrow(df2)-length(shared_rows), ncol = ncol(df11), data=fill))
+      colnames(df_x) <- colnames(df11)
+      rownames(df_x) <- setdiff(rownames(df2), shared_rows)
+      df_notshared_1 <- cbind(df_x, df2[setdiff(rownames(df2), shared_rows),])
+    }else{
+      df_notshared_2 <- data.frame()
+    }
+    
+    df_notshared <- rbind(df_notshared_1, df_notshared_2)
+    df_shared <- cbind(df1[shared_rows,], df2[shared_rows,])
+    df_out <- data.frame(rbind(df_shared, df_notshared))
   }
   
   return(df_out)
@@ -322,7 +347,7 @@ coordinate.to.decimal<-function(val){
   val <- gsub("$", "", val, fixed=TRUE)[[1]]
   val <- gsub("#", "", val, fixed=TRUE)[[1]]
   val <- gsub("*", "", val, fixed=TRUE)[[1]]
-  val <- gsub("ˆ", "", val, fixed=TRUE)[[1]]
+  val <- gsub("??", "", val, fixed=TRUE)[[1]]
   val <- gsub("?", "", val, fixed=TRUE)[[1]]
   val <- gsub("!", "", val, fixed=TRUE)[[1]]
   val <- gsub("ca.", "", val, fixed=TRUE)[[1]]
@@ -341,7 +366,7 @@ coordinate.to.decimal<-function(val){
   # replace all the weird reincarnations of the latitude symbols with something understandable
   # need to use fixed=T, so can't do it in a single line...
   # DEGREE == DDD
-  val <- gsub('°', "DDD", val, fixed=TRUE)[[1]]
+  val <- gsub('??', "DDD", val, fixed=TRUE)[[1]]
   
   val <- gsub('\302\260', "DDD", val, fixed=TRUE)[[1]]
   val <- gsub('\241', "DDD", val, fixed=TRUE)[[1]]
@@ -516,26 +541,26 @@ parse.citation <- function(citation){
   #' @param citation character string. A bibliographic citation, scientific reference
   #' @return a list with the autors, year, title, journal, issue, volume, pages and dio
   
-  ref <- "Wiles, T. J., & Guillemin, K. J. (2020). Zebrafish as a Model for Investigating Animal–Microbe Interactions. In The Zebrafish in Biomedical Research (pp. 627-635). Academic Press."
+  ref <- "Wiles, T. J., & Guillemin, K. J. (2020). Zebrafish as a Model for Investigating Animal???Microbe Interactions. In The Zebrafish in Biomedical Research (pp. 627-635). Academic Press."
 
   test <- bibentry(ref, bibtype="Article")
   format(test, "text")
   print(test, style = "citation")
   
   ## MLA
-  # Wiles, Travis J., and Karen J. Guillemin. "Zebrafish as a Model for Investigating Animal–Microbe Interactions." The Zebrafish in Biomedical Research. Academic Press, 2020. 627-635.
+  # Wiles, Travis J., and Karen J. Guillemin. "Zebrafish as a Model for Investigating Animal???Microbe Interactions." The Zebrafish in Biomedical Research. Academic Press, 2020. 627-635.
   
   ## APA
-  # Wiles, T. J., & Guillemin, K. J. (2020). Zebrafish as a Model for Investigating Animal–Microbe Interactions. In The Zebrafish in Biomedical Research (pp. 627-635). Academic Press.
+  # Wiles, T. J., & Guillemin, K. J. (2020). Zebrafish as a Model for Investigating Animal???Microbe Interactions. In The Zebrafish in Biomedical Research (pp. 627-635). Academic Press.
   
   ## Chicago
-  # Wiles, Travis J., and Karen J. Guillemin. "Zebrafish as a Model for Investigating Animal–Microbe Interactions." In The Zebrafish in Biomedical Research, pp. 627-635. Academic Press, 2020.
+  # Wiles, Travis J., and Karen J. Guillemin. "Zebrafish as a Model for Investigating Animal???Microbe Interactions." In The Zebrafish in Biomedical Research, pp. 627-635. Academic Press, 2020.
   
   ## Harvard
-  # Wiles, T.J. and Guillemin, K.J., 2020. Zebrafish as a Model for Investigating Animal–Microbe Interactions. In The Zebrafish in Biomedical Research (pp. 627-635). Academic Press.
+  # Wiles, T.J. and Guillemin, K.J., 2020. Zebrafish as a Model for Investigating Animal???Microbe Interactions. In The Zebrafish in Biomedical Research (pp. 627-635). Academic Press.
   
   ## Vancouver
-  # Wiles TJ, Guillemin KJ. Zebrafish as a Model for Investigating Animal–Microbe Interactions. InThe Zebrafish in Biomedical Research 2020 Jan 1 (pp. 627-635). Academic Press.
+  # Wiles TJ, Guillemin KJ. Zebrafish as a Model for Investigating Animal???Microbe Interactions. InThe Zebrafish in Biomedical Research 2020 Jan 1 (pp. 627-635). Academic Press.
   
 
   grepl('([12][0-9]{3})', "bbb(1999)p")
