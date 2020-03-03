@@ -110,10 +110,6 @@ write.metadata.MIxS.as.mars <- function(metadata.object, name.prefix=NULL, dest.
   }
   
   # 3.3 remaining dataset-specific terms
-  doubleTerms <- c("decimalLatitude", "decimalLongitude")
-  mimarksUnits <- mimarksUnits[!names(mimarksUnits) %in% doubleTerms] 
-  mimarksSection <- mimarksSection[!names(mimarksSection) %in% doubleTerms] 
-  mimarks_data <- mimarks_data[,!colnames(mimarks_data) %in% doubleTerms, drop=FALSE]
   if(ncol(mimarks_data)>0){
     Row03 <- character()
     for(cx in 1:ncol(mimarks_data)){

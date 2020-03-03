@@ -164,9 +164,11 @@ get.sample.attributes.INSDC <- function(sampleID=NA, apiKey=NA, BioPrjct=NA){
       attr_vals <- trimws(xml_text(attr_vals))
       attr_cols <- xml_find_all(metaXML, "//SAMPLE_ATTRIBUTES/SAMPLE_ATTRIBUTE/*[self::TAG]")
       attr_cols <- xml_text(attr_cols)
-      
       attr_BioPrj <- xml_find_all(metaXML, "//STUDY/IDENTIFIERS/EXTERNAL_ID")
       attr_BioPrj <- xml_text(attr_BioPrj)
+      
+      attr_LibNname <- xml_find_all(metaXML, "//EXPERIMENT_PACKAGE/EXPERIMENT/DESIGN/LIBRARY_DESCRIPTOR/*[self::LIBRARY_NAME]")
+      attr_LibNname <- trimws(xml_text(attr_LibNname))
       
       n_samples <- as_list(xml_find_all(metaXML, "//SAMPLE_ATTRIBUTES"))
       n_samples <- lapply(n_samples, function(x){length(x)})
@@ -181,6 +183,9 @@ get.sample.attributes.INSDC <- function(sampleID=NA, apiKey=NA, BioPrjct=NA){
       env_metadata <- reshape2::dcast(env_metadata, attr_name ~ attr_cols, value.var="value")
       env_metadata$BioProject <- attr_BioPrj
       env_metadata$SRA_sample <- attr_sample
+      
+      env_metadata$LibraryName <- attr_LibNname
+      
     }
     if(nrow(env_metadata_full)==0){
       env_metadata_full <- env_metadata
@@ -190,6 +195,11 @@ get.sample.attributes.INSDC <- function(sampleID=NA, apiKey=NA, BioPrjct=NA){
     }
   }
   row.names(env_metadata_full)<-env_metadata_full$attr_name
+  colnames(env_metadata_full)<-gsub(" ", "_", colnames(env_metadata_full))
+  colnames(env_metadata_full)<-gsub("-", "_", colnames(env_metadata_full))
+  colnames(env_metadata_full)<-gsub("/", "_", colnames(env_metadata_full))
+  colnames(env_metadata_full)<-gsub("\\(", "", colnames(env_metadata_full))
+  colnames(env_metadata_full)<-gsub("\\)", "", colnames(env_metadata_full))
   return(env_metadata_full)
   }
 

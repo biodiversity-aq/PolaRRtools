@@ -527,81 +527,38 @@ get.insertSize <- function(file_path=NA){
   return(insertSize)
 }
 
+find.dataset <- function(dataset, TermsList=c()){
+  #' @author Maxime Sweetlove ccBY 4.0 2020
+  #' @description finds a column in a dataframe
+  #' @param dataset data.frame. A dataframe where to find a column based on the columnames
+  #' @param TermsList a character vector with the columnnames to look for. They will be handled in the order given, and the search will stop at the first match
+  #' @return a character vactor with the content of the matching column, or an empty vector
+  ctu<-TRUE
+  i=1
+  colMatch<-c("")
+  while(ctu){
+    if(TermsList[i] %in% colnames(dataset)){
+      colMatch <- dataset[,TermsList[i]]
+      ctu<-FALSE
+    }else{
+      i=i+1
+    }
+    if(i>length(TermsList)){
+      ctu<-FALSE
+    }
+  }
+  return(colMatch)
+}
+    
+ 
+
+
 unicodeHex.to.letterApproximation <- function(dataset){
   #<U+00F6> o
   #<U+00F8> o
   #<U+201D> "
   #<U+2013> -
 }
-
-
-parse.citation <- function(citation){
-  #' @author Maxime Sweetlove ccBY 4.0 2019
-  #' @description parse.citation splits a character string with a scientific citation into the following components: autors, year, title, journal, issue, volume, pages, dio
-  #' @param citation character string. A bibliographic citation, scientific reference
-  #' @return a list with the autors, year, title, journal, issue, volume, pages and dio
-  
-  ref <- "Wiles, T. J., & Guillemin, K. J. (2020). Zebrafish as a Model for Investigating Animal???Microbe Interactions. In The Zebrafish in Biomedical Research (pp. 627-635). Academic Press."
-
-  test <- bibentry(ref, bibtype="Article")
-  format(test, "text")
-  print(test, style = "citation")
-  
-  ## MLA
-  # Wiles, Travis J., and Karen J. Guillemin. "Zebrafish as a Model for Investigating Animal???Microbe Interactions." The Zebrafish in Biomedical Research. Academic Press, 2020. 627-635.
-  
-  ## APA
-  # Wiles, T. J., & Guillemin, K. J. (2020). Zebrafish as a Model for Investigating Animal???Microbe Interactions. In The Zebrafish in Biomedical Research (pp. 627-635). Academic Press.
-  
-  ## Chicago
-  # Wiles, Travis J., and Karen J. Guillemin. "Zebrafish as a Model for Investigating Animal???Microbe Interactions." In The Zebrafish in Biomedical Research, pp. 627-635. Academic Press, 2020.
-  
-  ## Harvard
-  # Wiles, T.J. and Guillemin, K.J., 2020. Zebrafish as a Model for Investigating Animal???Microbe Interactions. In The Zebrafish in Biomedical Research (pp. 627-635). Academic Press.
-  
-  ## Vancouver
-  # Wiles TJ, Guillemin KJ. Zebrafish as a Model for Investigating Animal???Microbe Interactions. InThe Zebrafish in Biomedical Research 2020 Jan 1 (pp. 627-635). Academic Press.
-  
-
-  grepl('([12][0-9]{3})', "bbb(1999)p")
-  
-  
-  ### split into author list, title and rest:
-  
-  
-  ref <- strsplit(citation, ",")[[1]]
-  
-  # in author list
-  gsub("and ", "", ref)
-  gsub("& ", "", ref)
-  
-  ref <- unname(unlist(sapply(ref, function(x){strsplit(x, ".", fixed=TRUE)})))
-  
-  #remove leading and trailing spaces
-  ref <- unname(unlist(sapply(ref, function(x){trimws(x, "both")})))
-  
-  ### guess author format:
-  autors <- c()
-
-  for(i in 1:length(ref)){
-    
-    if(ref[i] )
-    
-    print(ref[i])
-    
-    #replace &, and
-    
-  }
-  
-  
-  if(nchar(ref[1])==1){
-    # first initial(s), than name
-  } else{
-    # first name, (then initial(s))
-    authors <- c(authors)#, ref[1]=ref[2])
-  }
-}
-
 
 
 

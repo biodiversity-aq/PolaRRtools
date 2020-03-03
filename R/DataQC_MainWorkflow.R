@@ -16,15 +16,15 @@
 #--------------------------------------------------------------
 # ToDo
 #--------------------------------------------------------------
-
-semantics <- function(dataset = NA, vocab=c("MIxS", "MiMARKS", "DarwinCore")){
-  # use the library to shore up the semantics of a dataset using a volcabulary (DwC or MIxS)
-  # make sure all the terms are the correct terms
-}
-
 dataQC.DwC_MIxS <- function(){
   #' a converter between DwC and MIxS
 }
+
+# replace illegal characters
+#eventTable$eventID<-gsub(" ","_", eventTable$eventID)
+#eventTable$eventID<-gsub("-","_", eventTable$eventID)
+#eventTable$eventID<-gsub(",","_", eventTable$eventID)
+
 
 #--------------------------------------------------------------
 # DarwinCore
@@ -40,6 +40,8 @@ dataQC.DwC_general<-function(DwC.data = NA, DwC.type = "event", ask.input = TRUE
   #' @param DwC.type character. The type of DarwinCore of the output, either event or occurrence. If event, the output will have an event core with possible occurrence and eMoF extensions. If occurrence, the output will have an occurrence core with possibly an eMoF extension. Default event, if the parameter Event is not NA, out.type will be fixed as event.
   #' @param ask.input logical. If TRUE, console input will be requested to the user when a problem occurs. Default TRUE
   #' @param complete.data logical. If TRUE, datathat has not been provided, but can be completed automatically will be added to the DarwinCore data.frame. For instance, footprintWKT can be generated from the coordinates, or higher taxonomic level names (like kingdom, phylum,...) can looked up with the species name.Defaut TRUE.
+  
+  warningmessages<-c()
   
   require(stringr)
   require(worrms)
@@ -227,76 +229,67 @@ dataQC.DwC_general<-function(DwC.data = NA, DwC.type = "event", ask.input = TRUE
   
   # check latitude-longitude
   
-  # check dates
+
+  # dealing with the collection date, and putting it in the YYYY-MM-DD format
+  if(!"eventDate" %in% colnames(DwC.data)){
+    if("year" %in% colnames(DwC.data) && !grepl("/", DwC.data$year)){
+      DwC.data$eventDate <- DwC.data$year
+      if("month" %in% colnames(DwC.data)){
+        for(i in nrow(DwC.data)){
+          if(DwC.data[i,]$eventDate!="" & 
+             !is.na(DwC.data[i,]$eventDate)){
+            if(DwC.data[i,]$month!="" &
+               !is.na(DwC.data[i,]$month)){
+              DwC.data[i,]$eventDate <- paste(DwC.data[i,]$eventDate, DwC.data[i,]$month, sep="-")
+            }
+          }else{
+            DwC.data[i,]$eventDate <- ""
+          }
+        }
+        if("day" %in% colnames(DwC.data)){
+          for(i in nrow(DwC.data)){
+            if(DwC.data[i,]$eventDate!=""){
+              if(DwC.data[i,]$day!="" &
+                 !is.na(DwC.data[i,]$day)){
+                DwC.data[i,]$eventDate <- paste(DwC.data[i,]$eventDate, DwC.data[i,]$day, sep="-")
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  if("eventDate" %in% colnames(DwC.data)){
+    QCDate <- dataQC.dateCheck(DwC.data, "eventDate")
+  }
+  warningmessages<-c(QCDate$warningmessages, warningmessages)
+  if(length(QCDate$values)==nrow(DwC.data)){
+    DwC.data$eventDate <- QCDate$values
+  }
   
   #check taxa and look for scientificNameID
   if(DwC.type == "occurrence" & complete.data){
-    taxaNames <- intersect(colnames(DwC.data), c("scientificName", "genus", "specificEpithet"))
-    if(length(taxaNames)>0){
-      # try to get the species names
-      if("scientificName" %in% taxaNames){
-        species <- DwC.data$scientificName
-      }else if("genus" %in% taxaNames){
-        if("specificEpithet" %in% taxaNames){
-          species <- paste(DwC.data$genus, DwC.data$specificEpithet, sep=" ")
-          species <- gsub("\\s$", "", species, fixed=FALSE) #remove trailing spaces
-          DwC.data$scientificName <- species
-        }else{
-          species <- DwC.data$genus
-          DwC.data$scientificName <- paste(species, "sp.")
-        }
-      }
-      # make a small table with the unique taxa to collect all the info from WORMS or GBIF
-      taxid_key <- data.frame(taxname = unique(species), scientificNameID=NA, 
-                              ID=NA, kingdom=NA, phylum=NA, class=NA, order=NA, family=NA,
-                              genus=NA, specificEpithet=NA, scientificNameAuthorship=NA,
-                              namePublishedInYear=NA)
-      # look-up missing information on an accepted taxonomic registery
-      for(nc in 1:nrow(taxid_key)){
-        taxon<-as.character(taxid_key[nc,]$taxname)
-        if(!taxon %in% c("", "NA", NA)){
-          taxid <- tryCatch({
-            tx <- worrms::wm_name2id(taxon)
-          }, error = function(e){
-            tx <- ""
-          }
-          ) 
-          if(taxid != ""){
-            taxnum <- taxid
-            taxid<-paste("urn:lsid:marinespecies.org:taxname:", taxid, sep="")
-            taxdata <- data.frame(worrms::wm_record(taxnum))
-            
-            #fill the taxid_key table
-            taxid_key[nc,]$ID <- taxnum
-            taxid_key[nc,]$scientificNameID <- taxid
-            taxid_key[nc,]$kingdom<-taxdata$kingdom
-            taxid_key[nc,]$phylum<-taxdata$phylum
-            taxid_key[nc,]$class<-taxdata$class
-            taxid_key[nc,]$order<-taxdata$order
-            taxid_key[nc,]$family<-taxdata$family
-            taxid_key[nc,]$genus<-taxdata$genus
-            taxid_key[nc,]$specificEpithet<-strsplit(taxdata$scientificname, " ")[[1]][2]
-            
-            authoryear<-strsplit(taxdata$authority, ", ")[[1]]
-            taxid_key[nc,]$scientificNameAuthorship<-gsub("\\(", "", authoryear[1], fixed=FALSE)
-            taxid_key[nc,]$namePublishedInYear<-gsub("\\)", "", authoryear[2], fixed=FALSE)
-            
-          }else{
-            taxid_key[nc,]$scientificNameID <- taxid
-            taxid_key[nc,]$ID <- taxnum
-          }
-        }
-      }
-      # now use the taxid_key table to complete the data in DwC.data
-      for(term in setdiff(colnames(taxid_key), c("taxname", "ID"))){
-        DwC.data[,term]  <- as.character(species)
-        DwC.data[,term] <- unname(unlist(sapply(as.character(DwC.data[,term]), 
-                                                FUN = function(x){
-                                                  gsub(x,taxid_key[taxid_key$taxname==x,][,term],x)
-                                                })))
-      }
-      warningmessages <- multi.warnings("added scientificNameID and additional species data", warningmessages)
+    # try to get the species names
+    species <- dataQC.TaxonListFromData(DwC.data)
+    
+    species <- dataQC.taxaNames(species)
+
+    # make a small table with the unique taxa to collect all the info from WORMS or GBIF
+    cat("Completing the taxonomic information (this might take a while)...\n")
+    taxid_key <- dataQC.completeTaxaNamesFromRegistery(species$scientificName)
+    
+    # now use the taxid_key table to complete the data in DwC.data
+    for(term in setdiff(colnames(taxid_key), c("aphID"))){
+      DwC.data[,term]  <- as.character(species)
+      DwC.data[,term] <- unname(unlist(sapply(as.character(DwC.data[,term]), 
+                                              FUN = function(x){
+                                                gsub(x,taxid_key[taxid_key$taxname==x,][,term],x)
+                                              })))
     }
+    warningmessages <- multi.warnings("added scientificNameID and additional species data", warningmessages)
+    
+
   }
   
   
@@ -317,7 +310,6 @@ dataQC.DwC <- function(Event=NA, Occurrence=NA, eMoF=NA, EML.url=NA,
   #' @param eMoF data.frame. A dataframe with the extended MeasurementOrFact (eMoF) data, structured with DarwinCore terms
   #' @param out.type character. The type of DarwinCore of the output, either event or occurrence. If event, the output will have an event core with possible occurrence and eMoF extensions. If occurrence, the output will have an occurrence core with possibly an eMoF extension. Default event, if the parameter Event is not NA, out.type will be fixed as event.
   #' @param ask.input logical. If TRUE, console input will be requested to the user when a problem occurs. Default TRUE
-
   #' @details
   #' 
   #' @return a list of dataframes that strictly follows the DarwinCore standard.
@@ -331,7 +323,6 @@ dataQC.DwC <- function(Event=NA, Occurrence=NA, eMoF=NA, EML.url=NA,
     stop("invalid input for out.type")
   }
 
-  
   # 1. checking the Event data.
   if(!all(is.na(Event))){
     # fix out.type as event, regardless of user input
@@ -427,15 +418,13 @@ dataQC.DwC <- function(Event=NA, Occurrence=NA, eMoF=NA, EML.url=NA,
 #--------------------------------------------------------------
 # MIxS
 #--------------------------------------------------------------
-DataQC.MIxS <- function(metadata = NA, strict.MIxS = FALSE, 
-                        ask.input=TRUE, add_to = NA){
+dataQC.MIxS <- function(metadata = NA, ask.input=TRUE, add_to = NA){
   #' @author Maxime Sweetlove ccBY 4.0 2019
   #' @description takes a dataframe with contextual data and metadata from a sequencing dataset and performs a basis Quality Controll. (see further for details)
   #' 
-  #' @usage DataQC.MIxS(metadata, strict.MIxS = FALSE, ask.input=TRUE, add_to)
+  #' @usage DataQC.MIxS(metadata, ask.input=TRUE, add_to)
   #' 
   #' @param metadata data.frame. The raw metadata downloaded from INSDC to be cleaned up. Rows are samples, columns variables
-  #' @param strict.MIxS logical. If TRUE, variable names in the output will only be MIxS terms. Any variable with no MIxS counterpart is discarded. If FALSE, than variables that have no appropriate MIxS term wil be added as extra "miscellaneous" collumns. Default is FALSE
   #' @param ask.input logical. If TRUE, console input will be requested to the user when a problem occurs. Default TRUE
   #' @param add_to a metadata.MIxS object. An already present dataset with quality-comtrolled metadata. must be formatted as metadata.MIxS to ensure the correct input format of the data.
   #' @details Any sequencing project typically has important additional data associated with it.
@@ -465,7 +454,7 @@ DataQC.MIxS <- function(metadata = NA, strict.MIxS = FALSE,
   #' 
   #' @return a dataframe that is compatible with the MIxS standard, or that stricly follows the MIxS standard
   #' 
-  #' @example metadataQC_PRJNA369175 <- process.metadata(metadata = metadata_PRJNA369175, strict.MIxS = FALSE)
+  #' @example metadataQC_PRJNA369175 <- process.metadata(metadata = metadata_PRJNA369175)
   
   warningmessages<-c()
   
@@ -485,19 +474,30 @@ DataQC.MIxS <- function(metadata = NA, strict.MIxS = FALSE,
   # clean up columnames
   colnames(metadata) <- gsub("[\\.]+", "_", colnames(metadata)) # replace double dots with underscore
   colnames(metadata) <- gsub("_$", "", colnames(metadata))  # remove trailing underscore
+  metadata_origcolNames <- metadata
   colnames(metadata) <- tolower(colnames(metadata)) # all to lowercase
+  
+  # check columnnames, and correct errors
+  termsQC <- dataQC.TermsCheck(observed=colnames(metadata), 
+                               exp.standard = "MIxS", exp.section = NA, 
+                               fuzzy.match = FALSE, out.type = "full")
+  for(tQC in names(termsQC$terms_wrongWithSolution)){
+    colnames(metadata)[colnames(metadata)==tQC] <- termsQC$terms_wrongWithSolution[tQC]
+  }
   
   # 0.3 check if data is in one-header table or if there are additional MiMARKS header lines
   # for additional MIxS headers: "environmental package", "units template" => only units of importance
   pre_def_units <- FALSE
-  if(grepl("units", tolower(row.names(metadata)[1]))){
-    units <- data.frame(var_name=c(colnames(metadata)), unit= unlist(metadata[1,]))
+  if(grepl("unit", tolower(row.names(metadata)[1]))){
+    units <- data.frame(var_name=c(colnames(metadata)), unit= unlist(metadata[1,]), stringsAsFactors = FALSE)
     metadata <- data.frame(metadata[-1,], stringsAsFactors = FALSE)
+    metadata_origcolNames <- data.frame(metadata_origcolNames[-1,], stringsAsFactors = FALSE)
     pre_def_units <- TRUE
     warningmessages <- multi.warnings("the units were taken from the row \"units template\" in the input data", warningmessages)
-  } else if(grepl("units", tolower(row.names(metadata)[2]))){
-    units <- data.frame(var_name=c(colnames(metadata)), unit= unlist(metadata[2,]))
+  } else if(grepl("unit", tolower(row.names(metadata)[2]))){
+    units <- data.frame(var_name=c(colnames(metadata)), unit= unlist(metadata[2,]), stringsAsFactors = FALSE)
     metadata <- data.frame(metadata[-c(1,2),], stringsAsFactors = FALSE)
+    metadata_origcolNames <- data.frame(metadata_origcolNames[-c(1,2),], stringsAsFactors = FALSE)
     pre_def_units <- TRUE
     warningmessages <- multi.warnings("the units were taken from the row \"units template\" in the input data", warningmessages)
   }
@@ -508,56 +508,20 @@ DataQC.MIxS <- function(metadata = NA, strict.MIxS = FALSE,
   New_metadata <- data.frame(row.names=rownames(metadata))
   
   # 1. looking for the original sample name
-  item_shared <- intersect(TermsSyn["original_name"][[1]], colnames(metadata))
-  if(length(item_shared)>=1){ 
-    likely_sampNames <- item_shared[1] #order of item_shared is in decreasing likelyness
-    if(ask.input){
-      cat(paste("The original sample names could be in the \"",likely_sampNames,"\" column.\n", sep="")) 
-      cat(paste("The first five names in this column are ", paste(metadata[1:5,likely_sampNames], collapse="; "), " ...\nDoes this seems correct? (y/n)\n", sep="")) 
-      doNext <- readline() 
-      if(doNext %in% c("y", "Y", "yes", "YES", "Yes")){
-        New_metadata$original_name <- as.character(metadata[,likely_sampNames])
-        warningmessages <- multi.warnings(paste("assumed the \"",likely_sampNames,"\" column contained the original sample names", sep=""), warningmessages)
-        tryCatch({
-          New_metadata$INSDC_SampleID <- rownames(New_metadata)
-          rownames(New_metadata) <- New_metadata$original_name
-        },
-        error=function(x){
-          warningmessages <- multi.warnings("duplicate or missing original sample names", warningmessages)
-        })
-      }else if(!doNext %in% c("n", "N", "no", "NO", "No")){
-        stop("incorrect input... only yes or no allowed.")
-      } 
-    }else{
-      New_metadata$original_name <- as.character(metadata[,likely_sampNames])
-      warningmessages <- multi.warnings(paste("assumed the \"",likely_sampNames,"\" column contained the original sample names", sep=""), warningmessages)
-    }
-  }else{
-    if(.row_names_info(metadata)>0){#rownames provided by the user might be the original names
-      if(ask.input){
-        cat("No original sample names found...\n\tuse the rownames instead? (y/n)\n") 
-        ctu <- readline() 
-        if(ctu %in% c("y", "Y", "yes", "YES", "Yes")){
-          New_metadata$original_name <- row.names(metadata)
-          warningmessages <- multi.warnings("no original sample names found, used the rownames instead", warningmessages)
-        }else if(ctu %in% c("n", "N", "no", "NO", "No")){
-          cat("you chose no.\n\t Can you give the columnname with the original sample names instead? Type n to ignore\n") 
-          ctu2 <- readline() 
-          if(ctu2 %in% colnames(metadata)){
-            New_metadata$original_name <- metadata[,ctu3]
-          }else if(!ctu2 %in% c("n", "N", "no", "NO", "No")){
-            stop("incorrect input... only yes or no allowed.")
-          }else{
-            stop(paste("could not find the column", ctu2, "in the colnames of the dataset provided..."))
-          }
-        } else{
-          stop("incorrect input... only yes or no allowed.")
-        }
-      }
-    }else{
-      warningmessages <- multi.warnings("no original sample names found", warningmessages)
-    }
-  }
+  metadataNames <- dataQC.findNames(dataset = metadata_origcolNames, ask.input=ask.input)
+  New_metadata$original_name <- (metadataNames$Names)$original_name
+  warningmessages <- multi.warnings(metadataNames$warningmessages, warningmessages)
+  tryCatch({
+    rownames(New_metadata) <- (metadataNames$Names)$original_name
+  },
+  error=function(x){
+    warningmessages <- multi.warnings("duplicate or missing original sample names", warningmessages)
+  })
+  if(! all((metadataNames$Names)$INSDC_SampleID=="")){New_metadata$INSDC_SampleID <- (metadataNames$Names)$INSDC_SampleID}
+  if(! all((metadataNames$Names)$eventID=="")){New_metadata$eventID <- (metadataNames$Names)$eventID}
+  if(! all((metadataNames$Names)$parentEventID=="")){New_metadata$parentEventID <- (metadataNames$Names)$parentEventID}
+  if(! all((metadataNames$Names)$occurrenceID=="")){New_metadata$occurrenceID <- (metadataNames$Names)$occurrenceID}
+  
   
   # 2. some basic info from insdc
   TermsSyn_insdc<-TermsSyn[as.character(TermsLib[TermsLib$name_origin=="INSDC",]$name)]
@@ -584,6 +548,18 @@ DataQC.MIxS <- function(metadata = NA, strict.MIxS = FALSE,
   
   New_metadata[is.na(New_metadata)] <- ""
   
+  #change the units for the coordinates
+  if(pre_def_units){
+    for(unitx in c("lat_lon", "decimalLatitude", "decimalLongitude")){
+      if(unitx %in% units$var_name){
+        units[units$var_name==unitx,]$unit <- as.character(TermsLib[TermsLib$name==unitx,]$expected_unit)
+      }else{
+        units <- rbind(units, data.frame(var_name=unitx, unit=as.character(TermsLib[TermsLib$name==unitx,]$expected_unit)))
+        rownames(units)[nrow(units)] <- unitx
+      }
+    }
+  }
+
   
   # 4. dealing with the collection date, and putting it in the YYYY-MM-DD format
   TermsSyn_date<-TermsSyn[as.character(TermsLib[TermsLib$name=="collection_date",]$name)]
@@ -605,8 +581,9 @@ DataQC.MIxS <- function(metadata = NA, strict.MIxS = FALSE,
     }
   }
   
-  # 6. the package MIxS terms (just one package allowed for strict.MIxS, otherwise multiple packages allowed)
+  # 6. the MIxS package terms 
   # 6.1 find the best package/ask user if no package was specified
+  env_package<-""
   if(!"env_package" %in% colnames(metadata)){
     if(ask.input){
       cat("No env_package was specified.\nPlease specify what to do next:\n1) Make an educated guess based on the data\n2) Ask user for the package name\n3) stop executing\n(type 1, 2 or 3)\n") 
@@ -616,15 +593,9 @@ DataQC.MIxS <- function(metadata = NA, strict.MIxS = FALSE,
         warningmessages<-c(warningmessages, env_package$warningmessages)
         env_package <- env_package$values
       }else if(doNext==2){
-        if(strict.MIxS){
-          cat("One MIxS environmental package is required for a strict.MIxS output. Found none or more than one.\nPlease provide a single package or type none to turn off strict.MIxS\nThe choices are: air, built_environment, host_associated, human_associated,human_gut,\nhuman_oral, human_skin, human_vaginal,microbial_mat_biofilm,\nmiscellaneous_natural_or_artificial_environment,\nplant_associated, soil, sediment, wastewater_sludge, water\n") 
-        } else{
-          cat("Please provide a single MIxS environmental package\nThe choices are: air, built_environment, host_associated, human_associated,human_gut,\nhuman_oral, human_skin, human_vaginal,microbial_mat_biofilm,\nmiscellaneous_natural_or_artificial_environment,\nplant_associated, soil, sediment, wastewater_sludge, water\n") 
-        }
+        cat("Please provide a single MIxS environmental package\nThe choices are: air, built_environment, host_associated, human_associated,human_gut,\nhuman_oral, human_skin, human_vaginal,microbial_mat_biofilm,\nmiscellaneous_natural_or_artificial_environment,\nplant_associated, soil, sediment, wastewater_sludge, water\n") 
         env_package <- readline() 
-        if(env_package=="none"){
-          strict.MIxS<-FALSE
-        } else if(!env_package %in% colnames(TermsLib)){
+        if(!env_package %in% colnames(TermsLib)){
           stop("incorrect environmental package provided. Be sure to use underscores and lowercase letters")
         } else{
           env_package <- rep(env_package, nrow(metadata))
@@ -665,34 +636,13 @@ DataQC.MIxS <- function(metadata = NA, strict.MIxS = FALSE,
     }
   }
   
-  if(is.null(env_package) & !strict.MIxS){
+  if(all(nchar(env_package)==0)){
     warningmessages<-multi.warnings("No env_package could be inferred", warningmessages)
   } else{
     New_metadata$env_package <- env_package
   }
   
-  if(strict.MIxS){
-    if(is.null(env_package) || length(unique(env_package)) != 1){
-      if(ask.input){
-        cat("Found none or more than one environmental packages. Only one allowed when strict.MIxS is TRUE\n\tContinue by setting strict.MIxS to FALSE? (y/n)\n") 
-        ctn <- readline() 
-        if(ctn %in% c("y", "Y", "yes", "YES", "Yes")){
-          strict.MIxS<-FALSE
-        }else if(ctn %in% c("n", "N", "no", "NO", "No")){
-          stop("Could not output metadata strictly following the MIxS rules.")
-        } else{
-          stop("incorrect input... only yes or no allowed.")
-        }
-      }else{
-        stop("Found none or more than one environmental packages. Only one allowed when strict.MIxS is TRUE")
-      }
-    }else{
-      TermsSyn_MIxSpackage<-TermsSyn[as.character(TermsLib[TermsLib$official_MIxS==TRUE & TermsLib[,env_package]>0,]$name)]
-    }
-  }else{
-    TermsSyn_MIxSpackage<-TermsSyn[as.character(TermsLib[TermsLib$official_MIxS==TRUE & TermsLib$MIxS_core==0,]$name)]
-  }
-  
+  TermsSyn_MIxSpackage<-TermsSyn[as.character(TermsLib[TermsLib$name_origin=="MIxS" & TermsLib$MIxS_core==0,]$name)]
   for(item in names(TermsSyn_MIxSpackage)){
     item_shared <- intersect(TermsSyn_MIxSpackage[item][[1]], colnames(metadata))
     if(length(item_shared)==1){
@@ -701,30 +651,6 @@ DataQC.MIxS <- function(metadata = NA, strict.MIxS = FALSE,
       New_metadata[,item] <- metadata[,item_shared[[1]]]
     }
   }
-  
-  #check if minimal terms are present
-  if(strict.MIxS){
-    TermsSyn_MIxSpackage_minimal <- c(names(TermsSyn[as.character(TermsLib[TermsLib[,env_package]==2,]$name)]),
-                                      names(TermsSyn[as.character(TermsLib[TermsLib[,"MIxS_core"]==2,]$name)]))
-    
-    if(length(intersect(names(TermsSyn_MIxSpackage_minimal), names(TermsSyn_MIxSpackage))) != length(names(TermsSyn_MIxSpackage_minimal))){
-      if(ask.input){
-        cat("Some of the required terms for strict.MIxS are missing...\n\tContinue with strict.MIxS turned off? (y/n)\n") 
-        ctu <- readline() 
-        if(ctu %in% c("y", "Y", "yes", "YES", "Yes")){
-          strict.MIxS<-FALSE
-        }else if(ctu %in% c("n", "N", "no", "NO", "No")){
-          stop("Could not output metadata strictly following the MIxS rules.")
-        } else{
-          stop("incorrect input... only yes or no allowed.")
-        }
-      }else{
-        stop("Some of the required terms for strict.MIxS were missing.")
-      }
-    }
-    
-  }
-  
   
   # 7. any other additionalinformation
   # 7.1 already registered terms
@@ -738,51 +664,37 @@ DataQC.MIxS <- function(metadata = NA, strict.MIxS = FALSE,
   }
   # 7.2 novel terms
   unknown_terms <- setdiff(colnames(metadata), unlist(TermsSyn))
-  if(length(unknown_terms) > 0 & strict.MIxS & ask.input){
-    cat("non-MIxS variables were encountere.\n\tContinue with strict.MIxS turned off? (y/n)\n") 
-    ctu <- readline() 
-    if(ctu %in% c("y", "Y", "yes", "YES", "Yes")){
-      strict.MIxS<-FALSE
-    }else if(ctu %in% c("n", "N", "no", "NO", "No")){
-      stop("Could not output metadata strictly following the MIxS rules.")
-    } else{
-      stop("incorrect input... only yes or no allowed.")
-    }
-  }
-  if(!strict.MIxS){
-    if(length(unknown_terms) > 5){
-      # if there are too much novel terms, don't go over all of them
-      if(ask.input){
-        t<-paste(unknown_terms, collapse=", ")
-        cat(paste("The following unknown variables were encountered:\n",t," \n\tAdd all to the QC'd data? (y/n)\n", sep=" ")) 
-        ctu <- readline() 
-        if(ctu %in% c("y", "Y", "yes", "YES", "Yes")){
-          for(t in unknown_terms){
-            New_metadata[,t] <- metadata[,t]
-          }
-        }
-      }else{
-        warningmessages<-multi.warnings("Some unknown variables present in the data", warningmessages)
+  if(length(unknown_terms) > 5){
+    # if there are too much novel terms, don't go over all of them
+    if(ask.input){
+      t<-paste(unknown_terms, collapse=", ")
+      cat(paste("The following unknown variables were encountered:\n",t," \n\tAdd all to the QC'd data? (y/n)\n", sep=" ")) 
+      ctu <- readline() 
+      if(ctu %in% c("y", "Y", "yes", "YES", "Yes")){
         for(t in unknown_terms){
           New_metadata[,t] <- metadata[,t]
         }
       }
     }else{
+      warningmessages<-multi.warnings("Some unknown variables present in the data", warningmessages)
       for(t in unknown_terms){
-        if(ask.input){
-          cat(paste("The following unknown variable was encountered:",t," \n\tAdd to the QC'd data? (y/n)\n", sep=" ")) 
-          ctu <- readline() 
-          if(ctu %in% c("y", "Y", "yes", "YES", "Yes")){
-            New_metadata[,t] <- metadata[,t]
-          }
-        }else{
+        New_metadata[,t] <- metadata[,t]
+      }
+    }
+  }else{
+    for(t in unknown_terms){
+      if(ask.input){
+        cat(paste("The following unknown variable was encountered:",t," \n\tAdd to the QC'd data? (y/n)\n", sep=" ")) 
+        ctu <- readline() 
+        if(ctu %in% c("y", "Y", "yes", "YES", "Yes")){
           New_metadata[,t] <- metadata[,t]
-          warningmessages<-multi.warnings("Some unknown variables present in the data", warningmessages)
         }
+      }else{
+        New_metadata[,t] <- metadata[,t]
+        warningmessages<-multi.warnings("Some unknown variables present in the data", warningmessages)
       }
     }
   }
-  
   
   # 8. some additional quality controll
   if("investigation_type" %in% colnames(New_metadata)){
@@ -814,7 +726,8 @@ DataQC.MIxS <- function(metadata = NA, strict.MIxS = FALSE,
       New_metadata <- New_metadata[,!colnames(New_metadata) %in% "specific_host"]
     }
   }
-  #if("eventID" %in% colnames(New_metadata) & ask.input){
+  
+  #if("eventID" %in% colnames(New_metadata)){
   #  if(length(unique(New_metadata$eventID))==nrow(New_metadata)){
   #    cat("There are the same number of events as there are samples...\n\tkeep $eventID? (y/n)\n") 
   #    ctu <- readline() 
@@ -832,7 +745,7 @@ DataQC.MIxS <- function(metadata = NA, strict.MIxS = FALSE,
   QC_units<-c()
   if(length(items_shared)>0){
     alternative_units<-data.frame(name=items_shared, unit_full=rep(NA, length(items_shared)))
-    possible_units <- c("nm", "um", "??m", "mm", "cm", "dm", "m", "km")
+    possible_units <- c("nanometer", "micrometer", "milimeter", "centimeter", "decimeter", "meter", "kilometer")
     for(name_unit in items_shared){
       vals <- as.vector(as.character(New_metadata[,colnames(New_metadata) %in% name_unit]))
       names(vals)<-row.names(New_metadata)
@@ -844,13 +757,13 @@ DataQC.MIxS <- function(metadata = NA, strict.MIxS = FALSE,
         val_units <- unlist(lapply(vals, function(v){gsub("[0-9]|\\.|,|-", "", v)} ))
       }
       val_units <- gsub(" ", "", tolower(val_units))
-      val_units <- gsub("nano", "n", tolower(val_units))
-      val_units <- gsub("micro", "u", tolower(val_units))
-      val_units <- gsub("mili", "m", tolower(val_units))
-      val_units <- gsub("centi", "c", tolower(val_units))
-      val_units <- gsub("deci", "d", tolower(val_units))
-      val_units <- gsub("kilo", "k", tolower(val_units))
-      val_units <- gsub("meter", "m", tolower(val_units))
+      val_units <- gsub("^nm$", "nanometer", tolower(val_units), fixed=FALSE)
+      val_units <- gsub("^um$", "micrometer", tolower(val_units), fixed=FALSE)
+      val_units <- gsub("^mm$", "milimeter", tolower(val_units), fixed=FALSE)
+      val_units <- gsub("^cm$", "centimeter", tolower(val_units), fixed=FALSE)
+      val_units <- gsub("^dm$", "decimeter", tolower(val_units), fixed=FALSE)
+      val_units <- gsub("^km$", "kilometer", tolower(val_units), fixed=FALSE)
+      val_units <- gsub("^m$", "meter", tolower(val_units))
       val_units <- intersect(unique(val_units), possible_units) #danger in this step: discards any text that is not an expected unit
       
       vals<-unlist(lapply(vals, function(v){gsub(",", ".", v)} ))
@@ -886,9 +799,14 @@ DataQC.MIxS <- function(metadata = NA, strict.MIxS = FALSE,
     # user defined units obviously have priority over assumed standard units in the TermsLib file
     for(i in 1:ncol(New_metadata)){
       if(colnames(New_metadata)[i] %in% units$var_name){
-        New_metadata_units[colnames(New_metadata)[i]] <- as.character(units[units$var_name==colnames(New_metadata)[i],]$unit)
+        predef_unit <- as.character(units[units$var_name==colnames(New_metadata)[i],]$unit)
+        if(is.na(predef_unit) | predef_unit=="" | predef_unit=="NA"){
+          predef_unit <- "alphanumeric"
+        }
+        New_metadata_units[colnames(New_metadata)[i]] <- predef_unit
       } else{
-        New_metadata_units[colnames(New_metadata)[i]] <- as.character(TermsLib[TermsLib$name %in% colnames(New_metadata)[i],]$expected_unit)
+        # if unit completely unkown, put alphanumeric
+        New_metadata_units[colnames(New_metadata)[i]] <- "alphanumeric"
       }
     }
   }
@@ -900,26 +818,24 @@ DataQC.MIxS <- function(metadata = NA, strict.MIxS = FALSE,
   }
   
   
-  # 9.2 if strict.MIxS: concatenate all non-MIxS terms in the misc_param term
-  if(strict.MIxS){
-    MIxS_terms <- setdiff(as.character(TermsLib[TermsLib$official_MIxS==TRUE,]$name), "misc_param")
-    misc_units <- New_metadata_units[which(!colnames(New_metadata) %in% MIxS_terms)]
-    New_metadata_units <- New_metadata_units[which(colnames(New_metadata) %in% MIxS_terms)]
-    misc_metadata <- New_metadata[,!colnames(New_metadata) %in% MIxS_terms, drop=FALSE]
-    New_metadata <- New_metadata[,colnames(New_metadata) %in% MIxS_terms, drop=FALSE]
-    if(ncol(misc_metadata)>0){
-      for(cl in 1:ncol(misc_metadata)){
-        if(!grepl("alphanumeric", misc_units[cl])){
-          un <- paste("(", misc_units[cl], ")", sep="")
-        }else{
-          un<-""
-        }
-        misc_metadata[,cl]<-paste(colnames(misc_metadata)[cl], ":", misc_metadata[,cl], un, sep="")
-      }
-      New_metadata$misc_param<-apply(misc_metadata, 1, function(x) paste(x, collapse = ";"))
-      New_metadata_units["misc_param"] <- "alphanumeric"
-    }
-  }
+  # 9.2 concatenate all non-MIxS terms in the misc_param term
+  #MIxS_terms <- setdiff(as.character(TermsLib[TermsLib$official_MIxS==TRUE,]$name), "misc_param")
+  #misc_units <- New_metadata_units[which(!colnames(New_metadata) %in% MIxS_terms)]
+  #New_metadata_units <- New_metadata_units[which(colnames(New_metadata) %in% MIxS_terms)]
+  #misc_metadata <- New_metadata[,!colnames(New_metadata) %in% MIxS_terms, drop=FALSE]
+  #New_metadata <- New_metadata[,colnames(New_metadata) %in% MIxS_terms, drop=FALSE]
+  #if(ncol(misc_metadata)>0){
+  #  for(cl in 1:ncol(misc_metadata)){
+  #    if(!grepl("alphanumeric", misc_units[cl])){
+  #      un <- paste("(", misc_units[cl], ")", sep="")
+  #    }else{
+  #      un<-""
+  #    }
+  #    misc_metadata[,cl]<-paste(colnames(misc_metadata)[cl], ":", misc_metadata[,cl], un, sep="")
+  #  }
+  #  New_metadata$misc_param<-apply(misc_metadata, 1, function(x) paste(x, collapse = ";"))
+  #  New_metadata_units["misc_param"] <- "alphanumeric"
+  #}
   
   # 9.3 the section
   New_metadata_section <- c()
@@ -953,29 +869,16 @@ DataQC.MIxS <- function(metadata = NA, strict.MIxS = FALSE,
   }
   
   # 9.6 convert to the right output format (data.frame or metadata.MIxS)
-  if(out.format=="metadata.MIxS"){
-    if(strict.MIxS){
-      New_metadata <- new("metadata.MIxS",
-                          data   = New_metadata,
-                          section = New_metadata_section,
-                          units      = New_metadata_units,
-                          env_package = env_package,
-                          type = "strict.MIxS",
-                          QC = TRUE
-      )
-    }else{
-      New_metadata <- new("metadata.MIxS",
-                          data   = New_metadata,
-                          section = New_metadata_section,
-                          units      = New_metadata_units,
-                          env_package = env_package,
-                          type = "versatile",
-                          QC = TRUE
-      )
-    }
-    if(!is.na(add_to)){
-      New_metadata <- combine.data(New_metadata, add_to)
-    }
+  New_metadata <- new("metadata.MIxS",
+                      data   = New_metadata,
+                      section = New_metadata_section,
+                      units      = New_metadata_units,
+                      env_package = env_package,
+                      type = "versatile",
+                      QC = TRUE
+  )
+  if(!is.na(add_to)){
+    New_metadata <- combine.data(New_metadata, add_to)
   }
   return(New_metadata)
 }

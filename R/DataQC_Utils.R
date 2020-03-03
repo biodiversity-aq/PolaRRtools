@@ -324,7 +324,7 @@ dataQC.TermsCheck <- function(observed=NA, exp.standard="MIxS", exp.section=NA, 
   #' @usage Check.terms(observed, exp.standard="MIxS", exp.section="core")
   #' 
   #' @param observed character vector. The terms to be checked
-  #' @param exp.standard character. The expected standard to which he terms should comply. Either MIxS (Minimum Information on any x sequence), DwC (DarwinCore) or INSDC (International Nucleotide Sequence Database Consortium)
+  #' @param exp.standard character. The expected standard to which he terms should comply. Either MIxS (Minimum Information on any x sequence), DwC (DarwinCore), INSDC (International Nucleotide Sequence Database Consortium).
   #' @param exp.section character. Optionally an specific section standard where the terms should come from. When exp.standard is MIxS, the allowed sections are: core,  air, built_environment, host_associated, human_associated, human_gut, human_oral, human_skin, human_vaginal, microbial_mat_biofilm, miscellaneous_natural_or_artificial_environment, plant_associated, sediment, soil, wastewater_sludge, water. When exp.standard is DwC, the allowed sections are: event, occurence, emof
   #' @param fuzzy.match logical. If TRUE, fuzzy matching will be done when no corresponding term is found in the Standard
   #' @param out.type character. The type of the output. Either "full" (the output is a list of three lists: terms_OK=the correct terms, terms_wrongWithSolution = wrong terms with a proposed solution, and terms_notFound = terms that had no match), "logical" (output is logical vector for exact matches or not) or "best_match" (output returns a vector with the best matching terms). default full
@@ -347,7 +347,7 @@ dataQC.TermsCheck <- function(observed=NA, exp.standard="MIxS", exp.section=NA, 
   if(!tolower(out.type) %in% c("full", "logical", "best_match")){
     stop("out.type should be either:\n\t \"full\": output will be a list of three lists, with:\n\t\t1) the correct terms\n\t\t2) wrong terms with a solution\n\t\t3) terms that had no match\n\t\"logical\": the output will be a TRUE/FALSE vector\n\t\"best_match\": the output will be the best matching term")
   }
-  
+
   if(!tolower(exp.standard) %in% c("mixs", "dwc", "insdc")){
     stop("expected standard should be either \"MIxS\", \"DwC\" or \"INSDC\".")
   }
@@ -512,233 +512,412 @@ dataQC.generate.footprintWKT <- function(dataset, NA.val=""){
   
 }
 
-
-dataQC.eventStructure <- function(dataset, check.parentEventID=TRUE, 
-                                  complete.hierarchy=FALSE, ask.input=TRUE){
+dataQC.findNames <- function(dataset = NA, ask.input=TRUE){
   #' @author Maxime Sweetlove ccBY 4.0 2020
-  #' @description checks if an eventID is present in a (QC'd) dataset, and generates one if not. Does the same of parentEventID if check.parentEventID is TRUE, and check the hierarchical relationships between eventID and parentEventID
-  #' @param dataset data.frame. A data.frame
-  #' @param check.parentEventID logical. If TRUE, the function will check for the presence of a parentEventID, and generate one if needed. The hierarchy between the eventIDs and the parentEventIDs is then also checked. Default TRUE.
-  #' @param complete.hierarchy logical. If TRUE, the event-parentEvent hierarchy structure will be completed upt to a root. Any parentEvents that are not listed among the eventIDs will also be created. Default FALSE.
+  #' @description find the sample names in a given (meta-)dataset where at least an attempt has been made to standardize the data following MIxS or DarwinCore
+  #' @param dataset data.frame. The data.frame where to look for the sample names
   #' @param ask.input logical. If TRUE, console input will be requested to the user when a problem occurs. Default TRUE
-  
-  #' @usage dataQC.eventStructure(dataset, check.parentEventID=TRUE, complete.hierarchy=FALSE, ask.input=TRUE)
-  
-  require(stringr)
-  eventIDs<-c()
-  parentEventIDs<-c()
-  
-  eventTable <- data.frame(eventID=rep(NA, nrow(dataset)), 
-                           original_event=rep(TRUE, nrow(dataset)),
-                           project=rep(NA, nrow(dataset)))
-  rownames(eventTable)<-rownames(dataset)
-  
-  if(complete.hierarchy & !check.parentEventID){
-    warning("complete.hierarchy is meaningless without checking the parentEventID column.")
-  }
-  
-  # 1. check for the presence of eventID, if not, try to generate one
-  if("eventID" %in% colnames(dataset)){
-    eventTable$eventID <- dataset$eventID
-    # QC the eventIDs: they have to be unique
-    if(length(unique(eventTable$eventID)) != nrow(dataset)){
-      if(dealWithErrors){
-        # make the eventIDs unique
-        eventTable$eventID <- make.names(eventTable$eventID, unique=TRUE)
-      }else{
-        stop("Some eventIDs were not unique.")
-      }
-    }
-  }else{ ## there is no eventID
-    # try to generate an eventID from sample names (but these have to be unique with non-missing values)
-    for(attempt in c("original_name", "INSDC_SampleID", "sra_run_number", 
-                     "genbank_accession_numbers")){
-      if(attempt %in% colnames(dataset)){
-        if(length(unique(dataset[,attempt]))==nrow(dataset) & 
-           !any(is.na(dataset[,attempt])) & 
-           !any(dataset[,attempt]=="")){
-          eventTable$eventID <- dataset[,attempt]
-          if(attempt!="original_name"){
-            eventTable$eventID <- paste("INSDC:", eventTable$eventID, sep="")
-          }
-          break
-        }
-      }
-    }
-    if(all(is.na(eventTable$eventID))){
-      # if no decent eventID could be found, generate one based on the project name
-      for(attempt in c("biosample", "project_name","bioproject")){
-        if(attempt %in% colnames(dataset)){
-          eventTable$eventID <- dataset[,attempt]
-          eventTable$eventID <- paste(eventTable$eventID, ":E",
-                            stringr::str_pad(1:nrow(dataset), nchar(nrow(dataset)), pad = "0"), 
-                            sep="")
-          eventTable$eventID<-gsub("^:","", eventTable$eventID)
-          eventTable$eventID<-gsub(" ","_", eventTable$eventID)
-          eventTable$eventID<-gsub("-","_", eventTable$eventID)
-          break
-          }
-        }
-    }
-    if(all(is.na(eventTable$eventID))){
-      # still no eventID has been generated, just give it a number
-      if(ask.input){
-        cat("No eventIDs were found.\n\tPlease provide an eventID prefix, or type n to ignore.") 
-        doNext <- readline() 
-        if(!tolower(doNext) %in% c("n")){
-          eventTable$eventID <- paste(doNext, ":E",
-                            stringr::str_pad(1:nrow(dataset), nchar(nrow(dataset)), pad = "0"), 
-                            sep="")
-        }else{
-          eventTable$eventID <- paste("unnamed_event:E",
-                            stringr::str_pad(1:nrow(dataset), nchar(nrow(dataset)), pad = "0"), 
-                            sep="")
-        }
-      }
-    }
-  }
-  
-  # 2. check for the presence of parentEventID, if not present, generate one
-  if(check.parentEventID){
-    if("parentEventID" %in% colnames(dataset)){
-      eventTable$parentEventID <- dataset$parentEventID
-    }else{
-      # generate a parentEventID based on the project name
-      if("project_name" %in% colnames(dataset)){
-        eventTable$parentEventID <- dataset$project_name
-        eventTable$project <- dataset$project_name
-        eventTable$parentEventID<-gsub(" ","_", eventTable$parentEventID)
-        eventTable$parentEventID<-gsub("-","_", eventTable$parentEventID)
-      }
-    }
-  }
-  
-  if(all(is.na(eventTable$parentEventID))){
+  #' @usage dataQC.findNames(dataset, ask.input=TRUE)
+  #' @return a list with: 1) a named vector with the most likely sample names, 2) the column name where the sample names were found, 3) a vector with warning messages
+  orig_names <- data.frame(original_names = rep("", nrow(dataset)),
+                           eventID = rep("", nrow(dataset)),
+                           parentEventID = rep("", nrow(dataset)),
+                           occurrenceID = rep("", nrow(dataset)),
+                           INSDC_SampleID = rep("", nrow(dataset)))
+  rownames(orig_names) <- rownames(dataset)
+  warningmessages <- ""
+  item_shared <- intersect(TermsSyn["original_name"][[1]], tolower(colnames(dataset)))
+  if(length(item_shared)>=1){ 
+    likely_sampNames <- item_shared[1] #order of item_shared is in decreasing likelyness
+    likely_sampNames_orig <- colnames(dataset)[tolower(colnames(dataset))==likely_sampNames]
     if(ask.input){
-      cat("No parentEventID was found.\n\tPlease provide an one that is equivalent to the scientific project in which the data was generated, or type n to ignore.") 
+      cat(paste("The original sample names could be in the \"",likely_sampNames_orig,"\" column.\n", sep="")) 
+      cat(paste("\tThe first five names in this column are ", paste(dataset[1:5,tolower(colnames(dataset))==likely_sampNames], collapse="; "), " ...\n\tDoes this seems correct? (y/n)\n", sep="")) 
       doNext <- readline() 
-      if(!tolower(doNext) %in% c("n")){
-        eventTable$parentEventID<-rep(doNext, nrow(dataset))
-        eventTable$project <- doNext
-      }
+      if(tolower(doNext) %in% c("y", "yes")){
+        orig_names$original_names <- as.character(dataset[,tolower(colnames(dataset))==likely_sampNames])
+        warningmessages <- paste("assumed the \"",likely_sampNames_orig,"\" column contained the original sample names", sep="")
+      }else if(!tolower(doNext) %in% c("n", "no")){
+        stop("incorrect input... only yes or no allowed.")
+      } 
     }else{
-      eventTable$parentEventID<-rep("unnamed_project", nrow(dataset))
-      eventTable$project <- "unnamed_project"
+      orig_names$original_names <- as.character(dataset[,tolower(colnames(dataset))==likely_sampNames])
+      warningmessages <- paste("assumed the \"",likely_sampNames_orig,"\" column contained the original sample names", sep="")
     }
-  }
-  
-  #try to find a project name, or ask for one
-  if(all(is.na(eventTable$project))){
-    if("project_name" %in% colnames(dataset)){
-      eventTable$project <- dataset$project_name
-    }else if(ask.input){
-      cat("No project name was found.\n\tPlease provide a project name, or type n to ignore.") 
-      doNext <- readline() 
-      if(!tolower(doNext) %in% c("n")){
-        eventTable$project <- doNext
-      }else{
-        eventTable$project <- "unnamed_project"
-      }
-    }
-  }
-  
-  #if there is just one project: this will be the root project
-  #if there are multiple projects: create a root project
-  if(complete.hierarchy){
-    if(length(unique(eventTable$project)==1) && !unique(eventTable$project)==""){
-      PRJ <- unique(eventTable$project)
-    }else if(ask.input){
-      if("" %in% unique(eventTable$project) & length(unique(eventTable$project))>1){
-        cat("Multiple projects found or some sample had no project.\n\tPlease provide an overarching project name that can be used to unite all samples, or type n to ignore.") 
-      }else if("" %in% unique(eventTable$project) & length(unique(eventTable$project))==1){
-        cat("No project found.\n\tPlease provide an overarching project name that can be used to unite all samples, or type n to ignore.") 
-      }else{
-        cat("Multiple projects found.\n\tPlease provide an overarching project name that can be used to unite all samples, or type n to ignore.") 
-      }
-      doNext <- readline() 
-      if(!tolower(doNext) %in% c("n")){
-        PRJ <- doNext
-      }else{
-        PRJ <- "unnamed_project"
-      }
-    }
-    
-    ## complete the event hierarchy
-    # first
-    
-    # then the overarching project
-    PRJ
-    
-    
-    # 6. include higer level events
-    # add any parentEventIDs that are missing from the EventIDs
-    if(length(missing_parents)>0){
-      for(mp in missing_parents){
-        dataset[nrow(dataset)+1,]<-NA
-        rownames(dataset)[nrow(dataset)] <- mp
-        dataset[nrow(dataset),]$eventID <- mp
-        dataset[nrow(dataset),]$parentEventID <- ""
-      }
-    }
-    
-    # use the project as a root to all EventIDs and parentEventIDs
-    if(length(missing_project)>0){
-      if(length(PRJ)>1){
-        PRJ <- "unnamed_project"
-      }
-      dataset[dataset$parentEventID=="","parentEventID"] <- PRJ
-      dataset[nrow(dataset)+1,]<-NA
-      rownames(dataset)[nrow(dataset)] <- "project"
-      dataset[nrow(dataset),]$eventID <- PRJ
-      dataset[nrow(dataset),]$parentEventID <- ""
-    }
-    
-    
-
-    
-    
-  }
-  
-  
-  # 5. check if the EventIDs match the parentEventIDs
-  if(check.parentEventID){
-    missing_project<-c()
-    missing_parents<-c()
-    u_ev <- unique(dataset$eventID)
-    u_pev <- unique(dataset$parentEventID)
-    if(!"" %in% u_pev){
-      missing_project<-c("") #the allows a project-level parent event to be added
-    }else{
-      #check if eventIDs with no parentEvent is also the parent of an event
-      if(!all(dataset[dataset$parentEventID=="",]$eventID %in% dataset$parentEventID)){
-        # if not, a project-level parent can be added
-        missing_project<-c("")
-      }else{
-        if(length(dataset[dataset$parentEventID=="",]$eventID)>1){
-          missing_project<-c("") # multiple high-ranking parents can be united by adding project-level parent
+  }else{
+    likely_sampNames_orig <- NA
+    if(.row_names_info(dataset)>0){#rownames provided by the user might be the original names
+      if(ask.input){
+        cat("No original sample names found...\n\tuse the rownames instead? (y/n)\n") 
+        doNext <- readline() 
+        if(tolower(doNext) %in% c("y", "yes")){
+          orig_names$original_names <- row.names(dataset)
+          warningmessages <- "no original sample names found, used the rownames instead"
+        }else if(tolower(doNext) %in% c("n","no")){
+          cat("you chose no.\n\t Can you give the columnname with the original sample names instead? Leave blank and hit enter to ignore\n") 
+          doNext2 <- readline() 
+          if(doNext2!=""){
+            if (doNext2 %in% colnames(dataset)){
+              orig_names$original_name <- dataset[,doNext2]
+            }else{
+              stop(paste("could not find the column", doNext2, "in the colnames of the dataset provided..."))
+            }
+          }
+        } else{
+          stop("incorrect input... only yes or no allowed.")
         }
       }
-    }
-    if(!all(u_pev[u_pev!=""] %in% u_ev)){
-      missing_parents <- c(setdiff(u_pev, u_ev))
+    }else{
+      warningmessages <- "no original sample names found"
     }
   }
   
-
-  
-
-  
-  if(check.parentEventID){
-    data.out <- dataset[,colnames(dataset) %in% c("eventID", "parentEventID")]
-  }else{
-    data.out <- dataset[,colnames(dataset) %in% c("eventID")]
+  #find and return some other common sample IDs
+  if("eventid" %in% tolower(colnames(dataset))){
+    orig_names$eventID <- as.character(dataset[,tolower(colnames(dataset))=="eventid"])
   }
-  return(data.out)
+  if("parenteventid" %in% tolower(colnames(dataset))){
+    orig_names$eventID <- as.character(dataset[,tolower(colnames(dataset))=="parenteventid"])
+  }
+  if("insdc_sampleid" %in% tolower(colnames(dataset))){
+    orig_names$eventID <- as.character(dataset[,tolower(colnames(dataset))=="insdc_sampleid"])
+  }
+  if("occurrenceid" %in% tolower(colnames(dataset))){
+    orig_names$eventID <- as.character(dataset[,tolower(colnames(dataset))=="occurrenceid"])
+  }
+
+  return(list(Names=orig_names, Names.column=likely_sampNames_orig, warningmessages = warningmessages))
 }
 
+dataQC.TaxonListFromData <- function(dataset){
+  #' @author Maxime Sweetlove CC-BY 4.0 2020
+  #' @description tries to find taxonomic names for samples (rows) in a dataset (data.frame), 
+  #' @usage find.sampleTaxon(dataset)
+  #' @param dataset a data.frame. The dataset with samples as rows, and taxonomy information in the columns. using the MIxS or DarwinCore taxonomy terms, the taxonomy information will be extracted
+  #' @return a vector with the highest level taxonomic name found, with genus and species epithet separated by a space.
+  
+  taxaTerms<-c("specificEpithet", "subgenus", "genus", "family",
+               "order","class","phylum","kingdom", "domain")
+  rankNames<-intersect(colnames(dataset), taxaTerms)
+  # 1. try subspecf_gen_lin (for MIxS data)
+  if("subspecf_gen_lin" %in% colnames(dataset)){
+    taxaNames<-dataset$subspecf_gen_lin
+  }else if("scientificName" %in% colnames(dataset)){
+    # 2. try scientificName (for DwC data)
+    taxaNames<-dataset$scientificName
+  }else{
+    # 3. look for thetaxonomy columns and try to get a name frome there
+    if("genus" %in% rankNames){
+      if("specificEpithet" %in% rankNames){
+        taxaNames <- paste(dataset$genus, dataset$specificEpithet, sep=" ")
+      }else{
+        taxaNames <- DwC.data$genus
+      }
+    }else{
+      taxaNames <- rep("", nrow(dataset))
+    }
+  }
+  #standardize all unknown values to be ""
+  taxaNames <- as.character(taxaNames)
+  taxaNames[is.na(taxaNames)]<-""
+  taxaNames[taxaNames=="NA"]<-""
+  
+  for(tx in 1:length(taxaNames)){
+    if(taxaNames[tx]==""){
+      # means both genus and species names were unknown
+      tx_i=1
+      while(tx_i<(length(rankNames)+1)){
+        tx_term <- rankNames[tx_i]
+        taxName <- dataset[tx,tx_term]
+        if(!is.na(taxName) & !(taxName %in% c("", "NA"))){
+          taxaNames[tx] <- taxName
+          tx_i<-length(rankNames)+100
+        }
+        tx_i <- tx_i+1
+      }
+    }
+  }
+  
+  taxaNames <- gsub("\\s$", "", taxaNames, fixed=FALSE) #remove trailing spaces
+  return(taxaNames)
+}
 
+dataQC.taxaNames <- function(taxaNames){
+  #' @author Maxime Sweetlove CC-BY 4.0 2020
+  #' @description checks a list of taxonomic names, 
+  #' @usage dataQC.taxaNames(taxaNames)
+  #' @param taxaNames character vector. a list of scientific taxonomic names
+  
+  taxaNamesQC <- data.frame(matrix(data="", ncol=3, nrow=length(taxaNames)), stringsAsFactors = FALSE)
+  colnames(taxaNamesQC) <- c("speciesLevelName", "scientificName", "identificationQualifier")
+  
+  for(tx in 1:length(taxaNames)){
+    taxon <- taxaNames[tx]
+    taxon <- gsub("\\s$", "", taxon, fixed=FALSE) #remove trailing spaces
+    taxon <- gsub("Eukaryotes", "Eukaryota", taxon, fixed=TRUE)
+    taxon <- gsub("Eukarya", "Eukaryota", taxon, fixed=TRUE)
+    taxon_split <- strsplit(taxon, " ")[[1]]
+    
+    if(length(taxon_split)>1){
+      taxaNamesQC[tx,]$speciesLevelName <- taxon
+      if(taxon_split[2]=="cf."){
+        taxaNamesQC[tx,]$scientificName <- tx_split[1]
+        taxaNamesQC[tx,]$identificationQualifier <- paste(tx_split[2], tx_split[3])
+      }else if(taxon_split[2]=="sp." | taxon_split[2]=="sp"){
+        taxaNamesQC[tx,]$scientificName <- tx_split[1]
+        taxaNamesQC[tx,]$identificationQualifier <- "sp."
+      }else if(taxon_split[2]=="spp." | taxon_split[2]=="spp"){
+        taxaNamesQC[tx,]$scientificName <- tx_split[1]
+        taxaNamesQC[tx,]$identificationQualifier <- "spp."
+      }else if(taxon_split[2]=="gr."){
+        taxaNamesQC[tx,]$scientificName <- tx_split[1]
+        taxaNamesQC[tx,]$identificationQualifier <- paste(taxon_split[3], "group")
+      }else{
+        taxaNamesQC[tx,]$scientificName <- taxon
+      }
+    }else{
+      taxaNamesQC[tx,]$speciesLevelName <- paste(taxon, "sp.")
+      taxaNamesQC[tx,]$scientificName <- taxon
+      taxaNamesQC[tx,]$identificationQualifier <- "sp."
+    }
+  }
+  return(taxaNamesQC)
+}
 
+dataQC.completeTaxaNamesFromRegistery <- function(taxaNames, taxBackbone="worms"){
+  #' @author Maxime Sweetlove CC-BY 4.0 2020
+  #' @description complete a list of taxonomic names by looking-up missing information on an accepted taxonomic registery
+  #' @param taxaNames a character vector. A list with the taxonomic names to look for
+  #' @param taxBackbone a character string. The taxonomic backbone to querry. Either "worms" or "gbif"
+  #' @usage dataQC.completeTaxaNamesFromRegistery(taxaNames, taxBackbone="gbif")
+  
+  require(worrms)
+  require(rgbif)
+  
+  taxid_key <- data.frame(scientificName = unique(taxaNames), scientificNameID=NA, 
+                          aphID=NA, kingdom=NA, phylum=NA, class=NA, order=NA, family=NA,
+                          genus=NA, specificEpithet=NA, scientificNameAuthorship=NA,
+                          namePublishedInYear=NA)
+  
+  if(tolower(taxBackbone) == "worms"){
+    for(nc in 1:nrow(taxid_key)){
+      taxon<-as.character(taxid_key[nc,]$scientificName)
+      if(!taxon %in% c("", "NA", NA)){
+        taxid <- tryCatch({
+          tx <- worrms::wm_name2id(taxon)
+        }, error = function(e){
+          tx <- ""
+        }
+        ) 
+        
+        if(taxid != ""){
+          taxnum <- taxid
+          taxid<-paste("urn:lsid:marinespecies.org:taxname:", taxid, sep="")
+          taxdata <- data.frame(worrms::wm_record(taxnum))
+          
+          #fill the taxid_key table
+          taxid_key[nc,]$aphID <- taxnum
+          taxid_key[nc,]$scientificNameID <- taxid
+          taxid_key[nc,]$kingdom<-taxdata$kingdom
+          taxid_key[nc,]$phylum<-taxdata$phylum
+          taxid_key[nc,]$class<-taxdata$class
+          taxid_key[nc,]$order<-taxdata$order
+          taxid_key[nc,]$family<-taxdata$family
+          taxid_key[nc,]$genus<-taxdata$genus
+          if(!is.na(taxdata$scientificname)){
+            taxid_key[nc,]$specificEpithet<-strsplit(taxdata$scientificname, " ")[[1]][2]
+          }else{
+            taxid_key[nc,]$specificEpithet <- NA
+          }
+          
+          if(!is.na(taxdata$authority)){
+            authoryear<-strsplit(taxdata$authority, ", ")[[1]]
+            taxid_key[nc,]$scientificNameAuthorship<-gsub("\\(", "", authoryear[1], fixed=FALSE)
+            taxid_key[nc,]$namePublishedInYear<-gsub("\\)", "", authoryear[2], fixed=FALSE)
+          }else{
+            taxid_key[nc,]$scientificNameAuthorship <- NA
+            taxid_key[nc,]$namePublishedInYear <- NA
+          }
+          
+        }else{
+          taxid_key[nc,]$scientificNameID <- taxid
+          taxid_key[nc,]$aphID <- taxid
+        }
+      }
+    }
+  }else if(tolower(taxBackbone) == "gbif"){
+    for(nc in 1:nrow(taxid_key)){
+      taxon<-as.character(taxid_key[nc,]$scientificName)
+      if(!taxon %in% c("", "NA", NA)){
+        taxid <- tryCatch({
+          tx <- rgbif::name_backbone(name="taxon")
+        }, error = function(e){
+          tx <- ""
+        }
+        ) 
+      }
+      ### to be finished
+    }
+    
+  }else{
+    stop("invalid taxBackbone argument")
+  }
+  
+  
+  taxid_key[is.na(taxid_key)]<-""
+  return(taxid_key)
+}
 
+dataQC.eventStructure <- function(dataset, eventID.col = "eventID", parentEventID.col = NA,
+                                  project.col = NA, project = NA, event.prefix = NA,
+                                  complete.hierarchy=FALSE){
+  #' @author Maxime Sweetlove ccBY 4.0 2020
+  #' @description checks if an eventID is present in a (QC'd) dataset, and generates one if not. Does the same of parentEventID if check.parentEventID is TRUE, and check the hierarchical relationships between eventID and parentEventID
+  #' @param dataset data.frame. The dataset for which the event structure should be checked
+  #' @param eventID.col character. The column where the names of the events are given. Default eventID. If NA, and event.prefix must be provided to be able to create unique eventIDs
+  #' @param parentEventID.col character. The column where the names of the parentEvents are given. If NA, parentEvents are not considered. Default NA
+  #' @param project.col character. The column where the names of the projects are given. Projects are high-level parentEvents that group a large number of events. If NA, projects are not considered. If there is just one project, please consider the project parameter. Default NA. This parameter overrides the project parameter. Only effective if complete.hierarchy is TRUE.
+  #' @param project character. The project that groups all samples. This parameter is overriden by the the project.col parameter if not NA. Only effective if complete.hierarchy is TRUE.
+  #' @param event.prefix character. A prefix to feauture in the eventIDs if these have to be created from scratch. This parameter overrides the eventID.col parameter.
+  #' @param complete.hierarchy logical. If TRUE, the event-parentEvent hierarchy structure will be completed upt to a root (project). Any parentEvents that are not listed among the eventIDs will also be created. Default FALSE. if parentEventID.col was NA, new parentEventIDs will be created.
+
+  #' @usage dataQC.eventStructure(dataset, eventID.col = "eventID", parentEventID.col = NA, project.col = NA, project = NA, complete.hierarchy=FALSE, ask.input=TRUE)
+  
+  require(stringr)
+  eventTable <- data.frame(original_name = rownames(dataset), eventID=rep(NA, nrow(dataset)), 
+                           parentEventID=rep(NA, nrow(dataset)), type=NA,
+                           stringsAsFactors = FALSE)
+  rownames(eventTable)<-rownames(dataset)
+  
+  # 0. checking the input and error handling
+  if(complete.hierarchy & is.na(parentEventID.col) & is.na(project) & is.na(project.col)){
+    # complete.hierarchy makes no sense if there is no project or parentEvent information
+    complete.hierarchy<-FALSE
+  } 
+  
+  if(is.na(eventID.col)){
+    if(is.na(event.prefix)){
+      stop("eventID.col or an event.prefix must be provided")
+    }else{
+      eventID.col <- "eventID"
+      dataset$eventID <- paste(event.prefix, ":N",
+                               stringr::str_pad(1:nrow(dataset), nchar(nrow(dataset)), pad = "0"), sep="")
+    }
+  }else if(!eventID.col %in% colnames(dataset)){
+    stop("eventID.col not found")
+  }
+  
+  if(!is.na(project.col)){
+    if(!project.col %in% colnames(dataset)){
+      stop("project.col not found")
+    }else{
+      eventTable$project <- dataset[,colnames(dataset)==project.col]
+    }
+  }else if(!is.na(project)){
+    project.col<-"project"
+    eventTable$project <- rep(project, nrow(dataset))
+  }
+  
+  ## 1. get eventID
+  eventTable$eventID <- dataset[,colnames(dataset)==eventID.col]
+  # 1.1 QC the eventIDs: they have to be unique
+  if(length(unique(eventTable$eventID)) != nrow(dataset)){
+    eventTable$eventID <- make.names(eventTable$eventID, unique=TRUE)
+  }
+
+  # 2. get parentEventID
+  if(!is.na(parentEventID.col)){
+    if(!parentEventID.col %in% colnames(dataset)){
+      stop("parentEventID.col not found")
+    }else{
+      eventTable$parentEventID <- dataset[,colnames(dataset)==parentEventID.col]
+    }
+  }
+
+  # make all parentEvents that are NA ""
+  eventTable$parentEventID[is.na(eventTable$parentEventID)]<-""
+  
+  # complete the type column
+  eventTable$type[!eventTable$eventID %in% eventTable$parentEventID]<-"event"
+  eventTable$type[eventTable$eventID %in% eventTable$parentEventID]<-"parentEvent"
+  
+  # 3. complete hierarchy
+  if(complete.hierarchy){
+    eventTable$original <- TRUE
+    # 3.1 make sure there is a parentEvent column to work with
+    if(is.na(parentEventID.col)){
+      # create a parentEventID column with the provided project
+      eventTable$parentEventID <- eventTable$project
+    }
+      
+    # 3.2 check if the parentEventIDs are in the eventID column
+    # if not: complete
+    parentEvents <- setdiff(unique(eventTable$parentEventID), "")
+    if(!all(parentEvents %in% eventTable$eventID)){
+      # not all parentEvents are in the event column
+      for(pi in 1:length(parentEvents)){
+        if(!parentEvents[pi] %in% eventTable$eventID){
+          if(!is.na(project.col) & !is.na(parentEventID.col)){
+            # add the (true) parentEvents and their projects
+            prj <- eventTable[eventTable$parentEventID==parentEvents[pi],]$project
+            eventTable <- rbind(data.frame(original_name="", eventID=parentEvents[pi], 
+                                           parentEventID=prj, project=prj, type="parentEvent",
+                                           original=FALSE, stringsAsFactors = FALSE),
+                                eventTable)
+          }else if(!is.na(project.col) & is.na(parentEventID.col)){
+            # add the parentEvents, but the are the same as the projects
+            eventTable <- rbind(data.frame(original_name="", eventID=parentEvents[pi], 
+                                           parentEventID="", project=parentEvents[pi], type="project",
+                                           original=FALSE, stringsAsFactors = FALSE),
+                                eventTable)
+          }else{
+            # add parentEvents, there are no projects
+            eventTable <- rbind(data.frame(original_name="", eventID=parentEvents[pi], 
+                                           parentEventID="", type="parentEvent",
+                                           original=FALSE, stringsAsFactors = FALSE),
+                                eventTable)
+          }
+          rownames(eventTable)[1]<-parentEvents[pi]
+        }
+      }
+    }
+    
+    # 3.3 if there is a project, put this as the higest event. 
+    # else=> don't change anything about the parentEvents anymore.
+    if(!is.na(project.col)){
+      projects<-unique(eventTable$project)
+      if(length(projects)==1){
+        if(!projects %in% unique(eventTable$parentEventID)){
+          eventTable[eventTable$parentEventID=="",]$parentEventID <- projects
+        }else{
+          for(pri in 1:nrow(eventTable)){
+            if(eventTable[pri,]$parentEventID=="" & eventTable[pri,]$eventID!=projects){
+              eventTable[pri,]$parentEventID <- projects
+            }
+          }
+        }
+      }
+      
+      if(!all(projects %in% eventTable$eventID)){
+        # add the projects as events
+        for(pi in 1:length(projects)){
+          if(!projects[pi] %in% eventTable$eventID){
+            eventTable <- rbind(data.frame(original_name="", eventID=projects[pi], 
+                                           parentEventID="", project="", type="project",
+                                           original=FALSE, stringsAsFactors = FALSE), 
+                                eventTable)
+            rownames(eventTable)[1]<-projects[pi]
+          }
+        }
+      }else{
+        # make sure projects as events have no parentEvent
+        eventTable[eventTable$eventID %in% projects,]$parentEventID <- ""
+      }
+    }
+  }
+  # 4. finalize
+  return(eventTable)
+}
 
 
 ### still need to finish

@@ -264,7 +264,7 @@ sync.metadata.sequenceFiles <- function(Names, file.dir=NULL,
 # Formatting data to upload to ENA
 #--------------------------------------------------------------
 prep.metadata.ENA <- function(metadata, dest.dir=NULL, file.name=NULL,
-                              sample.unique_name_prefix=NA, checklist_accession=NA,
+                              sample_unique_name_prefix=NA, checklist_accession=NA,
                               tax_name=NA, ask.input=TRUE,
                               insert.size=NA, library.layout=NA,
                               library.strategy=NA, library.selection=NA,
@@ -275,12 +275,12 @@ prep.metadata.ENA <- function(metadata, dest.dir=NULL, file.name=NULL,
   #' @param metadata a metadata.MIxS class object. The object to be written as text file suited for submission to ENA.
   #' @param file.name a character string. A name (without a file type extension) to use for the output files.
   #' @param dest.dir a character string. The file path to the directory where the output files must be written. If left blank files are written to the working directory.
-  #' @param sample.unique_name_prefix a character string. The unique name prefix to append to the sample names (to tie them all together). Required for ENA submissions
+  #' @param sample_unique_name_prefix a character string. The unique name prefix to append to the sample names (to tie them all together). Required for ENA submissions
   #' @param checklist_accession a character string. The name of a MIxS environmetal package or it's ENA checklist accession number.
   #' @param tax_name a character string. The scientific name of a taxon targeted in the data (applicable to all the samples). Same as "subspecf_gen_lin" or "scientific_name" in the metadata.MIxS input.
   #' @param ask.input boolean. Whether or not to ask for user input to make decisions or solve problems that arise during the reformatting (e.g. missing data,...)
   
-  #' @param insert_size a character string. The size of the reads (in number of basepairs), if applicable to all samples.
+  #' @param insert.size a character string. The size of the reads (in number of basepairs), if applicable to all samples.
   #' @param library_layout a character string. The layout of the library, either PAIRED or SINGLE, if applicable to all samples.
   #' @param library_strategy a character string. The library strategy (e.g. AMPLICON, WGS,...), if applicable to all samples.
   #' @param library_selection a character string. The method used to select for, enrich or or screen the material being sequenced (e.g. PCR)?, if applicable to all samples.
@@ -348,28 +348,58 @@ prep.metadata.ENA <- function(metadata, dest.dir=NULL, file.name=NULL,
     }
   out.line01 <- paste("#checklist_accession", checklist_accession, sep='\t')
   
-  # 4. unique_name_prefix
-  if(c(NULL,NA) %in% unique_name_prefix | length(unique_name_prefix)>1){
+  # 4. sample_unique_name_prefix
+  if(c(NULL,NA) %in% sample_unique_name_prefix | length(sample_unique_name_prefix)>1){
     if(ask.input){
-      cat("Please provide a unique name prefix (unique_name_prefix argument)\n") 
-      unique_name_prefix <- readline() 
+      cat("Please provide a unique name prefix (sample_unique_name_prefix argument)\n") 
+      sample_unique_name_prefix <- readline() 
     }else{
-      unique_name_prefix <- temp_unique_name_prefix
+      sample_unique_name_prefix <- temp_unique_name_prefix
     }
   }
-  out.line02 <- paste("#unique_name_prefix", unique_name_prefix, sep='\t')
+  out.line02 <- paste("#unique_name_prefix", sample_unique_name_prefix, sep='\t')
   
   # 5. the actual data:
   ena_metadata <- data.frame(row.names=rownames(metadata)) #the values
   ena_variable <- c() #the row with the variable names (use of spaces by ENA makes is difficult to include with the values)
   ena_units <- c() #the unit row
-  # 5.1 fixed term sample_alias = unique_name_prefix + a running number
-  ln <- nchar(trunc(nrow(metadata)))
-  lx <- c(1:nrow(metadata))
-  sample_alias <- paste(unique_name_prefix, formatC(lx, width=ln, flag="0"), sep="_")
-  ena_metadata$sample_alias<-sample_alias
+  
+  ####### START of intervention 2020-2-12######
+  
+  ###old# 5.1 fixed term sample_alias = sample_unique_name_prefix + a running number
+  ###old#ln <- nchar(trunc(nrow(metadata)))
+  ###old#lx <- c(1:nrow(metadata))
+  ###old#sample_alias <- paste(sample_unique_name_prefix, formatC(lx, width=ln, flag="0"), sep="_")
+  ###old#ena_metadata$sample_alias<-sample_alias
+  ###old#ena_variable <- c(ena_variable, "sample_alias")
+  ###old#ena_units <- c(ena_units, "#units")
+  # 5.1 fixed term sample_alias (original sample name)
+  if("original_name" %in% colnames(metadata)){
+    ena_metadata$sample_alias<-metadata$original_name
+  }else if("misc_param" %in% colnames(metadata)){
+    msc <- strsplit(metadata[1,]$misc_param, ";")
+    msc <- unlist(lapply(msc, function(x){strsplit(x, ":")}))
+    if("original_name" %in% msc){
+      sample_title <-c()
+      for(stl in 1:nrow(metadata)){
+        sName <- strsplit(metadata[stl,]$misc_param, ";")[[1]]
+        sName <- sName[grepl("original_name:", sName)]
+        sName <- strsplit(sName, ":")[[1]][2]
+        if(sName=="NA" | sName=="NULL"){
+          sName <- ""
+        }
+        sample_title <- c(sample_title, sName)
+      }
+      ena_metadata$sample_alias <- sample_title
+    }
+  }else{
+    ena_metadata$sample_alias<-rownames(metadata)
+  }
   ena_variable <- c(ena_variable, "sample_alias")
   ena_units <- c(ena_units, "#units")
+  ####### END of intervention 2020-2-12######
+  
+  
   
   # 5.2 fixed term taxon: common_name
   # = The taxonomic classification (based on the ENA taxIDs) of the sample
@@ -767,7 +797,7 @@ prep.metadata.ENA <- function(metadata, dest.dir=NULL, file.name=NULL,
   # 7.10. insert_size
   ## required parameter
   if(!is.na(insert.size)){
-    ena_runInfo$insert.size <- rep(insert.size, nrow(ena_runInfo))
+    ena_runInfo$insert_size <- rep(insert.size, nrow(ena_runInfo))
   }else if("insert_size" %in% colnames(metadata)){
     ena_runInfo$insert_size <- metadata$insert_size
   }else if(ask.input){
