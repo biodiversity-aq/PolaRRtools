@@ -1,43 +1,28 @@
 #==============================================================
-# The polaRRtools package
-#       polaRRtools is a collection of user-friendly tools to download explore and analize 
-#       High Throughput Amplicon sequencing data for Biodiversity research, using R. 
-#       The aim is to lower the treshold for high quality, reproducible and accessible 
-#       analysis of nucleotide data in the versatile R-environment, combined with data re-use.
+# The MicrobeDataTools package
+#       MicrobeDataTools is a collection data management tools for microbial 'omics datasets.
+#       They allow to download, structure, quqlity-controll and standardize microbial datasets
 #==============================================================
 # Author Maxime Sweetlove
 # lisence CC 4.0
 # Part of the POLA3R website (successor or mARS.biodiversity.aq)
-# version 1.0 (2019-09-20)
+# version 1.0 (2020-01-28)
 # file encdong UTF-8
 #
 #==============================================================
-## ideas to work out: do a QC on the Biome (use : as sep, envo vocab,...)
-#    # assume words of one terms are separated by a " ", ".", and "_" => change this to space
-#Metadata$env_biome <-gsub(".", " ", Metadata$env_biome, fixed=TRUE)
-#Metadata$env_biome <-gsub("_", " ", Metadata$env_biome, fixed=TRUE)
-#Metadata$env_biome<-gsub("\\s+", " ", Metadata$env_biome, fixed=FALSE)
-# change possible hyrarchy separators to ":"
-#Metadata$env_biome <-gsub(",", ":", Metadata$env_biome, fixed=TRUE)
-#Metadata$env_biome<-gsub(">", ":", Metadata$env_biome, fixed=TRUE)
-#Metadata$env_biome<-gsub(";", ":", Metadata$env_biome, fixed=TRUE)
-#Metadata$env_biome<-gsub("|", ":", Metadata$env_biome, fixed=TRUE)
-#Metadata$env_biome<-gsub(":+", ":", Metadata$env_biome, fixed=FALSE)
-
-
+# data Quality Controll (QC) function
+#==============================================================
+#' find and standardize dates in a dataframe
+#' @author Maxime Sweetlove CC-BY 4.0 2019
+#' @description looks in the columns of a dataset for a column with dates and transforms them to the YYYY-MM-DD format.
+#' @usage dataQC.dateCheck(dataset, date.colnames)
+#' @param dataset dataframe. The dataset where the date column should be found
+#' @param date.colnames character vector. a list of potential names for the column with the date. e.g. c("date", "Date", "collection date")
+#' @details The date column is found based on a user-provided list of possible names to look for (data.colnames argument). If a columnname is found that corresponds to a term in the list, the dates will be convered to the YYYY-MM-DD format, if the original format can be recognized.
+#' @return a list of length 2, with "$values" a dataframe with the same dimentions as the dataset argument, and "$warningmessages" a vector with potential warning messages as character strings.
+#' @export
 dataQC.dateCheck <- function(dataset, date.colnames=c("date", "Date", "collection_date")){
-  #' @author Maxime Sweetlove CC-BY 4.0 2019
-  #' @description dataQC.dateCheck looks in the columns of a dataset (dataframe) for a column with dates, 
-  #' and transforms them to the YYYY-MM-DD format.
-  #' @usage dataQC.dateCheck(dataset, date.colnames)
-  #' @param dataset dataframe. The dataset where the date column should be found
-  #' @param date.colnames character vector. a list of potential names for the column with the date. e.g. c("date", "Date", "collection date")
-  #' @details The date column is found based on a user-provided list of possible names to look for (data.colnames argument)
-  #' If a columnname is found that corresponds to a term in the list, the dates will be convered to the YYYY-MM-DD format, if the original format can be recognized.
-  #' @return a list of length 2, with "$values" a dataframe with the same dimentions as the 
-  #' dataset argument, and "$warningmessages" a vector with potential warning messages as character strings.
-  #' @example dataQC.dateCheck(dataset, date.colnames=c("date", "Date"))
-  
+
   warningmessages<-c()
   NAvals <- c("NA", "ND", "unnkown", "", NA, NULL, "na")
   xdate <- intersect(date.colnames, colnames(dataset))
@@ -45,7 +30,7 @@ dataQC.dateCheck <- function(dataset, date.colnames=c("date", "Date", "collectio
     warningmessages <- multi.warnings(paste("multiple date columns found, only executed QC on", xdate[1]), warningmessages)
     xdate <- xdate[1]
   }
-  
+
   if(length(xdate)==1){
     date_values <- as.character(dataset[,xdate])
     # try to format date in YYYY-MM-DD format
@@ -72,7 +57,7 @@ dataQC.dateCheck <- function(dataset, date.colnames=c("date", "Date", "collectio
         }
         date_values[i] <- strsplit(date_values[i], "T")[[1]][1]
         date_split <- strsplit(date_values[i], "-")
-        
+
         if(length(date_split[[1]])==3 && nchar(date_split[[1]][3])==4){ #assume DD-MM-YYYY
           year <- as.character(date_split[[1]][3])
           mnth <- as.character(sprintf("%02d", as.numeric(date_split[[1]][2])))
@@ -106,34 +91,25 @@ dataQC.dateCheck <- function(dataset, date.colnames=c("date", "Date", "collectio
   return(list(values=date_values, warningmessages=warningmessages))
 }
 
+#' find and standardize geographic coordinates in a dataframe
+#' @author Maxime Sweetlove CC-BY 4.0 2019
+#' @description looks in the columns of a dataset (dataframe) for a column with coordinates and transforms them a standardized decimal format (see details).
+#' @usage dataQC.LatitudeLongitudeCheck(dataset, latlon.colnames)
+#' @param dataset dataframe. The dataset where the date column should be found
+#' @param latlon.colnames a list of length 3 with character vectors. Three vectors of potential names for the columns with the latitude-longidude values. The first vector in the list are names if latitude and longitude were to be in the same column (e.g. the MIxS lat_lon format), the second and third are for when latitude and longitude, respectively, are in seperate columns. Example: list(c("lat_lon"), c("latitude"), c("longitude"))
+#' @details The date column is found based on a user-provided list of possible names to look for (latlon.colnames argument). First, a single column is searched where latitude and longitude are noted in a single field, if this returns no result, latitude and longitude are looked for in seperate fields. When found, the coordinates are transformed to decimals and returned as a single field, with values separated by a single space That is: (X Y), with X a numeric decimal latitude value and Y a numeric decimal longitude value.
+#' @return a list of length 2, with "$values" a vector of same length as the number of rows in the dataset argument, and "$warningmessages" a vector with potential warning messages as character strings.
+#' @export
 dataQC.LatitudeLongitudeCheck <- function(dataset, latlon.colnames=list(c("lat_lon"),c("latitude"), c("longitude"))){
-  #' @author Maxime Sweetlove CC-BY 4.0 2019
-  #' @description dataQC.LatitudeLongitudeCheck looks in the columns of a dataset (dataframe) for a column with coordinates (latitude/longitude in a single or double column system) and transforms them a standardized decimal format (see details).
-  #' @usage dataQC.LatitudeLongitudeCheck(dataset, latlon.colnames)
-  #' 
-  #' @param dataset dataframe. The dataset where the date column should be found
-  #' @param latlon.colnames a list of length 3 with character vectors. Three vectors of potential names for the columns with the latitude-longidude values. The first vector in the list are names if latitude and longitude were to be in the same column (e.g. the MIxS lat_lon format), the second and third are for when latitude and longitude, respectively, are in seperate columns. Example: list(c("lat_lon"), c("latitude"), c("longitude"))
-  #' 
-  #' @details The date column is found based on a user-provided list of possible names to look for (latlon.colnames argument).
-  #' First, a single column is searched where latitude and longitude are noted in a single field, if this
-  #' returns no result, latitude and longitude are looked for in seperate fields. When found, the coordinates
-  #' are transformed to decimals and returned as a single field, with values separated by a single space 
-  #' That is: (X Y), with X a numeric decimal latitude value and Y a numeric decimal longitude value.
-  #' @seealso lat_lonSymbol.to.value and degree.to.decimal
-  #' 
-  #' @return a list of length 2, with "$values" a vector of same length as the number of rows in the
-  #' dataset argument, and "$warningmessages" a vector with potential warning messages as character strings.
-  
-  #' @example dataQC.LatitudeLongitudeCheck(dataset, latlon.colnames=list(c("lat_lon"), c("latitude"), c("longitude")))
-  
+
   warningmessages<-c()
   latlonName <- intersect(latlon.colnames[[1]], colnames(dataset))
   latName <- intersect(latlon.colnames[[2]], colnames(dataset))
   lonName <- intersect(latlon.colnames[[3]], colnames(dataset))
   lat_space_lon_output<-c()
-  
+
   NAvals <- c("NA", "ND", "-", "/", "?", "unnkown", "")
-  
+
   # check format lat_lon: 1 field
   if(length(latlonName)>=1){ #case 1: latitude and longitude are in the same field
     if(length(latlonName)>1){ #more than one column detected
@@ -184,8 +160,8 @@ dataQC.LatitudeLongitudeCheck <- function(dataset, latlon.colnames=list(c("lat_l
           }else if(length(latlon_val)==4){
             lat<-paste(latlon_val[1], latlon_val[2], sep="")
             lon<-paste(latlon_val[3], latlon_val[4], sep="")
-          } 
-          
+          }
+
           #converto to decimal format
           lat <- coordinate.to.decimal(lat)
           lon <- coordinate.to.decimal(lon)
@@ -209,7 +185,7 @@ dataQC.LatitudeLongitudeCheck <- function(dataset, latlon.colnames=list(c("lat_l
       for(i in 1:length(lat_values)){
         lat <- lat_values[i]
         lon <- lon_values[i]
-        
+
         if(is.na(lat) | lat %in% NAvals | is.na(lon) | lon %in% NAvals){
           warningmessages <- multi.warnings("there are NAs in the coordinates", warningmessages)
           lat_space_lon_output<-c(lat_space_lon_output, "")
@@ -230,22 +206,20 @@ dataQC.LatitudeLongitudeCheck <- function(dataset, latlon.colnames=list(c("lat_l
   return(list(values=lat_space_lon_output, warningmessages=warningmessages))
 }
 
+#' make an educated guess to the MIxS environmental package of a dataset
+#' @author Maxime Sweetlove CC-BY 4.0 2019
+#' @description looks in the columns of a dataset for clues to what the most appropriate MIxS environmental could be for each sample.
+#' @usage dataQC.guess.env_package.from.data(dataset, pckge.colnames=c("env_package", "ScientificName"))
+#' @param dataset dataframe. The dataset for which the MIxS environmental package should be found or guessed
+#' @param pckge.colnames a character vector. A vector with the potential names for the column where the environmental package can be found. Place the terms in order of decreasing likeliness.
+#' @details The "Minimul Information on any (x) Sequence" (MIxS) standard requires an appropriate environmental package with MIxS terms to be selected to document the data. Some data and nucleotide archives enforce their users to select such a package. This function is made to automatically either find the package in a dataset, of guess it based on the data that is present.
+#' @return a list of length 2, with "$values" a vector of same length as the number of rows in the dataset argument, and "$warningmessages" a vector with potential warning messages as character strings.
+#' @export
 dataQC.guess.env_package.from.data <- function(dataset, pckge.colnames=c("env_package", "ScientificName")){
-  #' @author Maxime Sweetlove CC-BY 4.0 2019
-  #' @description dataQC.guess.env_package.from.data looks in the columns of a dataset for clues to what the most appropriate MIxS environmental could be for each sample.
-  #' @usage dataQC.guess.env_package.from.data(dataset)
-  #' 
-  #' @param dataset dataframe. The dataset for which the MIxS environmental package should be found or guessed
-  #' @param pckge.colnames a character vector. A vector with the potential names for the column where the environmental package can be found. Place the terms in order of decreasing likeliness.
-  #' @details The GSC MIxS standard requires an appropriate environmental package with MIxS terms to be selected to document the data. Some data and nucleotide archives enforce their users to select such a package. This function is made to automatically either find the package in a dataset, of guess it based on the data that is present. 
-  #' 
-  #' @return a list of length 2, with "$values" a vector of same length as the number of rows in the dataset argument, and "$warningmessages" a vector with potential warning messages as character strings.
-  
-  #' @example dataQC.guess.env_package.from.data(df)
-  
+
   warningmessages <- c()
   warningmessages<-multi.warnings("the env_package was not specified. An educated guess was made, but should be checked", warningmessages)
-  
+
   #look if a collumn can be found
   pck <- intersect(pckge.colnames, colnames(dataset))
   if(length(pck)>0){
@@ -254,7 +228,7 @@ dataQC.guess.env_package.from.data <- function(dataset, pckge.colnames=c("env_pa
     env_package<-NULL
     warningmessages<-multi.warnings("No env_package could be infered", warningmessages)
   }
-  
+
   # try to convert the input to a correct package name (necessary when the package is not given directly and needs to be infered)
   if(!is.null(env_package)){
     env_package <- as.character(env_package)
@@ -316,33 +290,32 @@ dataQC.guess.env_package.from.data <- function(dataset, pckge.colnames=c("env_pa
   return(list(values=env_package, warningmessages=warningmessages))
 }
 
+#' make variable names in a dataset to comply to a standrad
+#' @author Maxime Sweetlove ccBY 4.0 2020
+#' @description checks a set of terms (e.g. columnnames) to a Standard, and flags inconsistencies, gives solutions if possible.
+#' @usage Check.terms(observed, exp.standard="MIxS", exp.section=NA, fuzzy.match=TRUE, out.type="full")
+#' @param observed character vector. The terms to be checked
+#' @param exp.standard character. The expected standard to which he terms should comply. Either MIxS (Minimum Information on any x sequence), DwC (DarwinCore), INSDC (International Nucleotide Sequence Database Consortium).
+#' @param exp.section character. Optionally an specific section standard where the terms should come from. When exp.standard is MIxS, the allowed sections are: core,  air, built_environment, host_associated, human_associated, human_gut, human_oral, human_skin, human_vaginal, microbial_mat_biofilm, miscellaneous_natural_or_artificial_environment, plant_associated, sediment, soil, wastewater_sludge, water. When exp.standard is DwC, the allowed sections are: event, occurence, emof
+#' @param fuzzy.match logical. If TRUE, fuzzy matching will be done when no corresponding term is found in the Standard
+#' @param out.type character. The type of the output. Either "full" (the output is a list of three lists: terms_OK=the correct terms, terms_wrongWithSolution = wrong terms with a proposed solution, and terms_notFound = terms that had no match), "logical" (output is logical vector for exact matches or not) or "best_match" (output returns a vector with the best matching terms). default full
+#' @details For interoperability of data and data archiving, variable names in datasets need to comply to vocabulary standards. This function compares a list of existing terms to the MIxS or DwC standard, and tries to fiend the best matches.
+#' @return depending on out.type, either a boolean, or a list of length 3, with "$terms_OK" (terms that comply to the standard), "$terms_wrongWithSolution" (terms that do not comply to the standard but have a close match), and "$terms_notFound" (terms that do not comply to the standard, and that not match any term in it)
+#' @export
 dataQC.TermsCheck <- function(observed=NA, exp.standard="MIxS", exp.section=NA, fuzzy.match=TRUE,
                         out.type="full"){
-  #' @author Maxime Sweetlove ccBY 4.0 2020
-  #' @description checks a set of terms (e.g. columnnames) to a Standard, and flags inconsistencies, gives solutions if possible.
-  #' 
-  #' @usage Check.terms(observed, exp.standard="MIxS", exp.section="core")
-  #' 
-  #' @param observed character vector. The terms to be checked
-  #' @param exp.standard character. The expected standard to which he terms should comply. Either MIxS (Minimum Information on any x sequence), DwC (DarwinCore), INSDC (International Nucleotide Sequence Database Consortium).
-  #' @param exp.section character. Optionally an specific section standard where the terms should come from. When exp.standard is MIxS, the allowed sections are: core,  air, built_environment, host_associated, human_associated, human_gut, human_oral, human_skin, human_vaginal, microbial_mat_biofilm, miscellaneous_natural_or_artificial_environment, plant_associated, sediment, soil, wastewater_sludge, water. When exp.standard is DwC, the allowed sections are: event, occurence, emof
-  #' @param fuzzy.match logical. If TRUE, fuzzy matching will be done when no corresponding term is found in the Standard
-  #' @param out.type character. The type of the output. Either "full" (the output is a list of three lists: terms_OK=the correct terms, terms_wrongWithSolution = wrong terms with a proposed solution, and terms_notFound = terms that had no match), "logical" (output is logical vector for exact matches or not) or "best_match" (output returns a vector with the best matching terms). default full
-  
-  
-  require(RecordLinkage)
-  
+  #requires RecordLinkage
   MIxS_sections <- c("core",  "air", "built_environment", "host_associated",
-                     "human_associated", "human_gut", "human_oral", "human_skin", 
-                     "human_vaginal", "microbial_mat_biofilm", "sediment", "soil", 
-                     "miscellaneous_natural_or_artificial_environment", "plant_associated", 
+                     "human_associated", "human_gut", "human_oral", "human_skin",
+                     "human_vaginal", "microbial_mat_biofilm", "sediment", "soil",
+                     "miscellaneous_natural_or_artificial_environment", "plant_associated",
                      "wastewater_sludge", "water")
   DwC_sections <- c("event", "occurrence", "emof")
-  
+
   #chage terms to lowercase: lowers number of possible differences
   names(observed) <- observed
   observed <- tolower(observed)
-  
+
   # 1. check input
   if(!tolower(out.type) %in% c("full", "logical", "best_match")){
     stop("out.type should be either:\n\t \"full\": output will be a list of three lists, with:\n\t\t1) the correct terms\n\t\t2) wrong terms with a solution\n\t\t3) terms that had no match\n\t\"logical\": the output will be a TRUE/FALSE vector\n\t\"best_match\": the output will be the best matching term")
@@ -367,20 +340,20 @@ dataQC.TermsCheck <- function(observed=NA, exp.standard="MIxS", exp.section=NA, 
     exp.standard<-"INSDC"
     exp.section <- NA
   }
-  
+
   # 2. get the right synonym list
   if(is.na(exp.section)){
     synonymList <- sapply(as.character(TermsLib[TermsLib$name_origin %in% exp.standard,]$synonyms), function(x){strsplit(x, ";")})
-    names(synonymList) <- TermsLib[TermsLib$name_origin %in% exp.standard,]$name 
+    names(synonymList) <- TermsLib[TermsLib$name_origin %in% exp.standard,]$name
   }else{
     exp.section <- gsub("^core$", "MIxS_core", exp.section, fixed=FALSE)
     exp.section <- gsub("^event$", "DwC_Event", exp.section, fixed=FALSE)
     exp.section <- gsub("^occurrence$", "DwC_Occurrence", exp.section, fixed=FALSE)
     exp.section <- gsub("^emof$", "DwC_eMoF", exp.section, fixed=FALSE)
     synonymList <- sapply(as.character(TermsLib[TermsLib[,exp.section] > 0,]$synonyms), function(x){strsplit(x, ";")})
-    names(synonymList) <- TermsLib[TermsLib[,exp.section] > 0,]$name 
+    names(synonymList) <- TermsLib[TermsLib[,exp.section] > 0,]$name
   }
-  
+
   # 3. check terms
   terms_OK <- c()
   terms_wrongWithSolution <- c()
@@ -424,8 +397,7 @@ dataQC.TermsCheck <- function(observed=NA, exp.standard="MIxS", exp.section=NA, 
       }
     }
   }
-  
-  
+
   if(out.type=="full"){
     out<-list(terms_OK = terms_OK,
               terms_wrongWithSolution = terms_wrongWithSolution,
@@ -440,20 +412,23 @@ dataQC.TermsCheck <- function(observed=NA, exp.standard="MIxS", exp.section=NA, 
       }else if(w %in% terms_notFound){w<-NA
       }else{w}})
   }
-  
-  
+
+
   return(out)
 }
 
+#' generate a footprintWKT from coordinates
+#' @author Maxime Sweetlove ccBY 4.0 2020
+#' @description generate a footprintWKT column for a dataset (preferably DarwinCore eventCore). Lowest level events must be point locations.
+#' @param dataset data.frame. A data.frame with Event data, formatted as a DarwinCore EventCore file. Must include decimalLatitude, decimalLongitude, eventID and parentEventID.
+#' @param NA.val character. What to fill in when there is no data. Default ""
+#' @usage dataQC.generate.footprintWKT(dataset, NA.val="")
+#' @details This function will format the geographic coordinates of an event (in the fields decimalLatitude and decimalLongitude) into the WellKnownText format. For events that are at the lowest level of the hierarchy, it assumes a single point location. Higher level events are desribed by polygons based on the coordinates of the child events.
+#' @return a vector with a footprintWKT value for each row in the dataset
+#' @export
 dataQC.generate.footprintWKT <- function(dataset, NA.val=""){
-  #' @author Maxime Sweetlove ccBY 4.0 2020
-  #' @description generate a footprintWKT column for a dataset (preferably DarwinCore eventCore). Lowest level events must be point locations.
-  #' @param dataset data.frame. A data.frame with Event data, formatted as a DarwinCore EventCore file. Must include decimalLatitude, decimalLongitude, eventID and parentEventID.
-  #' @param NA.val character. What the fill in when there is no data. Default ""
-  #' @usage dataQC.generate.footprintWKT(dataset)
-  #' @details This function will format the geographic coordinates of an event (in the fields decimalLatitude and decimalLongitude) into the WellKnownText format. For events that are at the lowest level of the hierarchy, it assumes a single point location. Higher level events are desribed by polygons based on the coordinates of the child events.
-  require(mapview)
-  if(!"decimalLatitude" %in% colnames(dataset) | 
+  #requires mapview
+  if(!"decimalLatitude" %in% colnames(dataset) |
      !"decimalLongitude" %in% colnames(dataset) |
      !"eventID" %in% colnames(dataset)){
     stop("The data must include the following columns:\n\tdecimalLatitude, decimalLongitude, eventID")
@@ -489,7 +464,7 @@ dataQC.generate.footprintWKT <- function(dataset, NA.val=""){
           }
         }
         child_ev <- setdiff(child_ev, unique(dataset$parentEventID))
-        
+
         lat<-dataset[dataset$eventID %in% child_ev,]$decimalLatitude
         lon<-dataset[dataset$eventID %in% child_ev,]$decimalLongitude
         if(!all(is.na(lat)) & !all(is.na(lon)) & all(lat!="") & all(lon!="")){
@@ -503,22 +478,25 @@ dataQC.generate.footprintWKT <- function(dataset, NA.val=""){
     }
   }else{
     footprintWKT_vec <- paste("POINT (", as.character(dataset$decimalLatitude),
-                              ", ", as.character(dataset$decimalLongitude), ")", 
+                              ", ", as.character(dataset$decimalLongitude), ")",
                               sep="")
   }
-  
+
   footprintWKT_vec <- gsub("POINT (NA NA)", NA.val, footprintWKT_vec, fixed=TRUE)
   return(footprintWKT_vec)
-  
+
 }
 
+#' find the samplenames in a dataset
+#' @author Maxime Sweetlove ccBY 4.0 2020
+#' @description find the sample names in a given (meta-)dataset where at least an attempt has been made to standardize the data following MIxS or DarwinCore
+#' @param dataset data.frame. The data.frame where to look for the sample names
+#' @param ask.input logical. If TRUE, console input will be requested to the user when a problem occurs. Default TRUE
+#' @usage dataQC.findNames(dataset, ask.input=TRUE)
+#' @return a list of length 3 with: "$Names" a named vector with the most likely sample names, "$Names.column" the column name where the sample names were found, "$warningmessages" a vector with warning messages
+#' @details It is often not clear where the sample names are in a dataset. This function makes an educated guess, based on rownames or tags that are often used to indicate sample names. If ask.input, then the process happens user-supervised.
+#' @export
 dataQC.findNames <- function(dataset = NA, ask.input=TRUE){
-  #' @author Maxime Sweetlove ccBY 4.0 2020
-  #' @description find the sample names in a given (meta-)dataset where at least an attempt has been made to standardize the data following MIxS or DarwinCore
-  #' @param dataset data.frame. The data.frame where to look for the sample names
-  #' @param ask.input logical. If TRUE, console input will be requested to the user when a problem occurs. Default TRUE
-  #' @usage dataQC.findNames(dataset, ask.input=TRUE)
-  #' @return a list with: 1) a named vector with the most likely sample names, 2) the column name where the sample names were found, 3) a vector with warning messages
   orig_names <- data.frame(original_names = rep("", nrow(dataset)),
                            eventID = rep("", nrow(dataset)),
                            parentEventID = rep("", nrow(dataset)),
@@ -527,19 +505,19 @@ dataQC.findNames <- function(dataset = NA, ask.input=TRUE){
   rownames(orig_names) <- rownames(dataset)
   warningmessages <- ""
   item_shared <- intersect(TermsSyn["original_name"][[1]], tolower(colnames(dataset)))
-  if(length(item_shared)>=1){ 
+  if(length(item_shared)>=1){
     likely_sampNames <- item_shared[1] #order of item_shared is in decreasing likelyness
     likely_sampNames_orig <- colnames(dataset)[tolower(colnames(dataset))==likely_sampNames]
     if(ask.input){
-      cat(paste("The original sample names could be in the \"",likely_sampNames_orig,"\" column.\n", sep="")) 
-      cat(paste("\tThe first five names in this column are ", paste(dataset[1:5,tolower(colnames(dataset))==likely_sampNames], collapse="; "), " ...\n\tDoes this seems correct? (y/n)\n", sep="")) 
-      doNext <- readline() 
+      cat(paste("The original sample names could be in the \"",likely_sampNames_orig,"\" column.\n", sep=""))
+      cat(paste("\tThe first five names in this column are ", paste(dataset[1:5,tolower(colnames(dataset))==likely_sampNames], collapse="; "), " ...\n\tDoes this seems correct? (y/n)\n", sep=""))
+      doNext <- readline()
       if(tolower(doNext) %in% c("y", "yes")){
         orig_names$original_names <- as.character(dataset[,tolower(colnames(dataset))==likely_sampNames])
         warningmessages <- paste("assumed the \"",likely_sampNames_orig,"\" column contained the original sample names", sep="")
       }else if(!tolower(doNext) %in% c("n", "no")){
         stop("incorrect input... only yes or no allowed.")
-      } 
+      }
     }else{
       orig_names$original_names <- as.character(dataset[,tolower(colnames(dataset))==likely_sampNames])
       warningmessages <- paste("assumed the \"",likely_sampNames_orig,"\" column contained the original sample names", sep="")
@@ -548,14 +526,14 @@ dataQC.findNames <- function(dataset = NA, ask.input=TRUE){
     likely_sampNames_orig <- NA
     if(.row_names_info(dataset)>0){#rownames provided by the user might be the original names
       if(ask.input){
-        cat("No original sample names found...\n\tuse the rownames instead? (y/n)\n") 
-        doNext <- readline() 
+        cat("No original sample names found...\n\tuse the rownames instead? (y/n)\n")
+        doNext <- readline()
         if(tolower(doNext) %in% c("y", "yes")){
           orig_names$original_names <- row.names(dataset)
           warningmessages <- "no original sample names found, used the rownames instead"
         }else if(tolower(doNext) %in% c("n","no")){
-          cat("you chose no.\n\t Can you give the columnname with the original sample names instead? Leave blank and hit enter to ignore\n") 
-          doNext2 <- readline() 
+          cat("you chose no.\n\t Can you give the columnname with the original sample names instead? Leave blank and hit enter to ignore\n")
+          doNext2 <- readline()
           if(doNext2!=""){
             if (doNext2 %in% colnames(dataset)){
               orig_names$original_name <- dataset[,doNext2]
@@ -571,7 +549,7 @@ dataQC.findNames <- function(dataset = NA, ask.input=TRUE){
       warningmessages <- "no original sample names found"
     }
   }
-  
+
   #find and return some other common sample IDs
   if("eventid" %in% tolower(colnames(dataset))){
     orig_names$eventID <- as.character(dataset[,tolower(colnames(dataset))=="eventid"])
@@ -589,13 +567,13 @@ dataQC.findNames <- function(dataset = NA, ask.input=TRUE){
   return(list(Names=orig_names, Names.column=likely_sampNames_orig, warningmessages = warningmessages))
 }
 
+#' extract the finest resolution taxonomy from a dataset
+#' @author Maxime Sweetlove CC-BY 4.0 2020
+#' @description tries to find taxonomic names for samples (rows) in a dataset (data.frame),
+#' @usage find.sampleTaxon(dataset)
+#' @param dataset a data.frame. The dataset with samples as rows, and taxonomy information in the columns. using the MIxS or DarwinCore taxonomy terms, the taxonomy information will be extracted
+#' @return a vector with the highest level taxonomic name found, with genus and species epithet separated by a space.
 dataQC.TaxonListFromData <- function(dataset){
-  #' @author Maxime Sweetlove CC-BY 4.0 2020
-  #' @description tries to find taxonomic names for samples (rows) in a dataset (data.frame), 
-  #' @usage find.sampleTaxon(dataset)
-  #' @param dataset a data.frame. The dataset with samples as rows, and taxonomy information in the columns. using the MIxS or DarwinCore taxonomy terms, the taxonomy information will be extracted
-  #' @return a vector with the highest level taxonomic name found, with genus and species epithet separated by a space.
-  
   taxaTerms<-c("specificEpithet", "subgenus", "genus", "family",
                "order","class","phylum","kingdom", "domain")
   rankNames<-intersect(colnames(dataset), taxaTerms)
@@ -621,7 +599,7 @@ dataQC.TaxonListFromData <- function(dataset){
   taxaNames <- as.character(taxaNames)
   taxaNames[is.na(taxaNames)]<-""
   taxaNames[taxaNames=="NA"]<-""
-  
+
   for(tx in 1:length(taxaNames)){
     if(taxaNames[tx]==""){
       # means both genus and species names were unknown
@@ -637,27 +615,30 @@ dataQC.TaxonListFromData <- function(dataset){
       }
     }
   }
-  
+
   taxaNames <- gsub("\\s$", "", taxaNames, fixed=FALSE) #remove trailing spaces
   return(taxaNames)
 }
 
+#' perform a quality control onf taxonomic names
+#' @author Maxime Sweetlove CC-BY 4.0 2020
+#' @description checks a list of taxonomic names, and perform a basic quality control
+#' @usage dataQC.taxaNames(taxaNames)
+#' @param taxaNames character vector. a list of scientific taxonomic names
+#' @details looks for trailing spaces or common typos in taxonomic names.
+#' @return a vector with the checked taxon names
+#' @export
 dataQC.taxaNames <- function(taxaNames){
-  #' @author Maxime Sweetlove CC-BY 4.0 2020
-  #' @description checks a list of taxonomic names, 
-  #' @usage dataQC.taxaNames(taxaNames)
-  #' @param taxaNames character vector. a list of scientific taxonomic names
-  
   taxaNamesQC <- data.frame(matrix(data="", ncol=3, nrow=length(taxaNames)), stringsAsFactors = FALSE)
   colnames(taxaNamesQC) <- c("speciesLevelName", "scientificName", "identificationQualifier")
-  
+
   for(tx in 1:length(taxaNames)){
     taxon <- taxaNames[tx]
     taxon <- gsub("\\s$", "", taxon, fixed=FALSE) #remove trailing spaces
     taxon <- gsub("Eukaryotes", "Eukaryota", taxon, fixed=TRUE)
     taxon <- gsub("Eukarya", "Eukaryota", taxon, fixed=TRUE)
     taxon_split <- strsplit(taxon, " ")[[1]]
-    
+
     if(length(taxon_split)>1){
       taxaNamesQC[tx,]$speciesLevelName <- taxon
       if(taxon_split[2]=="cf."){
@@ -684,21 +665,23 @@ dataQC.taxaNames <- function(taxaNames){
   return(taxaNamesQC)
 }
 
+#' Complete a list of taxonomic names with information form an authorotive taxonomic backbone
+#' @author Maxime Sweetlove CC-BY 4.0 2020
+#' @description complete a list of taxonomic names by looking-up missing information on an accepted taxonomic registery
+#' @param taxaNames a character vector. A list with the taxonomic names to look for
+#' @param taxBackbone a character string. The taxonomic backbone to querry. Either "worms" or "gbif"
+#' @usage dataQC.completeTaxaNamesFromRegistery(taxaNames, taxBackbone="gbif")
+#' @details using the API-client connection to the World Registry of Marine Species (WORMS), additional taxonomic information can be added to an existing list of taxa
+#' @return a dataframe with the following fields:scientificName, scientificNameID, aphID, kingdom, phylum, class, order, family, genus, specificEpithet, scientificNameAuthorship, namePublishedInYear
+#' @export
 dataQC.completeTaxaNamesFromRegistery <- function(taxaNames, taxBackbone="worms"){
-  #' @author Maxime Sweetlove CC-BY 4.0 2020
-  #' @description complete a list of taxonomic names by looking-up missing information on an accepted taxonomic registery
-  #' @param taxaNames a character vector. A list with the taxonomic names to look for
-  #' @param taxBackbone a character string. The taxonomic backbone to querry. Either "worms" or "gbif"
-  #' @usage dataQC.completeTaxaNamesFromRegistery(taxaNames, taxBackbone="gbif")
-  
-  require(worrms)
-  require(rgbif)
-  
-  taxid_key <- data.frame(scientificName = unique(taxaNames), scientificNameID=NA, 
+  #requires worrms and rgbif
+
+  taxid_key <- data.frame(scientificName = unique(taxaNames), scientificNameID=NA,
                           aphID=NA, kingdom=NA, phylum=NA, class=NA, order=NA, family=NA,
                           genus=NA, specificEpithet=NA, scientificNameAuthorship=NA,
                           namePublishedInYear=NA)
-  
+
   if(tolower(taxBackbone) == "worms"){
     for(nc in 1:nrow(taxid_key)){
       taxon<-as.character(taxid_key[nc,]$scientificName)
@@ -708,13 +691,13 @@ dataQC.completeTaxaNamesFromRegistery <- function(taxaNames, taxBackbone="worms"
         }, error = function(e){
           tx <- ""
         }
-        ) 
-        
+        )
+
         if(taxid != ""){
           taxnum <- taxid
           taxid<-paste("urn:lsid:marinespecies.org:taxname:", taxid, sep="")
           taxdata <- data.frame(worrms::wm_record(taxnum))
-          
+
           #fill the taxid_key table
           taxid_key[nc,]$aphID <- taxnum
           taxid_key[nc,]$scientificNameID <- taxid
@@ -729,7 +712,7 @@ dataQC.completeTaxaNamesFromRegistery <- function(taxaNames, taxBackbone="worms"
           }else{
             taxid_key[nc,]$specificEpithet <- NA
           }
-          
+
           if(!is.na(taxdata$authority)){
             authoryear<-strsplit(taxdata$authority, ", ")[[1]]
             taxid_key[nc,]$scientificNameAuthorship<-gsub("\\(", "", authoryear[1], fixed=FALSE)
@@ -738,7 +721,7 @@ dataQC.completeTaxaNamesFromRegistery <- function(taxaNames, taxBackbone="worms"
             taxid_key[nc,]$scientificNameAuthorship <- NA
             taxid_key[nc,]$namePublishedInYear <- NA
           }
-          
+
         }else{
           taxid_key[nc,]$scientificNameID <- taxid
           taxid_key[nc,]$aphID <- taxid
@@ -754,47 +737,52 @@ dataQC.completeTaxaNamesFromRegistery <- function(taxaNames, taxBackbone="worms"
         }, error = function(e){
           tx <- ""
         }
-        ) 
+        )
       }
       ### to be finished
     }
-    
+
   }else{
     stop("invalid taxBackbone argument")
   }
-  
-  
+
+
   taxid_key[is.na(taxid_key)]<-""
   return(taxid_key)
 }
 
+
+#' check a dataset for an event-structure
+#' @author Maxime Sweetlove ccBY 4.0 2020
+#' @description checks if an eventID is present in a (QC'd) dataset, and generates one if not. Does the same of parentEventID if check.parentEventID is TRUE, and check the hierarchical relationships between eventID and parentEventID
+#' @param dataset data.frame. The dataset for which the event structure should be checked
+#' @param eventID.col character. The column where the names of the events are given. Default eventID. If NA, and event.prefix must be provided to be able to create unique eventIDs
+#' @param parentEventID.col character. The column where the names of the parentEvents are given. If NA, parentEvents are not considered. Default NA
+#' @param project.col character. The column where the names of the projects are given. Projects are high-level parentEvents that group a large number of events. If NA, projects are not considered. If there is just one project, please consider the project parameter. Default NA. This parameter overrides the project parameter. Only effective if complete.hierarchy is TRUE.
+#' @param project character. The project that groups all samples. This parameter is overriden by the the project.col parameter if not NA. Only effective if complete.hierarchy is TRUE.
+#' @param event.prefix character. A prefix to feauture in the eventIDs if these have to be created from scratch. This parameter overrides the eventID.col parameter.
+#' @param complete.hierarchy logical. If TRUE, the event-parentEvent hierarchy structure will be completed upt to a root (project). Any parentEvents that are not listed among the eventIDs will also be created. Default FALSE. if parentEventID.col was NA, new parentEventIDs will be created.
+#' @usage dataQC.eventStructure(dataset, eventID.col = "eventID", parentEventID.col = NA, project.col = NA, project = NA, event.prefix = NA, complete.hierarchy=FALSE)
+#' @details An event structure is a hierarchical grouping of (sub-) samples (events, that is, something that occurs at a place and time) into higher parentEvents, like expeditions, projects,... This interlinked structure is for instance used in the DarwinCore Event standard. The algorithm here looks for specific columnames that may give an indication to the event structure (e.g. a column with sampe names, projects,...). If disered, the user can complete the event structure by rooting it into an over-arching project.
+#' @return a dataframe with 2 columns: eventID and parentEventID
+#' @export
+#' . May be a global unique identifier or an identifier specific to the data set.
 dataQC.eventStructure <- function(dataset, eventID.col = "eventID", parentEventID.col = NA,
                                   project.col = NA, project = NA, event.prefix = NA,
                                   complete.hierarchy=FALSE){
-  #' @author Maxime Sweetlove ccBY 4.0 2020
-  #' @description checks if an eventID is present in a (QC'd) dataset, and generates one if not. Does the same of parentEventID if check.parentEventID is TRUE, and check the hierarchical relationships between eventID and parentEventID
-  #' @param dataset data.frame. The dataset for which the event structure should be checked
-  #' @param eventID.col character. The column where the names of the events are given. Default eventID. If NA, and event.prefix must be provided to be able to create unique eventIDs
-  #' @param parentEventID.col character. The column where the names of the parentEvents are given. If NA, parentEvents are not considered. Default NA
-  #' @param project.col character. The column where the names of the projects are given. Projects are high-level parentEvents that group a large number of events. If NA, projects are not considered. If there is just one project, please consider the project parameter. Default NA. This parameter overrides the project parameter. Only effective if complete.hierarchy is TRUE.
-  #' @param project character. The project that groups all samples. This parameter is overriden by the the project.col parameter if not NA. Only effective if complete.hierarchy is TRUE.
-  #' @param event.prefix character. A prefix to feauture in the eventIDs if these have to be created from scratch. This parameter overrides the eventID.col parameter.
-  #' @param complete.hierarchy logical. If TRUE, the event-parentEvent hierarchy structure will be completed upt to a root (project). Any parentEvents that are not listed among the eventIDs will also be created. Default FALSE. if parentEventID.col was NA, new parentEventIDs will be created.
 
-  #' @usage dataQC.eventStructure(dataset, eventID.col = "eventID", parentEventID.col = NA, project.col = NA, project = NA, complete.hierarchy=FALSE, ask.input=TRUE)
-  
-  require(stringr)
-  eventTable <- data.frame(original_name = rownames(dataset), eventID=rep(NA, nrow(dataset)), 
+  #requires stringr
+  eventTable <- data.frame(original_name = rownames(dataset), eventID=rep(NA, nrow(dataset)),
                            parentEventID=rep(NA, nrow(dataset)), type=NA,
                            stringsAsFactors = FALSE)
   rownames(eventTable)<-rownames(dataset)
-  
+
   # 0. checking the input and error handling
   if(complete.hierarchy & is.na(parentEventID.col) & is.na(project) & is.na(project.col)){
     # complete.hierarchy makes no sense if there is no project or parentEvent information
     complete.hierarchy<-FALSE
-  } 
-  
+  }
+
   if(is.na(eventID.col)){
     if(is.na(event.prefix)){
       stop("eventID.col or an event.prefix must be provided")
@@ -806,7 +794,7 @@ dataQC.eventStructure <- function(dataset, eventID.col = "eventID", parentEventI
   }else if(!eventID.col %in% colnames(dataset)){
     stop("eventID.col not found")
   }
-  
+
   if(!is.na(project.col)){
     if(!project.col %in% colnames(dataset)){
       stop("project.col not found")
@@ -817,7 +805,7 @@ dataQC.eventStructure <- function(dataset, eventID.col = "eventID", parentEventI
     project.col<-"project"
     eventTable$project <- rep(project, nrow(dataset))
   }
-  
+
   ## 1. get eventID
   eventTable$eventID <- dataset[,colnames(dataset)==eventID.col]
   # 1.1 QC the eventIDs: they have to be unique
@@ -836,11 +824,11 @@ dataQC.eventStructure <- function(dataset, eventID.col = "eventID", parentEventI
 
   # make all parentEvents that are NA ""
   eventTable$parentEventID[is.na(eventTable$parentEventID)]<-""
-  
+
   # complete the type column
   eventTable$type[!eventTable$eventID %in% eventTable$parentEventID]<-"event"
   eventTable$type[eventTable$eventID %in% eventTable$parentEventID]<-"parentEvent"
-  
+
   # 3. complete hierarchy
   if(complete.hierarchy){
     eventTable$original <- TRUE
@@ -849,7 +837,7 @@ dataQC.eventStructure <- function(dataset, eventID.col = "eventID", parentEventI
       # create a parentEventID column with the provided project
       eventTable$parentEventID <- eventTable$project
     }
-      
+
     # 3.2 check if the parentEventIDs are in the eventID column
     # if not: complete
     parentEvents <- setdiff(unique(eventTable$parentEventID), "")
@@ -860,19 +848,19 @@ dataQC.eventStructure <- function(dataset, eventID.col = "eventID", parentEventI
           if(!is.na(project.col) & !is.na(parentEventID.col)){
             # add the (true) parentEvents and their projects
             prj <- eventTable[eventTable$parentEventID==parentEvents[pi],]$project
-            eventTable <- rbind(data.frame(original_name="", eventID=parentEvents[pi], 
+            eventTable <- rbind(data.frame(original_name="", eventID=parentEvents[pi],
                                            parentEventID=prj, project=prj, type="parentEvent",
                                            original=FALSE, stringsAsFactors = FALSE),
                                 eventTable)
           }else if(!is.na(project.col) & is.na(parentEventID.col)){
             # add the parentEvents, but the are the same as the projects
-            eventTable <- rbind(data.frame(original_name="", eventID=parentEvents[pi], 
+            eventTable <- rbind(data.frame(original_name="", eventID=parentEvents[pi],
                                            parentEventID="", project=parentEvents[pi], type="project",
                                            original=FALSE, stringsAsFactors = FALSE),
                                 eventTable)
           }else{
             # add parentEvents, there are no projects
-            eventTable <- rbind(data.frame(original_name="", eventID=parentEvents[pi], 
+            eventTable <- rbind(data.frame(original_name="", eventID=parentEvents[pi],
                                            parentEventID="", type="parentEvent",
                                            original=FALSE, stringsAsFactors = FALSE),
                                 eventTable)
@@ -881,8 +869,8 @@ dataQC.eventStructure <- function(dataset, eventID.col = "eventID", parentEventI
         }
       }
     }
-    
-    # 3.3 if there is a project, put this as the higest event. 
+
+    # 3.3 if there is a project, put this as the higest event.
     # else=> don't change anything about the parentEvents anymore.
     if(!is.na(project.col)){
       projects<-unique(eventTable$project)
@@ -897,14 +885,14 @@ dataQC.eventStructure <- function(dataset, eventID.col = "eventID", parentEventI
           }
         }
       }
-      
+
       if(!all(projects %in% eventTable$eventID)){
         # add the projects as events
         for(pi in 1:length(projects)){
           if(!projects[pi] %in% eventTable$eventID){
-            eventTable <- rbind(data.frame(original_name="", eventID=projects[pi], 
+            eventTable <- rbind(data.frame(original_name="", eventID=projects[pi],
                                            parentEventID="", project="", type="project",
-                                           original=FALSE, stringsAsFactors = FALSE), 
+                                           original=FALSE, stringsAsFactors = FALSE),
                                 eventTable)
             rownames(eventTable)[1]<-projects[pi]
           }
@@ -918,54 +906,4 @@ dataQC.eventStructure <- function(dataset, eventID.col = "eventID", parentEventI
   # 4. finalize
   return(eventTable)
 }
-
-
-### still need to finish
-dataQC.measurement.to.meter <- function(dataset, meter.colnames=c("depth", "elev", "alt_elev", "filter_size", "tot_depth_water_col")){
-  #' @author Maxime Sweetlove CC-BY 4.0 2019
-  #' @description dataQC.measurement.to.meter looks in the columns of a dataset for given size/depth/length related measurements, and converts cells with value_unit format into a single value, saving the unit in a separate vector. some less used units are convrted into their nearest standard (See details).
-  #' @usage dataQC.measurement.to.meter(dataset, meter.colnames=c("depth", "elev", "alt_elev", "filter_size", "tot_depth_water_col"))
-  #' 
-  #' @param dataset dataframe. The dataset where the measurement columns should be found
-  #' @param meter.colnames a character vector. A vector with the names of columns names to target
-  #' @details This function is mainly aimed at formatting cells, and removing the unit from the cell. If multiple decimal indicators (e.g. nano-, centi-, kilo-,...) of a unit are found, everything is converted to the smalest decimal indicator. Any non-metric units are converted to meter. If multiple units are found, nothing will be done.
-  #' 
-  #' @return a list of length 3, with "$values" a dataframe of same length as the number of rows in the dataset argument and the same number of columns as columns that were chacked, "$units" a named character vector with the unit associated with each column, and "$warningmessages" a vector with potential warning messages as character strings.
-  #' @example dataQC.measurement.to.meter(df, c("depth"))
-
-  QC_units<-c()
-  items_shared <- intersect(meter.colnames, colnames(dataset))
-
-  if(length(items_shared)>0){
-    alternative_units<-data.frame(name=items_shared, unit_full=rep(NA, length(items_shared)))
-    possible_units <- c("nm", "um", "??m", "mm", "cm", "dm", "m", "km")
-    for(name_unit in items_shared){
-      vals <- as.vector(as.character(dataset[,colnames(dataset) %in% name_unit]))
-      names(vals)<-row.names(dataset)
-      #extract the units
-      val_units <- unlist(lapply(vals, function(v){gsub("[0-9]|\\.|,|-", "", v)} ))
-      val_units <- intersect(unique(val_units), possible_units) #danger in this step: discards any text that is not an expected unit
-      vals<-unlist(lapply(vals, function(v){gsub(",", ".", v)} ))
-      if(length(val_units)==1){
-        for(v in 1:length(vals)){
-          if(grepl(val_units[1], vals[v])){
-            vals[v]<-gsub(val_units[1], "", vals[v])
-          }
-        }
-        
-        
-        QC_units[name_unit]<-val_units[1]
-        New_metadata[,colnames(New_metadata)==name_unit] <- c(vals[rownames(New_metadata)])
-      }
-    }
-  }
-  
-  
-}
-
-### ideas for functions:
-#dataQC.footprintWKT <- function(){
-#to check if footprintWKT in DwC is correctly formatted
-#POINT, LINESTRING, POLYGON, MULTIPOINT
-#}
 

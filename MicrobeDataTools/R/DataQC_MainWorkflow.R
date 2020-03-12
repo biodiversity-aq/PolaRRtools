@@ -1,50 +1,34 @@
 #==============================================================
-# The polaRRtools package
-#       polaRRtools is a collection of user-friendly tools to download explore and analize 
-#       High Throughput Amplicon sequencing data for Biodiversity research, using R. 
-#       The aim is to lower the treshold for high quality, reproducible and accessible 
-#       analysis of nucleotide data in the versatile R-environment, combined with data re-use.
+# The MicrobeDataTools package
+#       MicrobeDataTools is a collection data management tools for microbial 'omics datasets.
+#       They allow to download, structure, quqlity-controll and standardize microbial datasets
 #==============================================================
 # Author Maxime Sweetlove
 # lisence CC 4.0
 # Part of the POLA3R website (successor or mARS.biodiversity.aq)
-# version 2.0 (2020-02-04)
+# version 1.0 (2020-01-28)
 # file encdong UTF-8
 #
 #==============================================================
+# data Quality Controll (QC) for DarwinCore
+#==============================================================
 
-#--------------------------------------------------------------
-# ToDo
-#--------------------------------------------------------------
-dataQC.DwC_MIxS <- function(){
-  #' a converter between DwC and MIxS
-}
-
-# replace illegal characters
-#eventTable$eventID<-gsub(" ","_", eventTable$eventID)
-#eventTable$eventID<-gsub("-","_", eventTable$eventID)
-#eventTable$eventID<-gsub(",","_", eventTable$eventID)
-
-
-#--------------------------------------------------------------
-# DarwinCore
-#--------------------------------------------------------------
+#' Quality Controll (QC) for DarwinCore data
+#' @author Maxime Sweetlove ccBY 4.0 2020
+#' @description performs a general QC on a darwinCore file. Desired output is either and event (core) file, occurrence (core or extension) or extended Measurement or Fact (eMoF; extension) file. Not an Ecological Metadata Language (EML) file.
+#' @usage dataQC.DwC_general(DwC.data = NA, DwC.type = "event", ask.input = TRUE, complete.data=TRUE)
+#' @param DwC.data data.frame. A dataframe with the data, structured with DarwinCore terms
+#' @param DwC.type character. The type of DarwinCore of the output, either event or occurrence. If event, the output will have an event core with possible occurrence and eMoF extensions. If occurrence, the output will have an occurrence core with possibly an eMoF extension. Default event, if the parameter Event is not NA, out.type will be fixed as event.
+#' @param ask.input logical. If TRUE, console input will be requested to the user when a problem occurs. Default TRUE
+#' @param complete.data logical. If TRUE, datathat has not been provided, but can be completed automatically will be added to the DarwinCore data.frame. For instance, footprintWKT can be generated from the coordinates, or higher taxonomic level names (like kingdom, phylum,...) can looked up with the species name. Defaut TRUE.
+#' @details DarwinCore is the biodiversity data standard develloped by TDWG, and is used by the Global Biodiversity Information Facility (GBIF). This function performs a basic and user-supervised quality control. This includes cheking all variables terms adhere to the DarwinCore vocabulary, listing other variables in an eMoF file or in the dynamicProperties field, and checking for obvious errors in the content of the data (typos, different NA values,...)
+#' @return a dataframe that is formatted as either: an event or occurrence
+#' @export
 dataQC.DwC_general<-function(DwC.data = NA, DwC.type = "event", ask.input = TRUE,
                              complete.data=TRUE){
-  #' @author Maxime Sweetlove ccBY 4.0 2020
-  #' @description performs a general QC on one darwinCore file. Either and event file, occurrence or eMoF. Not EML.
-  #' 
-  #' @usage dataQC.DwC_general(DwC.data = NA, DwC.type = "event", ask.input = TRUE, complete.data=TRUE)
-  #' 
-  #' @param DwC.data data.frame. A dataframe with the data, structured with DarwinCore terms
-  #' @param DwC.type character. The type of DarwinCore of the output, either event or occurrence. If event, the output will have an event core with possible occurrence and eMoF extensions. If occurrence, the output will have an occurrence core with possibly an eMoF extension. Default event, if the parameter Event is not NA, out.type will be fixed as event.
-  #' @param ask.input logical. If TRUE, console input will be requested to the user when a problem occurs. Default TRUE
-  #' @param complete.data logical. If TRUE, datathat has not been provided, but can be completed automatically will be added to the DarwinCore data.frame. For instance, footprintWKT can be generated from the coordinates, or higher taxonomic level names (like kingdom, phylum,...) can looked up with the species name.Defaut TRUE.
-  
+  #requires stringr and worrms
   warningmessages<-c()
-  
-  require(stringr)
-  require(worrms)
+
   # check input
   if(tolower(DwC.type)=="event"){
     DwC.type<-"event"
@@ -61,20 +45,20 @@ dataQC.DwC_general<-function(DwC.data = NA, DwC.type = "event", ask.input = TRUE
   }else{
     stop("invalid input for DwC.type")
   }
-  
+
   # check columnnames
-  termsQC <- dataQC.TermsCheck(observed=colnames(DwC.data), 
-                               exp.standard = "DwC", exp.section = DwC.type, 
+  termsQC <- dataQC.TermsCheck(observed=colnames(DwC.data),
+                               exp.standard = "DwC", exp.section = DwC.type,
                                fuzzy.match = TRUE, out.type = "full")
-  
+
   # run over fuzzy matches with possible solution
   if(length(termsQC$terms_wrongWithSolution)>0 & ask.input){
     for(tm in names(termsQC$terms_wrongWithSolution)){
       #note: in terms_wrongWithSolution: names= observed term, value is most likely match from standard
       tm_obs <- tm
       tm_match <- unname((termsQC$terms_wrongWithSolution)[tm])
-      cat(paste("The column name \"", tm_obs,"\" is not a DarwinCore ", DwC.type, " term...\n", sep="")) 
-      cat(paste("\tdid you mean \"", tm_match,"\"? (y/n)\n", sep="")) 
+      cat(paste("The column name \"", tm_obs,"\" is not a DarwinCore ", DwC.type, " term...\n", sep=""))
+      cat(paste("\tdid you mean \"", tm_match,"\"? (y/n)\n", sep=""))
       doNext <- tolower(readline())
       if(doNext %in% c("y", "yes")){
         colnames(DwC.data)[colnames(DwC.data)==tm_obs] <- tm_match
@@ -83,19 +67,19 @@ dataQC.DwC_general<-function(DwC.data = NA, DwC.type = "event", ask.input = TRUE
       }
     }
   }
-  
+
   # run over non-matched terms
   if(length(termsQC$terms_notFound)>0 & ask.input){
     for(tm in termsQC$terms_notFound){
-      cat(paste("The column name \"", tm,"\" is not a DarwinCore ", DwC.type, " term...\nPlease choose what to do:\n", sep="")) 
-      
+      cat(paste("The column name \"", tm,"\" is not a DarwinCore ", DwC.type, " term...\nPlease choose what to do:\n", sep=""))
+
       if(DwcType=="Event"){
-        cat(paste("\t1) drop the term\n\t2) add to dynamicProperties\n\t3) add to eventRemarks\n\t4) add to fieldNotes\n", sep="")) 
+        cat(paste("\t1) drop the term\n\t2) add to dynamicProperties\n\t3) add to eventRemarks\n\t4) add to fieldNotes\n", sep=""))
       }else if(DwcType=="Occurrence"){
-        cat(paste("\t1) drop the term\n\t2) add to dynamicProperties\n\t3) add to eventRemarks\n\t4) add to fieldNotes", 
-                  "\n\t5) add to identificationRemarks\n\t6) add to taxonRemarks\n\t7) add to measurementRemarks\n\t8) add to occurrenceRemarks\n", sep="")) 
+        cat(paste("\t1) drop the term\n\t2) add to dynamicProperties\n\t3) add to eventRemarks\n\t4) add to fieldNotes",
+                  "\n\t5) add to identificationRemarks\n\t6) add to taxonRemarks\n\t7) add to measurementRemarks\n\t8) add to occurrenceRemarks\n", sep=""))
       }
-      doNext <- tolower(readline()) 
+      doNext <- tolower(readline())
       if(doNext == 1){
         # drop the term
         DwC.data <- DwC.data[,!colnames(DwC.data) %in% tm]
@@ -142,7 +126,7 @@ dataQC.DwC_general<-function(DwC.data = NA, DwC.type = "event", ask.input = TRUE
           }else{x}
         })
         remarks<-unname(remarks)
-        
+
         if(doName %in% colnames(DwC.data)){
           remarks <- paste(DwC.data[,doName], remarks, sep=", ")
           remarks <- sapply(remarks, function(x){
@@ -159,7 +143,7 @@ dataQC.DwC_general<-function(DwC.data = NA, DwC.type = "event", ask.input = TRUE
       }
     }
   }
-  
+
   # check presence of required terms
   req_terms <- as.character(TermsLib[TermsLib[,DwCLib]==2,]$name)
   if(!all(req_terms %in% colnames(DwC.data))){
@@ -170,7 +154,7 @@ dataQC.DwC_general<-function(DwC.data = NA, DwC.type = "event", ask.input = TRUE
     }
     ## user input for basisOfRecord
     if("basisOfRecord" %in% terms_short & ask.input){
-      cat("No basisOfRecord found. Please specify if the data is:\n\t1)HumanObservation\n\t2)MachineObservation\n\t3)LivingSpecimen\n\t4)PreservedSpecimen\n\t5)FossilSpecimen") 
+      cat("No basisOfRecord found. Please specify if the data is:\n\t1)HumanObservation\n\t2)MachineObservation\n\t3)LivingSpecimen\n\t4)PreservedSpecimen\n\t5)FossilSpecimen")
       doNext <- tolower(readline())
       if(doNext == 1){
         DwC.data$basisOfRecord <- rep("HumanObservation", nrow(DwC.data))
@@ -188,7 +172,7 @@ dataQC.DwC_general<-function(DwC.data = NA, DwC.type = "event", ask.input = TRUE
     }
     ## user input for eventID
     if("eventID" %in% terms_short & ask.input){
-      cat("No eventID found.\n\tPlease type an eventID prefix, which will be used to generate a unique ID per event") 
+      cat("No eventID found.\n\tPlease type an eventID prefix, which will be used to generate a unique ID per event")
       doNext <- readline()
       if(doNext == ""){
         prefix<-"event_"
@@ -196,12 +180,12 @@ dataQC.DwC_general<-function(DwC.data = NA, DwC.type = "event", ask.input = TRUE
         prefix<-paste(doNext, "_", sep="")
       }
       DwC.data$eventID <- paste("prefix",
-                                stringr::str_pad(1:nrow(DwC.data), nchar(nrow(DwC.data)), pad = "0"), 
+                                stringr::str_pad(1:nrow(DwC.data), nchar(nrow(DwC.data)), pad = "0"),
                                 sep="")
     }
     ## user input for occurrenceID
     if("occurrenceID" %in% terms_short & ask.input){
-      cat("No occurrenceID found.\n\tPlease type an occurrenceID prefix, which will be used to generate a unique ID per event") 
+      cat("No occurrenceID found.\n\tPlease type an occurrenceID prefix, which will be used to generate a unique ID per event")
       doNext <- readline()
       if(doNext == ""){
         prefix<-"occ_"
@@ -209,13 +193,13 @@ dataQC.DwC_general<-function(DwC.data = NA, DwC.type = "event", ask.input = TRUE
         prefix<-paste(doNext, "_", sep="")
       }
       DwC.data$occurrenceID <- paste("prefix",
-                                     stringr::str_pad(1:nrow(DwC.data), nchar(nrow(DwC.data)), pad = "0"), 
+                                     stringr::str_pad(1:nrow(DwC.data), nchar(nrow(DwC.data)), pad = "0"),
                                      sep="")
     }
   }
-  
+
   # some other checks
-  if(!"footprintWKT" %in% colnames(DwC.data) & 
+  if(!"footprintWKT" %in% colnames(DwC.data) &
      complete.data &
      DwC.type == "Event" &
      "decimalLatitude" %in% colnames(DwC.data) &
@@ -226,9 +210,9 @@ dataQC.DwC_general<-function(DwC.data = NA, DwC.type = "event", ask.input = TRUE
   #if("dynamicProperties" %in% colnames(DwC.data)){
   #  structure dynamicProperties
   #}
-  
+
   # check latitude-longitude
-  
+
 
   # dealing with the collection date, and putting it in the YYYY-MM-DD format
   if(!"eventDate" %in% colnames(DwC.data)){
@@ -236,7 +220,7 @@ dataQC.DwC_general<-function(DwC.data = NA, DwC.type = "event", ask.input = TRUE
       DwC.data$eventDate <- DwC.data$year
       if("month" %in% colnames(DwC.data)){
         for(i in nrow(DwC.data)){
-          if(DwC.data[i,]$eventDate!="" & 
+          if(DwC.data[i,]$eventDate!="" &
              !is.na(DwC.data[i,]$eventDate)){
             if(DwC.data[i,]$month!="" &
                !is.na(DwC.data[i,]$month)){
@@ -259,7 +243,7 @@ dataQC.DwC_general<-function(DwC.data = NA, DwC.type = "event", ask.input = TRUE
       }
     }
   }
-  
+
   if("eventDate" %in% colnames(DwC.data)){
     QCDate <- dataQC.dateCheck(DwC.data, "eventDate")
   }
@@ -267,57 +251,52 @@ dataQC.DwC_general<-function(DwC.data = NA, DwC.type = "event", ask.input = TRUE
   if(length(QCDate$values)==nrow(DwC.data)){
     DwC.data$eventDate <- QCDate$values
   }
-  
+
   #check taxa and look for scientificNameID
   if(DwC.type == "occurrence" & complete.data){
     # try to get the species names
     species <- dataQC.TaxonListFromData(DwC.data)
-    
+
     species <- dataQC.taxaNames(species)
 
     # make a small table with the unique taxa to collect all the info from WORMS or GBIF
     cat("Completing the taxonomic information (this might take a while)...\n")
     taxid_key <- dataQC.completeTaxaNamesFromRegistery(species$scientificName)
-    
+
     # now use the taxid_key table to complete the data in DwC.data
     for(term in setdiff(colnames(taxid_key), c("aphID"))){
       DwC.data[,term]  <- as.character(species)
-      DwC.data[,term] <- unname(unlist(sapply(as.character(DwC.data[,term]), 
+      DwC.data[,term] <- unname(unlist(sapply(as.character(DwC.data[,term]),
                                               FUN = function(x){
                                                 gsub(x,taxid_key[taxid_key$taxname==x,][,term],x)
                                               })))
     }
     warningmessages <- multi.warnings("added scientificNameID and additional species data", warningmessages)
-    
-
   }
-  
-  
+
   # retrun the input file with the executed adjustments
   return(DwC.data)
 }
 
 
+#' format dataframes into a DarwinCore object
+#' @author Maxime Sweetlove ccBY 4.0 2020
+#' @description Takes one or more dataframes or a DarwinCore Archive and performs a basic Quality Controll. (see details)
+#' @usage DataQC.DwC(Event=NA, Occurrence=NA, eMoF=NA, EML.url=NA, out.type="event", ask.input=TRUE))
+#' @param Event data.frame. A dataframe with the event data, structured with DarwinCore terms
+#' @param Occurrence data.frame. A dataframe with the occurrence data, structured with DarwinCore terms
+#' @param eMoF data.frame. A dataframe with the extended MeasurementOrFact (eMoF) data, structured with DarwinCore terms
+#' @param out.type character. The type of DarwinCore of the output, either event or occurrence. If event, the output will have an event core with possible occurrence and eMoF extensions. If occurrence, the output will have an occurrence core with possibly an eMoF extension. Default event, if the parameter Event is not NA, out.type will be fixed as event.
+#' @param ask.input logical. If TRUE, console input will be requested to the user when a problem occurs. Default TRUE
+#' @param EML.url character. A URL to the Ecological Metadata Language (EML) file.
+#' @details DarwinCore is the biodiversity data standard develloped by TDWG, and is used by the Global Biodiversity Information Facility (GBIF). This function performs a basic and user-supervised quality control. This includes cheking all variables terms adhere to the DarwinCore vocabulary, listing other variables in an eMoF file or in the dynamicProperties field, and checking for obvious errors in the content of the data (typos, different NA values,...). All dataframes are combined into a DwC.event or DwC.occurrence object
+#' @return a DwC.event (event core with occurrence and/or eMoF extensions) or DwC.occurence (occurrence core with eMoF extension) object
+#' @export
 dataQC.DwC <- function(Event=NA, Occurrence=NA, eMoF=NA, EML.url=NA,
                        out.type="event", ask.input=TRUE){
-  #' @author Maxime Sweetlove ccBY 4.0 2020
-  #' @description Takes a set of dataframes or a DarwinCore Archive and performs a basic Quality Controll. (see further for details)
-  #' 
-  #' @usage DataQC.DwC(Event, Occurrence, eMoF, DwC.archive, metadata, strict.DwC, ask.input=TRUE)
-  #' 
-  #' @param Event data.frame. A dataframe with the event data, structured with DarwinCore terms
-  #' @param Occurrence data.frame. A dataframe with the occurrence data, structured with DarwinCore terms
-  #' @param eMoF data.frame. A dataframe with the extended MeasurementOrFact (eMoF) data, structured with DarwinCore terms
-  #' @param out.type character. The type of DarwinCore of the output, either event or occurrence. If event, the output will have an event core with possible occurrence and eMoF extensions. If occurrence, the output will have an occurrence core with possibly an eMoF extension. Default event, if the parameter Event is not NA, out.type will be fixed as event.
-  #' @param ask.input logical. If TRUE, console input will be requested to the user when a problem occurs. Default TRUE
-  #' @details
-  #' 
-  #' @return a list of dataframes that strictly follows the DarwinCore standard.
-  #' 
-  #' @example 
 
   warningmessages<-c()
- 
+
   #check out.format and  out.type
   if(!tolower(out.type) %in% c("event", "occurrence")){
     stop("invalid input for out.type")
@@ -355,7 +334,7 @@ dataQC.DwC <- function(Event=NA, Occurrence=NA, eMoF=NA, EML.url=NA,
     has.emof <- FALSE
     emofQC<-data.frame()
   }
-  
+
   # 4. check EML (if present)
   if(!is.na(EML.url)){
     if(!RCurl::url.exists(EML.url)){
@@ -364,7 +343,7 @@ dataQC.DwC <- function(Event=NA, Occurrence=NA, eMoF=NA, EML.url=NA,
   }else{
     EML.url<-""
   }
-  
+
   # 5. check IDs if multiple files provided
   if(tolower(out.type) == "event" & has.event){
     u_ev_ev <- unique(eventQC$eventID)
@@ -397,13 +376,13 @@ dataQC.DwC <- function(Event=NA, Occurrence=NA, eMoF=NA, EML.url=NA,
     DwC_out <- new("DwC.event",
                    core = eventQC,
                    occurrence = occurrenceQC,
-                   emof = emofQC, 
+                   emof = emofQC,
                    EML.url=EML.url,
                    QC=TRUE)
   }else if(tolower(out.type) == "occurrence" & has.occurrence){
     DwC_out <- new("DwC.occurrence",
                    core = occurrenceQC,
-                   emof = emofQC, 
+                   emof = emofQC,
                    EML.url=EML.url,
                    QC=TRUE)
   }else{
@@ -415,49 +394,24 @@ dataQC.DwC <- function(Event=NA, Occurrence=NA, eMoF=NA, EML.url=NA,
 }
 
 
-#--------------------------------------------------------------
-# MIxS
-#--------------------------------------------------------------
+#==============================================================
+# data Quality Controll (QC) for MIxS
+#==============================================================
+
+#' format dataframes into a MIxS object
+#' @author Maxime Sweetlove ccBY 4.0 2019
+#' @description takes a dataframe with contextual data and metadata from a sequencing dataset and performs a basis Quality Controll. (see details)
+#' @usage DataQC.MIxS(metadata = NA, ask.input=TRUE, add_to = NA))
+#' @param metadata data.frame. The raw metadata downloaded from INSDC to be cleaned up. Rows are samples, columns variables. Units can be listed in the first or second row, and will be automatically detected if the row names of this row includes the word "units". Different units per sample are not allowed.
+#' @param ask.input logical. If TRUE, console input will be requested to the user when a problem occurs (process runs user-supervised). Default TRUE
+#' @param add_to a metadata.MIxS object. An already present dataset with quality-comtrolled metadata. must be formatted as metadata.MIxS to ensure the correct input format of the data.
+#' @details Any sequencing project typically has important additional data associated with it. This goes from laboratory protocols, sequencing platform settings or environmental measurements. Thisfunction was develloped to sort through these metadata (provided in a dataframe), and perform a basic quality controll, correcting the most common mistakes, like incorrectly formatting the geographic coordinates, formatting dates, typos or variants of variable names, etc. To do this, the function makes use of a build-in dictionary of (MIxS) terms and their synonyms (that is: spelling errors, writing differences, true synonyms,...). Note that it is possible some terms are not recognized. In that case contact the author of the package to update the dictionary in the upcomming version.
+#' @seealso get.BioProject.metadata.INSDC, get.sample.attributes.INSDC
+#' @return a metadata.MIxS object that is compatible with the MIxS standard
+#' @export
 dataQC.MIxS <- function(metadata = NA, ask.input=TRUE, add_to = NA){
-  #' @author Maxime Sweetlove ccBY 4.0 2019
-  #' @description takes a dataframe with contextual data and metadata from a sequencing dataset and performs a basis Quality Controll. (see further for details)
-  #' 
-  #' @usage DataQC.MIxS(metadata, ask.input=TRUE, add_to)
-  #' 
-  #' @param metadata data.frame. The raw metadata downloaded from INSDC to be cleaned up. Rows are samples, columns variables
-  #' @param ask.input logical. If TRUE, console input will be requested to the user when a problem occurs. Default TRUE
-  #' @param add_to a metadata.MIxS object. An already present dataset with quality-comtrolled metadata. must be formatted as metadata.MIxS to ensure the correct input format of the data.
-  #' @details Any sequencing project typically has important additional data associated with it.
-  #' This goes from laboratory protocols, sequencing platform settings or environmental measurements.
-  #' While (most of) these data get deposited on the INSDC databases alongside the sequences, the
-  #' quality and format of this data is typically determined by the data provider rather than international
-  #' standards, like MIMARKS, MIxS and Darwin Core.
-  #' Therfore, the process.metadata function was develloped to sort through these metadata, and
-  #' perform a basic quality controll, correcting the most common mistakes, like incorrectly 
-  #' formatting the geographic coordinates, typing errors in variable names, etc. To do this, process.metadata 
-  #' makes use of a build-in dictionary of (MIxS) terms and their synonyms (that is: spelling errors, 
-  #' writing differences, true synonyms,...). Note that it is possible some terms are not recognized. 
-  #' In that case contact the author to update the dictionary in the upcomming version.
-  #' 
-  #' The metadata argument is typically a dataframe generated using the get.BioProject.metadata.INSDC or 
-  #' get.sample.attributes.INSDC functions. 
-  #' If the argument add_to is not NA or an empty dataframe, the output will be aded to fit the add_to dataframe input.
-  #' For any input, however, rows must be samples, columns variables.
-  #' 
-  #' process.metadata adresses the following issues for the metadata argument:
-  #' 1) variable names are converted to accepted MIxS standard terms if typos or incorrect notations are found
-  #' 2) Dates, if recognized, are returned in the YYYY-MM-DD format.
-  #' 3) Latitudes and longitudes are returned in decimal notation. Degrees are converted.
-  #' 4) length/depth measurements, if recognized, deci- and centimeters are converted to meter
-  #' 
-  #' @seealso get.BioProject.metadata.INSDC, get.sample.attributes.INSDC
-  #' 
-  #' @return a dataframe that is compatible with the MIxS standard, or that stricly follows the MIxS standard
-  #' 
-  #' @example metadataQC_PRJNA369175 <- process.metadata(metadata = metadata_PRJNA369175)
-  
   warningmessages<-c()
-  
+
   # 0. pre-process input
   # 0.1. check input data
   if(!is.data.frame(metadata)){
@@ -466,25 +420,25 @@ dataQC.MIxS <- function(metadata = NA, ask.input=TRUE, add_to = NA){
   if(!is.na(add_to) && !check.valid.metadata.MIxS(add_to)){
     stop("The input for the add_to argument must be a metadata.MIxS object to ensure correct merging of the datasets")
   }
-  
+
 
   # 0.2 formatting
   # remove empty columns
-  metadata <- metadata[,colSums(is.na(metadata)) < nrow(metadata)] 
+  metadata <- metadata[,colSums(is.na(metadata)) < nrow(metadata)]
   # clean up columnames
   colnames(metadata) <- gsub("[\\.]+", "_", colnames(metadata)) # replace double dots with underscore
   colnames(metadata) <- gsub("_$", "", colnames(metadata))  # remove trailing underscore
   metadata_origcolNames <- metadata
   colnames(metadata) <- tolower(colnames(metadata)) # all to lowercase
-  
+
   # check columnnames, and correct errors
-  termsQC <- dataQC.TermsCheck(observed=colnames(metadata), 
-                               exp.standard = "MIxS", exp.section = NA, 
+  termsQC <- dataQC.TermsCheck(observed=colnames(metadata),
+                               exp.standard = "MIxS", exp.section = NA,
                                fuzzy.match = FALSE, out.type = "full")
   for(tQC in names(termsQC$terms_wrongWithSolution)){
     colnames(metadata)[colnames(metadata)==tQC] <- termsQC$terms_wrongWithSolution[tQC]
   }
-  
+
   # 0.3 check if data is in one-header table or if there are additional MiMARKS header lines
   # for additional MIxS headers: "environmental package", "units template" => only units of importance
   pre_def_units <- FALSE
@@ -501,12 +455,12 @@ dataQC.MIxS <- function(metadata = NA, ask.input=TRUE, add_to = NA){
     pre_def_units <- TRUE
     warningmessages <- multi.warnings("the units were taken from the row \"units template\" in the input data", warningmessages)
   }
-  
-  
+
+
   # 0.4 prepare output data:
   # make an empty output file to fill along the way
   New_metadata <- data.frame(row.names=rownames(metadata))
-  
+
   # 1. looking for the original sample name
   metadataNames <- dataQC.findNames(dataset = metadata_origcolNames, ask.input=ask.input)
   New_metadata$original_name <- (metadataNames$Names)$original_name
@@ -521,8 +475,8 @@ dataQC.MIxS <- function(metadata = NA, ask.input=TRUE, add_to = NA){
   if(! all((metadataNames$Names)$eventID=="")){New_metadata$eventID <- (metadataNames$Names)$eventID}
   if(! all((metadataNames$Names)$parentEventID=="")){New_metadata$parentEventID <- (metadataNames$Names)$parentEventID}
   if(! all((metadataNames$Names)$occurrenceID=="")){New_metadata$occurrenceID <- (metadataNames$Names)$occurrenceID}
-  
-  
+
+
   # 2. some basic info from insdc
   TermsSyn_insdc<-TermsSyn[as.character(TermsLib[TermsLib$name_origin=="INSDC",]$name)]
   for(item in names(TermsSyn_insdc)){
@@ -531,13 +485,13 @@ dataQC.MIxS <- function(metadata = NA, ask.input=TRUE, add_to = NA){
       New_metadata[,item] <- metadata[,item_shared]
     }
   }
-  
+
   # 3. dealing with latitude-longitude, and it's many possible formats...
   TermsSyn_latlon<-TermsSyn[as.character(TermsLib[TermsLib$name=="lat_lon",]$name)]
   TermsSyn_lat<-TermsSyn[as.character(TermsLib[TermsLib$name=="decimalLatitude",]$name)]
   TermsSyn_lon<-TermsSyn[as.character(TermsLib[TermsLib$name=="decimalLongitude",]$name)]
-  
-  QClatlon <- dataQC.LatitudeLongitudeCheck(metadata, 
+
+  QClatlon <- dataQC.LatitudeLongitudeCheck(metadata,
                                             latlon.colnames=list(TermsSyn_latlon[[1]],
                                                                  TermsSyn_lat[[1]],
                                                                  TermsSyn_lon[[1]]))
@@ -545,9 +499,9 @@ dataQC.MIxS <- function(metadata = NA, ask.input=TRUE, add_to = NA){
   New_metadata$lat_lon <- QClatlon$values
   New_metadata$decimalLatitude <- sapply(New_metadata$lat_lon, function(x){strsplit(x, " ")[[1]][1]})
   New_metadata$decimalLongitude <- sapply(New_metadata$lat_lon, function(x){strsplit(x, " ")[[1]][2]})
-  
+
   New_metadata[is.na(New_metadata)] <- ""
-  
+
   #change the units for the coordinates
   if(pre_def_units){
     for(unitx in c("lat_lon", "decimalLatitude", "decimalLongitude")){
@@ -560,7 +514,7 @@ dataQC.MIxS <- function(metadata = NA, ask.input=TRUE, add_to = NA){
     }
   }
 
-  
+
   # 4. dealing with the collection date, and putting it in the YYYY-MM-DD format
   TermsSyn_date<-TermsSyn[as.character(TermsLib[TermsLib$name=="collection_date",]$name)]
   QCDate <- dataQC.dateCheck(metadata, TermsSyn_date[[1]])
@@ -568,7 +522,7 @@ dataQC.MIxS <- function(metadata = NA, ask.input=TRUE, add_to = NA){
   if(length(QCDate$values)==nrow(metadata)){
     New_metadata$collection_date <- QCDate$values
   }
-  
+
   # 5. the core MIxS terms
   TermsSyn_MIxS <- TermsSyn[as.character(TermsLib[TermsLib$MIxS_core>0,]$name)]
   TermsSyn_MIxS <- TermsSyn_MIxS[!names(TermsSyn_MIxS) %in% c("lat_lon", "collection_date")]
@@ -580,21 +534,21 @@ dataQC.MIxS <- function(metadata = NA, ask.input=TRUE, add_to = NA){
       New_metadata[,item] <- metadata[,item_shared[[1]]]
     }
   }
-  
-  # 6. the MIxS package terms 
+
+  # 6. the MIxS package terms
   # 6.1 find the best package/ask user if no package was specified
   env_package<-""
   if(!"env_package" %in% colnames(metadata)){
     if(ask.input){
-      cat("No env_package was specified.\nPlease specify what to do next:\n1) Make an educated guess based on the data\n2) Ask user for the package name\n3) stop executing\n(type 1, 2 or 3)\n") 
-      doNext <- readline() 
+      cat("No env_package was specified.\nPlease specify what to do next:\n1) Make an educated guess based on the data\n2) Ask user for the package name\n3) stop executing\n(type 1, 2 or 3)\n")
+      doNext <- readline()
       if(doNext==1){
         env_package <- dataQC.guess.env_package.from.data(metadata)
         warningmessages<-c(warningmessages, env_package$warningmessages)
         env_package <- env_package$values
       }else if(doNext==2){
-        cat("Please provide a single MIxS environmental package\nThe choices are: air, built_environment, host_associated, human_associated,human_gut,\nhuman_oral, human_skin, human_vaginal,microbial_mat_biofilm,\nmiscellaneous_natural_or_artificial_environment,\nplant_associated, soil, sediment, wastewater_sludge, water\n") 
-        env_package <- readline() 
+        cat("Please provide a single MIxS environmental package\nThe choices are: air, built_environment, host_associated, human_associated,human_gut,\nhuman_oral, human_skin, human_vaginal,microbial_mat_biofilm,\nmiscellaneous_natural_or_artificial_environment,\nplant_associated, soil, sediment, wastewater_sludge, water\n")
+        env_package <- readline()
         if(!env_package %in% colnames(TermsLib)){
           stop("incorrect environmental package provided. Be sure to use underscores and lowercase letters")
         } else{
@@ -635,13 +589,13 @@ dataQC.MIxS <- function(metadata = NA, ask.input=TRUE, add_to = NA){
       }
     }
   }
-  
+
   if(all(nchar(env_package)==0)){
     warningmessages<-multi.warnings("No env_package could be inferred", warningmessages)
   } else{
     New_metadata$env_package <- env_package
   }
-  
+
   TermsSyn_MIxSpackage<-TermsSyn[as.character(TermsLib[TermsLib$name_origin=="MIxS" & TermsLib$MIxS_core==0,]$name)]
   for(item in names(TermsSyn_MIxSpackage)){
     item_shared <- intersect(TermsSyn_MIxSpackage[item][[1]], colnames(metadata))
@@ -651,7 +605,7 @@ dataQC.MIxS <- function(metadata = NA, ask.input=TRUE, add_to = NA){
       New_metadata[,item] <- metadata[,item_shared[[1]]]
     }
   }
-  
+
   # 7. any other additionalinformation
   # 7.1 already registered terms
   TermsSyn_add <- TermsSyn[as.character(TermsLib[TermsLib$name_origin %in% c("DwC", "miscellaneous"),]$name)]
@@ -668,8 +622,8 @@ dataQC.MIxS <- function(metadata = NA, ask.input=TRUE, add_to = NA){
     # if there are too much novel terms, don't go over all of them
     if(ask.input){
       t<-paste(unknown_terms, collapse=", ")
-      cat(paste("The following unknown variables were encountered:\n",t," \n\tAdd all to the QC'd data? (y/n)\n", sep=" ")) 
-      ctu <- readline() 
+      cat(paste("The following unknown variables were encountered:\n",t," \n\tAdd all to the QC'd data? (y/n)\n", sep=" "))
+      ctu <- readline()
       if(ctu %in% c("y", "Y", "yes", "YES", "Yes")){
         for(t in unknown_terms){
           New_metadata[,t] <- metadata[,t]
@@ -684,8 +638,8 @@ dataQC.MIxS <- function(metadata = NA, ask.input=TRUE, add_to = NA){
   }else{
     for(t in unknown_terms){
       if(ask.input){
-        cat(paste("The following unknown variable was encountered:",t," \n\tAdd to the QC'd data? (y/n)\n", sep=" ")) 
-        ctu <- readline() 
+        cat(paste("The following unknown variable was encountered:",t," \n\tAdd to the QC'd data? (y/n)\n", sep=" "))
+        ctu <- readline()
         if(ctu %in% c("y", "Y", "yes", "YES", "Yes")){
           New_metadata[,t] <- metadata[,t]
         }
@@ -695,7 +649,7 @@ dataQC.MIxS <- function(metadata = NA, ask.input=TRUE, add_to = NA){
       }
     }
   }
-  
+
   # 8. some additional quality controll
   if("investigation_type" %in% colnames(New_metadata)){
     New_metadata$investigation_type <- sapply(New_metadata$investigation_type, FUN=function(x){
@@ -704,8 +658,8 @@ dataQC.MIxS <- function(metadata = NA, ask.input=TRUE, add_to = NA){
       return(x)})
   }else{
     if(ask.input){
-      cat("No investigation_type was found...\n\tPlease provide an investigation_type. Common ones include mimarks-survey or metagenome. Type n to ignore.\n") 
-      invtype <- readline() 
+      cat("No investigation_type was found...\n\tPlease provide an investigation_type. Common ones include mimarks-survey or metagenome. Type n to ignore.\n")
+      invtype <- readline()
       if(! invtype %in% c("n", "N")){
         New_metadata$investigation_type <- rep(invtype, nrow(New_metadata))
       }
@@ -726,17 +680,17 @@ dataQC.MIxS <- function(metadata = NA, ask.input=TRUE, add_to = NA){
       New_metadata <- New_metadata[,!colnames(New_metadata) %in% "specific_host"]
     }
   }
-  
+
   #if("eventID" %in% colnames(New_metadata)){
   #  if(length(unique(New_metadata$eventID))==nrow(New_metadata)){
-  #    cat("There are the same number of events as there are samples...\n\tkeep $eventID? (y/n)\n") 
-  #    ctu <- readline() 
+  #    cat("There are the same number of events as there are samples...\n\tkeep $eventID? (y/n)\n")
+  #    ctu <- readline()
   #    if(ctu %in% c("n", "N", "no", "NO", "No")){
   #      New_metadata <- New_metadata[,!colnames(New_metadata) %in% "eventID"]
   #    }
   #  }
   #}
-  
+
   # QC on length/depth/size measurements
   # if multiple units found: do nothing
   # if a string found that is not one of the expected units: leave it and work with the rest
@@ -765,7 +719,7 @@ dataQC.MIxS <- function(metadata = NA, ask.input=TRUE, add_to = NA){
       val_units <- gsub("^km$", "kilometer", tolower(val_units), fixed=FALSE)
       val_units <- gsub("^m$", "meter", tolower(val_units))
       val_units <- intersect(unique(val_units), possible_units) #danger in this step: discards any text that is not an expected unit
-      
+
       vals<-unlist(lapply(vals, function(v){gsub(",", ".", v)} ))
       if(length(val_units)==1){
         for(v in 1:length(vals)){
@@ -776,10 +730,10 @@ dataQC.MIxS <- function(metadata = NA, ask.input=TRUE, add_to = NA){
         QC_units[name_unit]<-val_units[1]
         New_metadata[,colnames(New_metadata)==name_unit] <- c(vals[rownames(New_metadata)])
       }
-      
+
     }
   }
-  
+
   # 9. finalizing and formatting the output
   # 9.1 the units
   New_metadata_units <- c()
@@ -816,8 +770,8 @@ dataQC.MIxS <- function(metadata = NA, ask.input=TRUE, add_to = NA){
       New_metadata_units[names(QC_units)[u]] <- QC_units[u]
     }
   }
-  
-  
+
+
   # 9.2 concatenate all non-MIxS terms in the misc_param term
   #MIxS_terms <- setdiff(as.character(TermsLib[TermsLib$official_MIxS==TRUE,]$name), "misc_param")
   #misc_units <- New_metadata_units[which(!colnames(New_metadata) %in% MIxS_terms)]
@@ -836,7 +790,7 @@ dataQC.MIxS <- function(metadata = NA, ask.input=TRUE, add_to = NA){
   #  New_metadata$misc_param<-apply(misc_metadata, 1, function(x) paste(x, collapse = ";"))
   #  New_metadata_units["misc_param"] <- "alphanumeric"
   #}
-  
+
   # 9.3 the section
   New_metadata_section <- c()
   for(i in 1:ncol(New_metadata)){
@@ -846,7 +800,7 @@ dataQC.MIxS <- function(metadata = NA, ask.input=TRUE, add_to = NA){
       New_metadata_section[colnames(New_metadata)[i]] <- "miscellaneous"
     }
   }
-  
+
   # 9.4 env_package
   if("env_package" %in% colnames(New_metadata)){
     env_package <- unique(New_metadata$env_package)
@@ -858,7 +812,7 @@ dataQC.MIxS <- function(metadata = NA, ask.input=TRUE, add_to = NA){
   } else{
     env_package <- "not_specified"
   }
-  
+
   # 9.5 warning messages
   if(length(warningmessages)>0){
     for(i in 1:length(warningmessages)){
@@ -867,7 +821,7 @@ dataQC.MIxS <- function(metadata = NA, ask.input=TRUE, add_to = NA){
     warningmessages <- c("Please consider the following warning messages carefully before proceding:", warningmessages)
     warning(paste(warningmessages, collapse='\n'))
   }
-  
+
   # 9.6 convert to the right output format (data.frame or metadata.MIxS)
   New_metadata <- new("metadata.MIxS",
                       data   = New_metadata,
